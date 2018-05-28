@@ -14,9 +14,17 @@ public:
 	void SetMouseController();
 	void SetKeyboardController();
 
-	void KeyUpdate(float dt);
+	void ControllerUpdate(float dt);
 
 private:
 	cocos2d::TMXTiledMap *_map;
 	cocos2d::Point _mapScrScrollSpeed = cocos2d::Point(0, 0);
+
+	bool _isClick = false;
+	bool _key_A_isPressed=false;
+	bool _key_W_isPressed = false;
+	bool _key_D_isPressed = false;
+	bool _key_S_isPressed = false;
+
+	cocos2d::Point _mousePosition = cocos2d::Point(0, 0);
 };
