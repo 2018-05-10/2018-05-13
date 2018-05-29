@@ -16,6 +16,9 @@
     <Filter Include="src\Manager">
       <UniqueIdentifier>{af09ca2b-26a6-4c30-bdec-38b77ba69ab9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Controller">
+      <UniqueIdentifier>{dd7e3ffd-c304-43cc-aed0-56b920d9ac06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -39,6 +42,9 @@
     <ClCompile Include="..\Classes\Scene\MenuLayer.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Manager\MenuLayerManager.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -61,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Scene\MenuLayer.h">
       <Filter>src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Manager\MenuLayerManager.h">
+      <Filter>src\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

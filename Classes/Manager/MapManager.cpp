@@ -8,10 +8,6 @@ bool MapManager::init()
 		return false;
 	}
 
-	_map = TMXTiledMap::create("map.tmx");
-	this->addChild(_map,0,1);
-	this->SetMouseController();
-	this->SetKeyboardController();
 	
 	return true;
 }
@@ -86,15 +82,14 @@ void MapManager::SetKeyboardController()
 
 void MapManager::ControllerUpdate(float dt)
 {
-	auto node = getChildByTag(1);
+	auto node = static_cast<GameScene*>(this->getParent())->GetMap();
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto currentPos = node->getPosition();
-	auto mapTiledNum = _map->getMapSize();
-	auto tiledSize = _map->getTileSize();
+	auto mapTiledNum =static_cast<GameScene*>(this->getParent())->GetMap()->getMapSize();
+	auto tiledSize = static_cast<GameScene*>(this->getParent())->GetMap()->getTileSize();
+
 	Point mapSize = Point(mapTiledNum.width*tiledSize.width, mapTiledNum.height*tiledSize.height);
 	int speed = 20;
-
-	log("%f %f", currentPos.x, currentPos.y);
 	
 	
 
@@ -105,7 +100,7 @@ void MapManager::ControllerUpdate(float dt)
 			currentPos += Point(speed, 0);
 		}
 	}
-	if ((_key_D_isPressed || _mousePosition.x > visibleSize.width *5/ 6) && !_isClick)
+	if ((_key_D_isPressed || _mousePosition.x > visibleSize.width*0.97) && !_isClick)
 	{
 		if (currentPos.x + mapSize.x >= visibleSize.width)
 		{
