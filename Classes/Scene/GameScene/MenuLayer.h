@@ -1,5 +1,6 @@
 #pragma once
 #include"cocos2d.h"
+#include"Entity/Building/Building.h"
 #include<vector>
 class MenuLayer :public cocos2d::Layer
 {
@@ -18,6 +19,6 @@ public:
 	
 private:
 
-	cocos2d::Sprite* _target;
+	Building* _target;
 	std::vector<cocos2d::Sprite*> _buildings = {};
 };

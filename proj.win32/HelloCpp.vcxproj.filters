@@ -19,6 +19,18 @@
     <Filter Include="src\Controller">
       <UniqueIdentifier>{dd7e3ffd-c304-43cc-aed0-56b920d9ac06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Entity">
+      <UniqueIdentifier>{e706ed5a-72ed-407a-85d3-c8c43b5a1bd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Entity\Building">
+      <UniqueIdentifier>{c244e233-d1e9-4bb6-afa3-3c25c556ae93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scene\GameScene">
+      <UniqueIdentifier>{0164217a-bb52-4743-a865-52ff916f56ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Entity\Resources">
+      <UniqueIdentifier>{33c82985-0756-41cd-bd49-d6fe593f2418}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -26,9 +38,6 @@
     </ClCompile>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Scene\GameScene.cpp">
-      <Filter>src\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Scene\MenuScene.cpp">
       <Filter>src\Scene</Filter>
@@ -39,11 +48,29 @@
     <ClCompile Include="..\Classes\Manager\MapManager.cpp">
       <Filter>src\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Scene\MenuLayer.cpp">
-      <Filter>src\Scene</Filter>
+    <ClCompile Include="..\Classes\Entity\Entity.cpp">
+      <Filter>src\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Manager\MenuLayerManager.cpp">
-      <Filter>src\Manager</Filter>
+    <ClCompile Include="..\Classes\Entity\Building\Base.cpp">
+      <Filter>src\Entity\Building</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Building\PowerStation.cpp">
+      <Filter>src\Entity\Building</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scene\GameScene\GameScene.cpp">
+      <Filter>src\Scene\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scene\GameScene\MenuLayer.cpp">
+      <Filter>src\Scene\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Resource\Mineral.cpp">
+      <Filter>src\Entity\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Resource\Power.cpp">
+      <Filter>src\Entity\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Building\Building.cpp">
+      <Filter>src\Entity\Building</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -52,9 +79,6 @@
     </ClInclude>
     <ClInclude Include="..\Classes\AppDelegate.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scene\GameScene.h">
-      <Filter>src\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Scene\MenuScene.h">
       <Filter>src\Scene</Filter>
@@ -65,11 +89,29 @@
     <ClInclude Include="..\Classes\Manager\MapManager.h">
       <Filter>src\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Scene\MenuLayer.h">
-      <Filter>src\Scene</Filter>
+    <ClInclude Include="..\Classes\Entity\Entity.h">
+      <Filter>src\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Manager\MenuLayerManager.h">
-      <Filter>src\Manager</Filter>
+    <ClInclude Include="..\Classes\Entity\Building\Base.h">
+      <Filter>src\Entity\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Building\PowerStation.h">
+      <Filter>src\Entity\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scene\GameScene\GameScene.h">
+      <Filter>src\Scene\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scene\GameScene\MenuLayer.h">
+      <Filter>src\Scene\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Resource\Power.h">
+      <Filter>src\Entity\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Resource\Mineral.h">
+      <Filter>src\Entity\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Building\Building.h">
+      <Filter>src\Entity\Building</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
