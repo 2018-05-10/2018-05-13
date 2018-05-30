@@ -31,6 +31,9 @@
     <Filter Include="src\Entity\Resources">
       <UniqueIdentifier>{33c82985-0756-41cd-bd49-d6fe593f2418}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Entity\Soldier">
+      <UniqueIdentifier>{8fbb6231-f574-4a44-9f67-d3859411471d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -72,6 +75,27 @@
     <ClCompile Include="..\Classes\Entity\Building\Building.cpp">
       <Filter>src\Entity\Building</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Manager\BuildingManager.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Building\Barrack.cpp">
+      <Filter>src\Entity\Building</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Soldier\Soldier.cpp">
+      <Filter>src\Entity\Soldier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Building\Mine.cpp">
+      <Filter>src\Entity\Building</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Soldier\Infantry.cpp">
+      <Filter>src\Entity\Soldier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Soldier\Dog.cpp">
+      <Filter>src\Entity\Soldier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Soldier\Tank.cpp">
+      <Filter>src\Entity\Soldier</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -112,6 +136,27 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Entity\Building\Building.h">
       <Filter>src\Entity\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Manager\BuildingManager.h">
+      <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Building\Barrack.h">
+      <Filter>src\Entity\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Soldier\Soldier.h">
+      <Filter>src\Entity\Soldier</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Building\Mine.h">
+      <Filter>src\Entity\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Soldier\Infantry.h">
+      <Filter>src\Entity\Soldier</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Soldier\Dog.h">
+      <Filter>src\Entity\Soldier</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Soldier\Tank.h">
+      <Filter>src\Entity\Soldier</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

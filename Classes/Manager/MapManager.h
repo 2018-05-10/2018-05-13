@@ -1,6 +1,6 @@
 #pragma once
 #include"cocos2d.h"
-#include"Scene/GameScene/GameScene.h"
+
 
 class MapManager :public cocos2d::Node
 {

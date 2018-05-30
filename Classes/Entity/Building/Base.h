@@ -7,12 +7,12 @@ class Base :public Building
 {
 public:
 	Base(Power* p, Mineral* m);
-	Base() = default;
+
 	~Base();
 	bool init();
 	int GetPowerCost();
 
-	CREATE_FUNC(Base);
+	
 private:
 
 };

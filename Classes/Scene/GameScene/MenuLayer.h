@@ -10,12 +10,15 @@ public:
 	CREATE_FUNC(MenuLayer);
 
 	void CreateMainLayer();
-	void CreateBaseLayer();
+	void CreateContructionLayer();
+	void CreateSoldierLayer();
 	void ClearLayer();
 
-	void SetBuildingController();
-
-	
+	void SetBuildingListController();
+	void SetBaseConstructionController();
+	void SetBarrackConstructionController();
+	void SetMineConstructionController();
+	void SetPowerStationController();
 	
 private:
 

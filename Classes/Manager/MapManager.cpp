@@ -1,4 +1,5 @@
 #include"MapManager.h"
+#include"Scene/GameScene/GameScene.h"
 
 USING_NS_CC;
 bool MapManager::init()

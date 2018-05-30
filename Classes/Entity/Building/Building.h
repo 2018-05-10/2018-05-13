@@ -14,7 +14,7 @@ public:
 	void Build(Entity E);
 	bool init();
 
-	CREATE_FUNC(Building);
+	
 protected:
 	bool _isWorking;
 	int _powerCost;
