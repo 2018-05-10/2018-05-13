@@ -1,3 +1,4 @@
+
 #include "Classes/Resource/Mineral.h"
 
 Mineral::Mineral()

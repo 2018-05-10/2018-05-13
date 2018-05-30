@@ -1,3 +1,4 @@
+
 #include "Classes/Entity/Building/PowerStation.h"
 
 PowerStation::PowerStation(Power* p, Mineral* m)
@@ -26,4 +27,5 @@ int PowerStation::GetPowerProduce()
 int PowerStation::GetMineralCost()
 {
 	return _mineralCost;
+
 }

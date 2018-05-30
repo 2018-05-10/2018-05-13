@@ -19,4 +19,5 @@ public:
 	void Add(int val);
 private:
 	int _currentVal;
+
 };

@@ -29,3 +29,4 @@ int Base::GetPowerCost()
 {
 	return _powerCost;
 }
+

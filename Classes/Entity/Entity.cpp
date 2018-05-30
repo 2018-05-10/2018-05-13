@@ -53,3 +53,4 @@ bool Entity::Isdead()
 	}
 	return false;
 }
+

@@ -11,4 +11,5 @@ public:
 	int GetMineralCost();
 private:
 	const int _powerProduce = 50;
+
 };

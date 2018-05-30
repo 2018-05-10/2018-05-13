@@ -1,3 +1,4 @@
+
 #pragma once
 #include "Building.h"
 #include "Resource/Mineral.h"
@@ -15,3 +16,4 @@ public:
 private:
 
 };
+

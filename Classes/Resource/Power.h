@@ -21,4 +21,5 @@ private:
 	int _totalVal;
 	int _usedVal;
 	int _availableVal;
+
 };

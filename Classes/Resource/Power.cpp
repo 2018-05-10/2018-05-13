@@ -1,3 +1,4 @@
+
 #include "Classes/Resource/Power.h"
 
 Power::Power()
