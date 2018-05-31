@@ -1,11 +1,31 @@
-#include"Classes/Entity/Building/Base.h"
+#include "Heads.h"
 
-Base::Base(Power* p,Mineral* m)
+Base::Base()
 {
+	_whatAmI = "Base";
+
 	_totalHP = 5000;
 	_currentHP = 5000;
 	_powerCost = 40;
 	_mineralCost = 0;
+	_timeToBuild = 0;
+
+	Sprite* spr = Sprite::create("Base.png");
+	this->BindSprite(spr);
+}
+
+Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
+{
+	_whatAmI = "Base";
+	_pPower = p;
+	_pManager = pManagerItBelongsTo;
+
+	_totalHP = 5000;
+	_currentHP = 5000;
+	_powerCost = 40;
+	_mineralCost = 0;
+	_timeToBuild = 0;
+
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
 	if (p->GetUsedVal() > p->GetTotalVal())
@@ -18,7 +38,10 @@ Base::Base(Power* p,Mineral* m)
 	}
 }
 
-Base::~Base() {}
+Base::~Base() 
+{
+	_pPower->Free(_powerCost);
+}
 
 bool Base::init()
 {
@@ -29,4 +52,3 @@ int Base::GetPowerCost()
 {
 	return _powerCost;
 }
-

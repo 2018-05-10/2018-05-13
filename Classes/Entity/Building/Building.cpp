@@ -1,4 +1,4 @@
-#include "Classes/Entity/Building/Building.h"
+#include "Heads.h"
 
 Building::Building() {}
 
@@ -14,12 +14,23 @@ void Building::SetIsWorking(bool a)
 	_isWorking = a;
 }
 
-void Building::Build(Entity E)
+Sprite* Building::Build(char* TypeName)
 {
-
+	Sprite* a = NULL;
+	a = _pManager->CreateBuilding(TypeName);
+	if (a == NULL)
+	{
+		a = _pManager->GetPairManager()->CreateSoldier(TypeName);
+	}
+	return a;
 }
 
 bool Building::init()
 {
 	return true;
+}
+
+void Building::Die()
+{
+	_pManager->DestroyBuilding(this);
 }

@@ -1,6 +1,4 @@
-
-#include "Classes/Resource/Power.h"
-
+#include "Heads.h"
 Power::Power()
 {
 	_totalVal = 50;
@@ -8,6 +6,11 @@ Power::Power()
 	_availableVal = 50;
 }
 Power::~Power(){}
+
+bool Power::init()
+{
+	return true;
+}
 
 int Power::GetTotalVal()
 {
@@ -30,12 +33,20 @@ void Power::Use(int val)
 	_availableVal = _totalVal - _usedVal;
 }
 
+void Power::Free(int val)
+{
+	_usedVal -= val;
+	_availableVal = _totalVal - _usedVal;
+}
+
 void Power::Add(int val)
 {
 	_totalVal += val;
+	_availableVal = _totalVal - _usedVal;
 }
 
 void Power::Reduce(int val)
 {
 	_totalVal -= val;
+	_availableVal = _totalVal - _usedVal;
 }
