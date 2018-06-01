@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.5" orientation="isometric" renderorder="right-down" width="75" height="75" tilewidth="64" tileheight="32" infinite="0" nextobjectid="105">
+ <tileset firstgid="1" name="isometric_grass_and_water" tilewidth="64" tileheight="64" tilecount="24" columns="4">
+  <tileoffset x="0" y="16"/>
+  <grid orientation="isometric" width="64" height="32"/>
+  <image source="isometric_grass_and_water.png" width="256" height="384"/>
+  <terraintypes>
+   <terrain name="Grass" tile="0"/>
+   <terrain name="Water" tile="22"/>
+  </terraintypes>
+  <tile id="0" terrain="0,0,0,0">
+   <properties>
+    <property name="Collidable" value="false"/>
+   </properties>
+  </tile>
+  <tile id="1" terrain="0,0,0,0">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+  </tile>
+  <tile id="2" terrain="0,0,0,0"/>
+  <tile id="3" terrain="0,0,0,0"/>
+  <tile id="4" terrain="0,0,0,1"/>
+  <tile id="5" terrain="0,0,1,0"/>
+  <tile id="6" terrain="1,0,0,0"/>
+  <tile id="7" terrain="0,1,0,0"/>
+  <tile id="8" terrain="0,1,1,1"/>
+  <tile id="9" terrain="1,0,1,1"/>
+  <tile id="10" terrain="1,1,1,0"/>
+  <tile id="11" terrain="1,1,0,1"/>
+  <tile id="12" terrain="0,0,1,1"/>
+  <tile id="13" terrain="1,0,1,0"/>
+  <tile id="14" terrain="1,1,0,0"/>
+  <tile id="15" terrain="0,1,0,1"/>
+  <tile id="16" terrain="0,0,1,1"/>
+  <tile id="17" terrain="1,0,1,0"/>
+  <tile id="18" terrain="1,1,0,0"/>
+  <tile id="19" terrain="0,1,0,1"/>
+  <tile id="20" terrain="0,1,1,0"/>
+  <tile id="21" terrain="1,0,0,1"/>
+  <tile id="22" terrain="1,1,1,1"/>
+  <tile id="23" terrain="1,1,1,1"/>
+  <wangsets>
+   <wangset name="Grass and Water" tile="15">
+    <wangcornercolor name="Grass" color="#8ab022" tile="0" probability="1"/>
+    <wangcornercolor name="Water" color="#378dc2" tile="23" probability="1"/>
+    <wangtile tileid="0" wangid="0x10101010"/>
+    <wangtile tileid="1" wangid="0x10101010"/>
+    <wangtile tileid="2" wangid="0x10101010"/>
+    <wangtile tileid="3" wangid="0x10101010"/>
+    <wangtile tileid="4" wangid="0x10102010"/>
+    <wangtile tileid="5" wangid="0x10201010"/>
+    <wangtile tileid="6" wangid="0x20101010"/>
+    <wangtile tileid="7" wangid="0x10101020"/>
+    <wangtile tileid="8" wangid="0x10202020"/>
+    <wangtile tileid="9" wangid="0x20202010"/>
+    <wangtile tileid="10" wangid="0x20201020"/>
+    <wangtile tileid="11" wangid="0x20102020"/>
+    <wangtile tileid="12" wangid="0x10202010"/>
+    <wangtile tileid="13" wangid="0x20201010"/>
+    <wangtile tileid="14" wangid="0x20101020"/>
+    <wangtile tileid="15" wangid="0x10102020"/>
+    <wangtile tileid="16" wangid="0x10202010"/>
+    <wangtile tileid="17" wangid="0x20201010"/>
+    <wangtile tileid="18" wangid="0x20101020"/>
+    <wangtile tileid="19" wangid="0x10102020"/>
+    <wangtile tileid="20" wangid="0x10201020"/>
+    <wangtile tileid="21" wangid="0x20102010"/>
+    <wangtile tileid="22" wangid="0x20202020"/>
+    <wangtile tileid="23" wangid="0x20202020"/>
+   </wangset>
+  </wangsets>
+ </tileset>
+ <tileset firstgid="25" name="suite.s2" tilewidth="192" tileheight="224" tilecount="0" columns="1">
+  <tileoffset x="-96" y="16"/>
+  <image source="Q045-红警科技45度建筑-素材包/suite.s2.png" width="230" height="230"/>
+ </tileset>
+ <tileset firstgid="25" source="../../../tiled/barracks.b1_1.tsx"/>
+ <tileset firstgid="25" name="basic6_1_damagedbody" tilewidth="224" tileheight="224" tilecount="0" columns="1">
+  <image source="Q045-红警科技45度建筑-素材包/basic6_1_damagedbody.png" width="227" height="236"/>
+ </tileset>
+ <tileset firstgid="25" name="L1_FloorGrass_NW" tilewidth="32" tileheight="32" tilecount="0" columns="1">
+  <image source="DO Terrain/L1_FloorGrass_NW.PNG" width="54" height="54"/>
+ </tileset>
+ <tileset firstgid="25" source="isometric_grass_and_water.tsx"/>
+ <tileset firstgid="25" source="map.tsx"/>
+ <layer name="Tile Layer 1" width="75" height="75" locked="1" opacity="0">
+  <data encoding="base64" compression="zlib">
+   eJztm4lu4zAMRNXY6XaPXumx+f8vXRPxwC9cB1WBpNty5wGEY1sBqsGQohR031rbT/F7ip9TPM3xa362x/tvU2zmuJpixP0w34/zuwGfqyAdIu7aYY4RN+2gl7TatWMdrjA2ayQd9a4K4aX7OcI3nOdzW/wmT2WtRozPHtP4KsgvnKvu5a0dnusd/cOcpMcUVYi8y/WHn0Ov8NR2iscprtuilfyz5q+KOfijHeafvcEco8fyeMaa5pV8pbqtuTLHwkvX8/V2iu9tqV1c53L9Yr5W8lVoFXmoOUof5d9rO2ik/iH7Sjrxe8zJzcdN5eJELyWfxJxVn0bcq3dQbxF6sXbxe+wl9K4KzD2u+axV0TtQK8UufSfXu2r1irUpalJ4RfopJ5WDykNd79pxHq71p5XqlTz10P6uR/Fc/Sh1olb0ZFxVt+TJar6K+UgT6pX3Osw/+kp1Xh5kf1vJV+w5uV/mfOU57qPZa0hvjWNuVloHVYepF/sIrXH37dhfeY8Y14e21Hz2pFXgeie91EfkdVGa5T6Da0DOzeHjpnJx8nkUfcb+kuOoL3v6fH5TrV5JI9YXzl9nWnwvTWPcS1vOBkMn5WZVX+Vem2uiPKLaw16KZxDqwVjvq9Ur9kas8axLuW9iLxV7HekUnor94y3GVuuveMbHOr92jkV/qUfgusi1sFovyv6Ia14+Bx7wnmdaPH8e2/E6WrG2U4N8jq5n2XMcz30O95LVcpA5tfZbFueezwI3K5+pUcUcVHCOa9qd+r0r52teL40xxhhjjDHGGGOMMcYYY4wxxpj/le2//gO+CNapD+vUh3Xqwzr1YZ36sE59WKc+zqFTpf93OMW5/DSsRCXOmXdZG2t1Gnqpmq/OXcuranXpNa+KVu4N+rBOfVinPqxTH9apD+vUh3Xqwzq9zbZZp/dgrT4PfwBEAhHa
+  </data>
+ </layer>
+ <layer name="ground and water" width="75" height="75">
+  <data encoding="base64" compression="zlib">
+   eJzt29lOwzAQBdCU0rIXCojy/19KrDaSGXmdzWMnD6NiAWl65FxPHLhM03TZyky9zPXeQb3O9RspLaeHuXZz3c21n+ve6Pgx4aXlZMWiZBzz0nBq/dkx45CXtJOVz44ZQ6+151NqDK/HLZ/SVr7Xlk/X15SVG38LOFn47JTxTthqlHySnlcj5ZM/Xr7msvLnk8a59zqv/HzitjrMdWxsxTWvYD5xW7k1+ufm1XJe+WOMVSifJK5B36tHq1j/JJVXvldPVqn+STLboRdn/yRhleufpNfBUH5pr5MlViX9k2/l1rBzRR0DxyvJL2vXYOn9nW/1UeDv16nwXOH1aMmq5v5Oy0oiv6hWtfd3mlal+aVhhbm/07ZqkV/QCrv/lLNyx/2awvtlWCvYf2laUfafclaft++H5jHGyn+/XH5h+6mU1YlwrJzV83TtD56YrDD9Vy9WEnml3X+NZCWdX6NZleTXZiWfXxJW7jxr/i6ltEepsZLILwkrrjWaahXLL+z5jW7FmV9rsOLKr7VYceQXxWp5LtWLFbX/oljBHOjBipJf1GuQc53RsvLzSzuvQs+lrFst472yFVxnerJqtQ5K3+ePZEVdZ9ZmRVlnSq32yN/fE99fqheVuM/355Xr7d4qimOeS/bt3PnlW2H2fSxbcefX6Fac+bUGK9h/bVZpK478ylkt/58Ye17bkxU1v3JWy/nHvtebFSW/clbuea3rD2LPaylWB3Bczb0+TH61yivo1GJftDa/WliFnFpY1eaXtlXMqZVVTX5pWqWcWlqV5tcO/Hzt81pKPlmyKsmvXeXxOPPJmlUuv6StSp2sWKXyS9KqxsmSVSy/pKxqnaxZhfJLwgrjZNFqyS+peYV1smollVcUpzVZUZ3WYsXh5MrtaWD3LXuw4nKCXqNZcTtBr1GspJygV+9W0k6Y/LJopeVUm1/WrLSdavLLklUrJ9/LPSM5G3qNVUunrf7XH//VpaU=
+  </data>
+ </layer>
+ <layer name="meta" width="75" height="75" opacity="0">
+  <data encoding="base64" compression="zlib">
+   eJzt2EuKxDAMBNDQ5P5nHrwQhCaZjq0qyS65wLuJLN6k/cnnOI7PHnssOFbKdurLdurLdurLdurLeWynnjC8VIO2Ug7SSj0oqwpBWFWJWZ0vxvffVXJq6bG6GkU4zfa/GLWKykxevb/BjN5n8Xprlb2Oz+BlBjP97p6S3cMvq+z36TvZ7/aTlceJeT7L8vpl5a3LOstm7TF3Vt5eIs790V53Vogeou5I0Wc9s0Ku4/95oO+TUV7Xnk9SXbaV1WRHxcrqMhNlxVqv7uZlRc3K5mZE0crmZ9RUtLIe0PUYVrMEvXcoW7UwzoyqVi3ou4iyVQviPlXFqsXjVc2qZdTLaxV5z0dmpG/Ee1XFC/UbXNWrJ1cn73ql7oW0snqqYeyDql7Mu7NamOcrNa9Vv7tZ7cjvPqt+d7O6alY2D6OmopXNha6namXzIWs99a5gZXOi6qhb2byIGhWsbG7v81HrFWsN7O3B82yEFXO/GOll9Dm2FXtvHe1p5BmmVcQ5ZDTZ818TdWbzZJYeVrBqyV4LVrJqydqTV7Rqieyn12k2qxZ2TyNGs1qxs63exeNUycrrVMUK4VTBCuWk7oV2UvViOal5sZ1UvKKcVveKdlrVK8tpjz1Gxx9L2Qvd
+  </data>
+ </layer>
+</map>

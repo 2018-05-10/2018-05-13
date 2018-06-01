@@ -1,6 +1,6 @@
 #pragma once
 #include"cocos2d.h"
-
+#include<vector>
 
 class MapManager :public cocos2d::Node
 {
@@ -14,11 +14,17 @@ public:
 
 	void SetMouseController();
 	void SetKeyboardController();
-
 	void ControllerUpdate(float dt);
 
+	cocos2d::Vec2 ChangeToTiledPos(cocos2d::Point);
+	bool BuildingCheck(cocos2d::Point);
+	void GetTiledInformation();
+	void SetBuilding(cocos2d::Point);
+
+
+	void SetTestListener();
 private:
-	cocos2d::Point _mapScrScrollSpeed = cocos2d::Point(0, 0);
+	std::vector<std::vector<bool>> _mapVec;
 
 	bool _isClick = false;
 	bool _key_A_isPressed=false;

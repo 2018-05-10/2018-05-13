@@ -12,7 +12,9 @@ public:
 	bool init();
 	int GetPowerCost();
 
-	
+	//=========just for test===
+	Base() = default;
+	CREATE_FUNC(Base);
 private:
 
 };

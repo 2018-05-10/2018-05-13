@@ -12,6 +12,8 @@ public:
 	int GetPowerCost();
 	int GetMineralCost();
 
-	
+	//=========just for test===
+	Barrack() = default;
+	CREATE_FUNC(Barrack);
 private:
 };

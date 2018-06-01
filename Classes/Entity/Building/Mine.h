@@ -13,7 +13,9 @@ public:
 	int GetMineralProducePerSecond();
 	bool init();
 
-	
+	//=========just for test===
+	Mine() = default;
+	CREATE_FUNC(Mine);
 private:
 	const int _mineralProducePerSecond = 5;
 

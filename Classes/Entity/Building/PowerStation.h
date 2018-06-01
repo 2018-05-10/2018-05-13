@@ -9,6 +9,10 @@ public:
 	bool init();
 	int GetPowerProduce();
 	int GetMineralCost();
+
+	//=========just for test===
+	PowerStation() = default;
+	CREATE_FUNC(PowerStation);
 private:
 	const int _powerProduce = 50;
 

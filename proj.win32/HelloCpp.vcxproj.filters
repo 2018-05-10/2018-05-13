@@ -96,6 +96,9 @@
     <ClCompile Include="..\Classes\Entity\Soldier\Tank.cpp">
       <Filter>src\Entity\Soldier</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Manager\SoldierManager.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -157,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Entity\Soldier\Tank.h">
       <Filter>src\Entity\Soldier</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Manager\SoldierManager.h">
+      <Filter>src\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -21,7 +21,7 @@ public:
 	void SetPowerStationController();
 	
 private:
-
+	std::vector<cocos2d::Sprite*> _buildings;
 	Building* _target;
-	std::vector<cocos2d::Sprite*> _buildings = {};
+	
 };
