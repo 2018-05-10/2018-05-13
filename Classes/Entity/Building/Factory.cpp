@@ -1,9 +1,9 @@
-#include "Barrack.h"
+#include "Factory.h"
 
-Barrack::Barrack()
+Factory::Factory()
 {
-	_whatAmI = "Barrack";
-
+	_whatAmI = "Factory";
+	
 	_totalHP = 2000;
 	_currentHP = 2000;
 	_powerCost = 35;
@@ -11,13 +11,13 @@ Barrack::Barrack()
 	_timeToBuild = 15;
 	_buildingID = buildingsID++;
 
-	Sprite* spr = Sprite::create("Building/Barrack.png");
+	Sprite* spr = Sprite::create("Building/Factory.png");
 	this->BindSprite(spr);
 }
 
-Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
+Factory::Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
 {
-	_whatAmI = "Barrack";
+	_whatAmI = "Factory";
 	_pPower = p;
 	_pManager = pManagerItBelongsTo;
 
@@ -39,22 +39,22 @@ Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
 	}
 }
 
-Barrack::~Barrack()
+Factory::~Factory()
 {
 	/*_pPower->Free(_powerCost);*/
 }
 
-bool Barrack::init()
+bool Factory::init()
 {
 	return true;
 }
 
-int Barrack::GetPowerCost()
+int Factory::GetPowerCost()
 {
 	return _powerCost;
 }
 
-int Barrack::GetMineralCost()
+int Factory::GetMineralCost()
 {
 	return _mineralCost;
 }

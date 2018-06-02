@@ -1,19 +1,17 @@
 #pragma once
 #include "Building.h"
 
-class PowerStation :public Building 
+class PowerStation :public Building
 {
 public:
-	PowerStation(Power* p, Mineral* m);
+	PowerStation();
+	PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo);
 	~PowerStation();
 	bool init();
 	int GetPowerProduce();
 	int GetMineralCost();
 
-	//=========just for test===
-	PowerStation() = default;
 	CREATE_FUNC(PowerStation);
 private:
-	const int _powerProduce = 50;
-
+	const int _powerProduce = 50;     //能提供的电力
 };

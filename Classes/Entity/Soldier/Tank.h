@@ -8,6 +8,8 @@ public:
 	Tank();
 	~Tank();
 	bool init();
+
+	CREATE_FUNC(Tank);
 private:
 
 };

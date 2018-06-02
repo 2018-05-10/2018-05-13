@@ -99,6 +99,9 @@
     <ClCompile Include="..\Classes\Manager\SoldierManager.cpp">
       <Filter>src\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Building\Factory.cpp">
+      <Filter>src\Entity\Building</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Manager\SoldierManager.h">
       <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Building\Factory.h">
+      <Filter>src\Entity\Building</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

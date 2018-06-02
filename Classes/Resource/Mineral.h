@@ -2,22 +2,16 @@
 #include "cocos2d.h"
 USING_NS_CC;
 
-class Mineral
+class Mineral :public Node
 {
-	friend class Dog;
-	friend class Infantry;
-	friend class Tank;
-	friend class Barrack;
-	friend class Base;
-	friend class Mine;
-	friend class PowerStation;
 public:
 	Mineral();
 	~Mineral();
+	CREATE_FUNC(Mineral);
+	bool init();
 	int GetCurrentVal();
-	void Cost(int val);
-	void Add(int val);
+	void Cost(int val);        //消耗矿产
+	void Add(int val);         //增加矿产
 private:
-	int _currentVal;
-
+	int _currentVal;       //当前量
 };

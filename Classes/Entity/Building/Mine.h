@@ -6,17 +6,13 @@ USING_NS_CC;
 class Mine :public Building
 {
 public:
-	Mine(Power* p,Mineral* m);
+	Mine();
+	Mine(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo);
 	~Mine();
 	int GetMineralCost();
 	int GetPowerCost();
-	int GetMineralProducePerSecond();
+	int GetMineralProducePerSecond();    //每秒产出的矿物数量
 	bool init();
 
-	//=========just for test===
-	Mine() = default;
 	CREATE_FUNC(Mine);
-private:
-	const int _mineralProducePerSecond = 5;
-
 };

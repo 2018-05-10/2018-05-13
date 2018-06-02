@@ -17,14 +17,18 @@ public:
 	void ControllerUpdate(float dt);
 
 	cocos2d::Vec2 ChangeToTiledPos(cocos2d::Point);
+	cocos2d::Vec2 ChangeToCocosPos(cocos2d::Vec2);
+
 	bool BuildingCheck(cocos2d::Point);
 	void GetTiledInformation();
 	void SetBuilding(cocos2d::Point);
 
 
 	void SetTestListener();
+
+	cocos2d::Point BFS(cocos2d::Point );
 private:
-	std::vector<std::vector<bool>> _mapVec;
+	std::vector<std::vector<int>> _mapVec;
 
 	bool _isClick = false;
 	bool _key_A_isPressed=false;

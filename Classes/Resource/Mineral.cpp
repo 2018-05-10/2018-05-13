@@ -1,11 +1,15 @@
-
-#include "Classes/Resource/Mineral.h"
+#include "Mineral.h"
 
 Mineral::Mineral()
 {
 	_currentVal = 150;
 }
 Mineral::~Mineral(){}
+
+bool Mineral::init()
+{
+	return true;
+}
 
 int Mineral::GetCurrentVal()
 {

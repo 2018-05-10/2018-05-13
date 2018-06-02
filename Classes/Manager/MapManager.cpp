@@ -10,7 +10,7 @@ bool MapManager::init()
 	}
 	for (int i = 0; i < 75; ++i)
 	{
-		std::vector<bool> temp;
+		std::vector<int> temp;
 		for (int j = 0; j < 75; ++j)
 		{
 			temp.push_back(1);
@@ -198,7 +198,8 @@ bool MapManager::BuildingCheck(Point pos)
 	{
 		for (int j = 0; j < 5; ++j)
 		{
-			if (_mapVec[static_cast<int>(originPos.x + i)][static_cast<int>(originPos.y + j)] == 0)
+			if (_mapVec[static_cast<int>(originPos.x + i)][static_cast<int>(originPos.y + j)] == 0||
+				_mapVec[static_cast<int>(originPos.x + i)][static_cast<int>(originPos.y + j)] == 2)
 			{
 				return false;
 			}
@@ -250,13 +251,29 @@ void MapManager::SetBuilding(Point pos)
 {
 	auto origin = this->ChangeToTiledPos(pos) - Point(2, 2);
 
-	
-
 	for (int i = -1; i < 6; ++i)
 	{
 		for (int j = -1; j < 6; ++j)
 		{
-			_mapVec[origin.x + i][origin.y + j] = 0;
+			if (i == -1 || j == 5)
+			{
+				_mapVec[origin.x + i][origin.y + j] = 2;
+			}
+			else
+			{
+				_mapVec[origin.x + i][origin.y + j] = 0;
+			}
 		}
 	}
+	
+}
+
+Vec2 MapManager::ChangeToCocosPos(Vec2 pos)
+{
+	auto mapSize = static_cast<GameScene*>(this->getParent())->GetMap()->getMapSize();
+	auto tileSize = static_cast<GameScene*>(this->getParent())->GetMap()->getTileSize()*0.78125;
+	int x =pos.x*tileSize.width + (static_cast<int>(pos.y )% 2) *tileSize.width / 2;
+	int y = (mapSize.height - (pos.y + 1))*tileSize.height / 2 - tileSize.height / 2;
+	return Vec2(x, y);
+
 }

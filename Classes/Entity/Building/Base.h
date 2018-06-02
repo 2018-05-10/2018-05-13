@@ -6,16 +6,12 @@
 class Base :public Building
 {
 public:
-	Base(Power* p, Mineral* m);
-
+	Base();
+	Base(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo);
 	~Base();
 	bool init();
 	int GetPowerCost();
 
-	//=========just for test===
-	Base() = default;
 	CREATE_FUNC(Base);
-private:
-
 };
 

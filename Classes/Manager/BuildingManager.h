@@ -9,6 +9,7 @@ public:
 
 	void SetBaseController(Building*);
 	void SetBarrackController(Building*);
+	void SetFactoryController(Building*);
 	void SetProducerController(Building*);
 private:
 

@@ -42,7 +42,7 @@ void Entity::Hit(int attack)
 	}
 	if (_currentHP == 0)
 	{
-		
+		Die();
 	}
 }
 bool Entity::Isdead()
@@ -53,4 +53,18 @@ bool Entity::Isdead()
 	}
 	return false;
 }
+char* Entity::WhatAmI()
+{
+	return _whatAmI;
+}
+void Entity::Die()
+{}
 
+void Entity::SetPlayer(int num)
+{
+	_player = num;
+}
+int Entity::GetPlayer()
+{
+	return _player;
+}

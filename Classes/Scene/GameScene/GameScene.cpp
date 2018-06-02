@@ -50,6 +50,7 @@ bool GameScene::init()
 	base->BindSprite(Sprite::create("Building/Base.png"));
 	_map->addChild(base,1);
 	base->setPosition(2000,1000);
+	GetMapManager()->SetBuilding(Point(2000,1000)+base->getContentSize()/2);
 	_buildingManager->SetBaseController(base);
 	
 

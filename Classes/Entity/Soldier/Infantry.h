@@ -8,6 +8,8 @@ public:
 	Infantry();
 	~Infantry();
 	bool init();
+
+	CREATE_FUNC(Infantry);
 private:
 
 };

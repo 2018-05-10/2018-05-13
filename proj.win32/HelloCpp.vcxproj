@@ -152,6 +152,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Entity\Building\Barrack.cpp" />
     <ClCompile Include="..\Classes\Entity\Building\Base.cpp" />
     <ClCompile Include="..\Classes\Entity\Building\Building.cpp" />
+    <ClCompile Include="..\Classes\Entity\Building\Factory.cpp" />
     <ClCompile Include="..\Classes\Entity\Building\Mine.cpp" />
     <ClCompile Include="..\Classes\Entity\Building\PowerStation.cpp" />
     <ClCompile Include="..\Classes\Entity\Entity.cpp" />
@@ -175,6 +176,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Entity\Building\Barrack.h" />
     <ClInclude Include="..\Classes\Entity\Building\Base.h" />
     <ClInclude Include="..\Classes\Entity\Building\Building.h" />
+    <ClInclude Include="..\Classes\Entity\Building\Factory.h" />
     <ClInclude Include="..\Classes\Entity\Building\Mine.h" />
     <ClInclude Include="..\Classes\Entity\Building\PowerStation.h" />
     <ClInclude Include="..\Classes\Entity\Entity.h" />

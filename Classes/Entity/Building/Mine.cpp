@@ -1,12 +1,32 @@
-
 #include "Mine.h"
 
-Mine::Mine(Power* p,Mineral* m)
+Mine::Mine()
 {
+	_whatAmI = "Mine";
+	
 	_totalHP = 2000;
 	_currentHP = 2000;
 	_mineralCost = 50;
 	_powerCost = 25;
+	_timeToBuild = 15;
+	_buildingID = buildingsID++;
+
+	Sprite* spr = Sprite::create("Building/Mine.png");
+	this->BindSprite(spr);
+}
+
+Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
+{
+	_whatAmI = "Mine";
+	_pPower = p;
+	_pManager = pManagerItBelongsTo;
+
+	_totalHP = 2000;
+	_currentHP = 2000;
+	_mineralCost = 50;
+	_powerCost = 25;
+	_timeToBuild = 15;
+
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
 	if (p->GetUsedVal() > p->GetTotalVal())
@@ -19,7 +39,10 @@ Mine::Mine(Power* p,Mineral* m)
 	}
 }
 
-Mine::~Mine() {}
+Mine::~Mine() 
+{
+	/*_pPower->Free(_powerCost);*/
+}
 
 int Mine::GetMineralCost()
 {
