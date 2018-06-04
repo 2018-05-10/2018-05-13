@@ -77,7 +77,7 @@ void BuildingManager::SetFactoryController(Building* building)
 		auto target1 = static_cast<Building*>(event->getCurrentTarget());
 		if (target1->getBoundingBox().containsPoint(pos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
 		{
-			log("%d", target1->GetBuildingID());
+			
 			static_cast<GameScene*>(this->getParent())->GetMenuLayer()->CreateFactoryLayer(target1->GetBuildingID());
 			return true;
 		}

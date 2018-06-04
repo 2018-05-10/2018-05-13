@@ -73,6 +73,10 @@ MapManager* GameScene::GetMapManager() const
 {
 	return _mapManager;
 }
+SoldierManager* GameScene::GetSoldierManager()const
+{
+	return _soldierManager;
+}
 Size GameScene::GetMapSize()const
 {
 	auto _ground = _map->getLayer("background");

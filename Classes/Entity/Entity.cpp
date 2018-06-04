@@ -17,7 +17,7 @@ void Entity::BindSprite(Sprite* sprite)
 	this->addChild(_sprite);
 
 	Size size = _sprite->getContentSize();
-	_sprite->setPosition(Point(size.width / 2, size.height / 2));
+	_sprite->setPosition(Point(size.width/2,size.height/2));
 	this->setContentSize(size);
 }
 int Entity::GetTotalHP()

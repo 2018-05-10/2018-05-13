@@ -1,6 +1,7 @@
 #include"MapManager.h"
 #include"Scene/GameScene/GameScene.h"
-
+#include<queue>
+#include<deque>
 USING_NS_CC;
 bool MapManager::init()
 {
@@ -18,6 +19,7 @@ bool MapManager::init()
 		_mapVec.push_back(temp);
 	}
 	
+
 	return true;
 }
 
@@ -138,43 +140,7 @@ void MapManager::ControllerUpdate(float dt)
 	}
 	node->setPosition(currentPos);
 }
-Vec2 MapManager::ChangeToTiledPos(Point pos)
-{
-	auto mapSize = static_cast<GameScene*>(this->getParent())->GetMap()->getMapSize();
-	auto tileSize= static_cast<GameScene*>(this->getParent())->GetMap()->getTileSize()*0.78125;
-	float halfMapWidth = mapSize.width * 0.5f;
-	float mapHeight = mapSize.height;
-	float tileWidth = tileSize.width;
-	float tileHeight = tileSize.height;
 
-
-	Vec2 tilePosDiv = CCPointMake(pos.x / tileWidth, pos.y / tileHeight);
-	float inverseTileY = mapHeight - tilePosDiv.y;
-
-
-	float posX = inverseTileY + tilePosDiv.x - halfMapWidth;
-	float posY = inverseTileY - tilePosDiv.x + halfMapWidth;
-
-	if (posX - static_cast<int>(posX) < 0.5)
-	{
-		posX = static_cast<int>(posX);
-	}
-	else
-	{
-		posX = static_cast<int>(posX)+1;
-	}
-
-	if (posY - static_cast<int>(posY) < 0.5)
-	{
-		posY = static_cast<int>(posY);
-	}
-	else
-	{
-		posY = static_cast<int>(posY) + 1;
-	}
-
-	return Vec2(posX, posY);
-}
 
 bool MapManager::BuildingCheck(Point pos)
 {
@@ -215,12 +181,16 @@ void MapManager::SetTestListener()
 
 	listener->onTouchBegan = [&](Touch *touch, Event *event)
 	{
+		return true;
+	};
+	listener->onTouchEnded = [&](Touch *touch, Event *event)
+	{
+
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		Vec2 pos2 = ChangeToTiledPos(pos- static_cast<GameScene*>(this->getParent())->GetMap()->getPosition());
-
 		log("%f %f", pos2.x, pos2.y);
-
-		return true;
+	
+		
 	};
 
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
@@ -249,13 +219,13 @@ void MapManager::GetTiledInformation()
 
 void MapManager::SetBuilding(Point pos)
 {
-	auto origin = this->ChangeToTiledPos(pos) - Point(2, 2);
+	auto origin = this->ChangeToTiledPos(pos) - Point(2, 1);
 
 	for (int i = -1; i < 6; ++i)
 	{
 		for (int j = -1; j < 6; ++j)
 		{
-			if (i == -1 || j == 5)
+			if ((i == -1 || j == 5||j==-1||i==5)&&_mapVec[origin.x + i][origin.y + j]!=0)
 			{
 				_mapVec[origin.x + i][origin.y + j] = 2;
 			}
@@ -268,12 +238,100 @@ void MapManager::SetBuilding(Point pos)
 	
 }
 
+Vec2 MapManager::ChangeToTiledPos(Point pos)
+{
+	auto mapSize = static_cast<GameScene*>(this->getParent())->GetMap()->getMapSize();
+	auto tileSize = static_cast<GameScene*>(this->getParent())->GetMap()->getTileSize()*0.78125;
+	float halfMapWidth = mapSize.width * 0.5f;
+	float mapHeight = mapSize.height;
+	float tileWidth = tileSize.width;
+	float tileHeight = tileSize.height;
+
+
+	Vec2 tilePosDiv = CCPointMake(pos.x / tileWidth, pos.y / tileHeight);
+	float inverseTileY = mapHeight - tilePosDiv.y;
+
+
+	float posX = inverseTileY + tilePosDiv.x - halfMapWidth;
+	float posY = inverseTileY - tilePosDiv.x + halfMapWidth;
+
+	if (posX - static_cast<int>(posX) < 0.5)
+	{
+		posX = static_cast<int>(posX);
+	}
+	else
+	{
+		posX = static_cast<int>(posX) + 1;
+	}
+
+	if (posY - static_cast<int>(posY) < 0.5)
+	{
+		posY = static_cast<int>(posY);
+	}
+	else
+	{
+		posY = static_cast<int>(posY) + 1;
+	}
+
+	return Vec2(posX, posY);
+}
+
 Vec2 MapManager::ChangeToCocosPos(Vec2 pos)
 {
 	auto mapSize = static_cast<GameScene*>(this->getParent())->GetMap()->getMapSize();
 	auto tileSize = static_cast<GameScene*>(this->getParent())->GetMap()->getTileSize()*0.78125;
-	int x =pos.x*tileSize.width + (static_cast<int>(pos.y )% 2) *tileSize.width / 2;
-	int y = (mapSize.height - (pos.y + 1))*tileSize.height / 2 - tileSize.height / 2;
+	int x =tileSize.width*(mapSize.width+pos.x-pos.y)/2;
+	int y =tileSize.height*mapSize.height- tileSize.height*(pos.x+pos.y)/2 ;
 	return Vec2(x, y);
 
+}
+
+Point MapManager::BFS(Point start)
+{
+	using namespace std;
+	int count=0;
+	Point tileStart = ChangeToTiledPos(start);
+	int dir[8][2] = { {0,1},{1,0},{1,1},{1,-1},{ 0,-1 },{ -1,0 },{ -1,-1 },{ -1,1 } };
+	int searchMap[75][75];
+	for (int i = 0; i < 75; ++i)
+	{
+		for (int j = 0; j < 75; ++j) {
+			searchMap[i][j] = 0;
+		}
+	}
+	queue<Point> isSearched;
+	isSearched.push(tileStart);
+	
+	while (!isSearched.empty())
+	{
+		if (_mapVec[isSearched.front().x][isSearched.front().y] != 0)
+		{ 
+			
+			return ChangeToCocosPos(isSearched.front());
+		}
+		searchMap[static_cast<int>(isSearched.front().x)][static_cast<int>(isSearched.front().y)] = 1;
+		for (int i = 0; i < 8; ++i)
+		{
+			
+			if (!searchMap[static_cast<int>(isSearched.front().x) + dir[i][0]][static_cast<int>(isSearched.front().y) + dir[i][1]])
+			{
+				
+				isSearched.push(Point(isSearched.front().x + dir[i][0], isSearched.front().y + dir[i][1]));
+				
+			}
+			
+		}
+		
+		isSearched.pop();
+	
+	}
+	
+	return Point(-1, -1);
+}
+
+void MapManager::SetSoldier(Point pos)
+{
+	auto origin = this->ChangeToTiledPos(pos);
+	_mapVec[origin.x][origin.y] = 0;
+	log("%f %f", origin.x, origin.y);
 }

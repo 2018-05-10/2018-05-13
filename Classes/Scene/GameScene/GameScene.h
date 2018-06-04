@@ -17,6 +17,7 @@ public:
 	
 	cocos2d::TMXTiledMap* GetMap()const;
 	BuildingManager* GetBuildingManager()const;
+	SoldierManager* GetSoldierManager()const;
 	MenuLayer* GetMenuLayer()const;
 	MapManager* GetMapManager()const;
 	cocos2d::Size GetMapSize()const;

@@ -22,13 +22,15 @@ public:
 	bool BuildingCheck(cocos2d::Point);
 	void GetTiledInformation();
 	void SetBuilding(cocos2d::Point);
+	void SetSoldier(cocos2d::Point);
 
 
 	void SetTestListener();
 
-	cocos2d::Point BFS(cocos2d::Point );
+	cocos2d::Point BFS(cocos2d::Point);
 private:
 	std::vector<std::vector<int>> _mapVec;
+
 
 	bool _isClick = false;
 	bool _key_A_isPressed=false;

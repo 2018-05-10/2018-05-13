@@ -10,6 +10,7 @@
 #include"extensions/cocos-ext.h"
 #include"ui/CocosGUI.h"
 #include"Manager/BuildingManager.h"
+#include"Manager/SoldierManager.h"
 
 USING_NS_CC;
 using namespace extension;
@@ -93,7 +94,7 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 	tank->setScale(3.0);
 	tank->setPosition(Size(contentSize.width / 4, contentSize.height / 2));
 
-	log("%d", buildingID);
+	
 	_targetBuildingID =buildingID;
 
 	tank->addTouchEventListener([&](Ref*, Widget::TouchEventType type)
@@ -105,20 +106,21 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-			log("%d", _targetBuildingID);
 			Building* building = static_cast<Building*>(static_cast<GameScene*>(this->getParent())->GetMap()->getChildByTag(_targetBuildingID));
 			auto pos = building->getPosition()+building->getContentSize()/2;
 			auto tilePos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(pos);
-			auto tank1 = Tank::create();
+			auto tank1 = SoldierManager::CreateSoldier("Tank");
 			static_cast<GameScene*>(this->getParent())->GetMap()->addChild(tank1,6);
-			tank1->setPosition(pos+Point(50,50));
-			log("%f %f", pos.x, pos.y);
+			auto landPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->BFS(pos);
+			tank1->setPosition(landPos);
+			static_cast<GameScene*>(this->getParent())->GetSoldierManager()->SetSoldierController(tank1);
+			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetSoldier(landPos);
 			break;
 		}
 	});
 
 	menuLayer->addChild(tank);
-		
+	
 	this->addChild(menuLayer);
 }
 
@@ -253,6 +255,7 @@ void MenuLayer::SetBarrackConstructionController()
 			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
 				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition());
 			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetBarrackController(_target);
+			
 		}
 		else
 		{
@@ -318,6 +321,8 @@ void MenuLayer::SetMineConstructionController()
 			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
 				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition());
 			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetProducerController(_target);
+			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos).x,
+				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos).y);
 		}
 		else
 		{
@@ -448,6 +453,10 @@ void MenuLayer::SetFactoryController()
 			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
 				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition());
 			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetFactoryController(_target);
+			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
+				static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()).x,
+				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
+					static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()).y);
 		}
 		else
 		{
