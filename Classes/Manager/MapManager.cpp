@@ -1,7 +1,7 @@
 #include"MapManager.h"
 #include"Scene/GameScene/GameScene.h"
 #include<queue>
-#include<deque>
+#include<string>
 USING_NS_CC;
 bool MapManager::init()
 {
@@ -72,10 +72,7 @@ void MapManager::SetMouseController()
 	auto listener = EventListenerMouse::create();
 
 
-	listener->onMouseDown = [&](Event*) { _isClick = true;
-
-	
-	};
+	listener->onMouseDown = [&](Event*) { _isClick = true; };
 	listener->onMouseMove = [&](Event* event) {
 		_mousePosition.x = static_cast<EventMouse*>(event)->getCursorX();
 		_mousePosition.y = static_cast<EventMouse*>(event)->getCursorY();
@@ -142,7 +139,7 @@ void MapManager::ControllerUpdate(float dt)
 }
 
 
-bool MapManager::BuildingCheck(Point pos)
+bool MapManager::BuildingCheck(Point pos,int name)
 {
 	Vec2 tilePos = ChangeToTiledPos(pos);
 
@@ -155,17 +152,48 @@ bool MapManager::BuildingCheck(Point pos)
 		return false;
 	}
 
-	auto originPos = tilePos - Point(2, 2);
-	if ((originPos.x < 0 || originPos.x>70) || (originPos.y < 0 || originPos.y>70))
+	auto originPos = tilePos;
+	int width, height;
+	
+	switch (name)
+	{
+	case(0):
+		width = 4;
+		height = 4;
+		originPos += Point(4, 3);
+		break;
+	case(1):
+		width = 3;
+		height = 3;
+		originPos += Point(3,3);
+		break;
+	case(2):
+		width = 4;
+		height = 4;
+		originPos += Point(3, 3);
+		break;
+	case(3):
+		width = 4;
+		height = 4;
+		originPos += Point(3, 3);
+		break;
+	case(4):
+		width = 3;
+		height = 3;
+		originPos += Point(3, 3);
+		break;
+	}
+
+	if ((originPos.x < width || originPos.x>74) || (originPos.y < height || originPos.y>74))
 	{
 		return false;
 	}
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < width+1; ++i)
 	{
-		for (int j = 0; j < 5; ++j)
+		for (int j = 0; j < height+1; ++j)
 		{
-			if (_mapVec[static_cast<int>(originPos.x + i)][static_cast<int>(originPos.y + j)] == 0||
-				_mapVec[static_cast<int>(originPos.x + i)][static_cast<int>(originPos.y + j)] == 2)
+			if (_mapVec[static_cast<int>(originPos.x - i)][static_cast<int>(originPos.y - j)] == 0||
+				_mapVec[static_cast<int>(originPos.x - i)][static_cast<int>(originPos.y - j)] == 2)
 			{
 				return false;
 			}
@@ -217,21 +245,56 @@ void MapManager::GetTiledInformation()
 	}
 }
 
-void MapManager::SetBuilding(Point pos)
+void MapManager::SetBuilding(Point pos,int name)
 {
-	auto origin = this->ChangeToTiledPos(pos) - Point(2, 1);
+	auto originPos = ChangeToTiledPos(pos);
 
-	for (int i = -1; i < 6; ++i)
+	int width, height;
+
+	switch (name)
 	{
-		for (int j = -1; j < 6; ++j)
+	case(0):
+		width = 4;
+		height = 4;
+		originPos += Point(3, 3);
+		break;
+	case(1):
+		width = 3;
+		height = 3;
+		originPos += Point(3, 3);
+		break;
+	case(2):
+		width = 4;
+		height = 4;
+		originPos += Point(3, 3);
+		break;
+	case(3):
+		width = 4;
+		height = 4;
+		originPos += Point(3, 3);
+		break;
+	case(4):
+		width = 3;
+		height = 3;
+		originPos += Point(3, 3);
+		break;
+	}
+
+	for (int i = -1; i < width+2; ++i)
+	{
+		for (int j = -1; j < height+2; ++j)
 		{
-			if ((i == -1 || j == 5||j==-1||i==5)&&_mapVec[origin.x + i][origin.y + j]!=0)
+			if (originPos.x - i < 0 || originPos.x - i>74 || originPos.y - j < 0 || originPos.y - j>74)
 			{
-				_mapVec[origin.x + i][origin.y + j] = 2;
+				continue;
+			}
+			if ((i == -1 || j == height+1||j==-width+1||i==4)&&_mapVec[originPos.x - i][originPos.y - j]!=0)
+			{
+				_mapVec[originPos.x - i][originPos.y - j] = 2;
 			}
 			else
 			{
-				_mapVec[origin.x + i][origin.y + j] = 0;
+				_mapVec[originPos.x - i][originPos.y - j] = 0;
 			}
 		}
 	}
@@ -291,6 +354,23 @@ Point MapManager::BFS(Point start)
 	using namespace std;
 	int count=0;
 	Point tileStart = ChangeToTiledPos(start);
+
+	if (tileStart.x < 0)
+	{
+		tileStart.x = 0;
+	}
+	else if (tileStart.x > 74)
+	{
+		tileStart.x = 74;
+	}
+	if (tileStart.y < 0)
+	{
+		tileStart.y = 0;
+	}
+	else if (tileStart.y > 74)
+	{
+		tileStart.y = 74;
+	}
 	int dir[8][2] = { {0,1},{1,0},{1,1},{1,-1},{ 0,-1 },{ -1,0 },{ -1,-1 },{ -1,1 } };
 	int searchMap[75][75];
 	for (int i = 0; i < 75; ++i)
@@ -312,7 +392,11 @@ Point MapManager::BFS(Point start)
 		searchMap[static_cast<int>(isSearched.front().x)][static_cast<int>(isSearched.front().y)] = 1;
 		for (int i = 0; i < 8; ++i)
 		{
-			
+			if (static_cast<int>(isSearched.front().x) + dir[i][0] < 0 || static_cast<int>(isSearched.front().x) + dir[i][0]>74 ||
+				static_cast<int>(isSearched.front().y) + dir[i][1] < 0 || static_cast<int>(isSearched.front().y) + dir[i][1]>74)
+			{
+				continue;
+			}
 			if (!searchMap[static_cast<int>(isSearched.front().x) + dir[i][0]][static_cast<int>(isSearched.front().y) + dir[i][1]])
 			{
 				

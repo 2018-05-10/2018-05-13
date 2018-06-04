@@ -122,6 +122,33 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType)
 	return S;
 }
 
+void SoldierManager::SetTargetController()
+{
+	auto listener = EventListenerMouse::create();
+	listener->onMouseDown = [&](Event* event)
+	{
+		if (static_cast<int>(static_cast<EventMouse*>(event)->getMouseButton()) == 1)
+		{
+			Point _getClickPosition;
+			_getClickPosition.x = static_cast<EventMouse*>(event)->getCursorX();
+			_getClickPosition.y = static_cast<EventMouse*>(event)->getCursorY();
+
+			auto mapPos = static_cast<GameScene*>(this->getParent())->GetMap()->getPosition();
+			auto mapPoint = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(_getClickPosition - mapPos);
+			
+			for (auto soldier : _beChoosed)
+			{
+				auto cocosPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(mapPoint);
+				auto moveTo = MoveTo::create(4.0f, cocosPos);
+				soldier->runAction(moveTo);
+			}
+
+			log("%f %f", mapPoint.x, mapPoint.y);
+		}
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener,this);
+}
+
 Vector<Soldier*> SoldierManager::_soldierVec;
 Vector<Soldier*> SoldierManager::_infantryVec;
 Vector<Soldier*> SoldierManager::_tankVec;

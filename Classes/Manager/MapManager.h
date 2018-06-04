@@ -1,7 +1,7 @@
 #pragma once
 #include"cocos2d.h"
 #include<vector>
-
+#include<string>
 class MapManager :public cocos2d::Node
 {
 public:
@@ -19,9 +19,9 @@ public:
 	cocos2d::Vec2 ChangeToTiledPos(cocos2d::Point);
 	cocos2d::Vec2 ChangeToCocosPos(cocos2d::Vec2);
 
-	bool BuildingCheck(cocos2d::Point);
+	bool BuildingCheck(cocos2d::Point,int);
 	void GetTiledInformation();
-	void SetBuilding(cocos2d::Point);
+	void SetBuilding(cocos2d::Point,int);
 	void SetSoldier(cocos2d::Point);
 
 

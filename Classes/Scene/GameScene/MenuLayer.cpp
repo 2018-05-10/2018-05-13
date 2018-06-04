@@ -94,10 +94,8 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 	tank->setScale(3.0);
 	tank->setPosition(Size(contentSize.width / 4, contentSize.height / 2));
 
-	
-	_targetBuildingID =buildingID;
 
-	tank->addTouchEventListener([&](Ref*, Widget::TouchEventType type)
+	tank->addTouchEventListener([&,buildingID](Ref*, Widget::TouchEventType type)
 	{
 		switch (type)
 		{
@@ -106,12 +104,12 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-			Building* building = static_cast<Building*>(static_cast<GameScene*>(this->getParent())->GetMap()->getChildByTag(_targetBuildingID));
+			Building* building = static_cast<Building*>(static_cast<GameScene*>(this->getParent())->GetMap()->getChildByTag(buildingID));
 			auto pos = building->getPosition()+building->getContentSize()/2;
 			auto tilePos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(pos);
 			auto tank1 = SoldierManager::CreateSoldier("Tank");
 			static_cast<GameScene*>(this->getParent())->GetMap()->addChild(tank1,6);
-			auto landPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->BFS(pos);
+			auto landPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->BFS(pos-_target->getContentSize()/2);
 			tank1->setPosition(landPos);
 			static_cast<GameScene*>(this->getParent())->GetSoldierManager()->SetSoldierController(tank1);
 			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetSoldier(landPos);
@@ -170,7 +168,7 @@ void MenuLayer::SetBaseConstructionController()
 		_target->setPosition(originPos -
 			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() - _target->getContentSize() / 2);
 		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),0))
 		{
 			_target->GetSprite()->setColor(Color3B::GREEN);
 		}
@@ -183,13 +181,22 @@ void MenuLayer::SetBaseConstructionController()
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-		static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(), 0))
 	{
+		auto setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
+			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()-_target->getContentSize()/2);
+		_target->setZOrder(setPos.x + setPos.y);
+		setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(setPos);
+		_target->setPosition(setPos);
+		
 		_target->GetSprite()->setOpacity(255);
 		_target->GetSprite()->setColor(Color3B(255, 255, 255));
 		static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
-			originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition());
+			originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(), 0);
 		static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetBaseController(_target);
+
+		log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).x,
+			static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).y);
 	}
 		else
 	{
@@ -234,7 +241,7 @@ void MenuLayer::SetBarrackConstructionController()
 		_target->setPosition(originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() -
 			_target->getContentSize() / 2);
 		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),2))
 		{
 			_target->GetSprite()->setColor(Color3B::GREEN);
 		}
@@ -248,13 +255,22 @@ void MenuLayer::SetBarrackConstructionController()
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),2))
 		{
+
+			auto setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
+				static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() - _target->getContentSize() / 2);
+			_target->setZOrder(setPos.x + setPos.y);
+			setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(setPos);
+			_target->setPosition(setPos);
+		
 			_target->GetSprite()->setOpacity(255);
 			_target->GetSprite()->setColor(Color3B(255, 255, 255));
 			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
-				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition());
+				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),2);
 			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetBarrackController(_target);
+			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).x,
+				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).y);
 			
 		}
 		else
@@ -300,7 +316,7 @@ void MenuLayer::SetMineConstructionController()
 		_target->setPosition(originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() -
 			_target->getContentSize() / 2);
 		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),3))
 		{
 			_target->GetSprite()->setColor(Color3B::GREEN);
 		}
@@ -314,15 +330,22 @@ void MenuLayer::SetMineConstructionController()
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(
-			originPos -static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+			originPos -static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),3))
 		{
+
+			auto setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
+				static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() - _target->getContentSize() / 2);
+			_target->setZOrder(setPos.x + setPos.y);
+			setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(setPos);
+			_target->setPosition(setPos);
+		
 			_target->GetSprite()->setOpacity(255);
 			_target->GetSprite()->setColor(Color3B(255, 255, 255));
 			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
-				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition());
+				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),3);
 			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetProducerController(_target);
-			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos).x,
-				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos).y);
+			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).x,
+				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).y);
 		}
 		else
 		{
@@ -367,7 +390,7 @@ void MenuLayer::SetPowerStationController()
 		_target->setPosition(originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() -
 			_target->getContentSize() / 2);
 		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),4))
 		{
 			_target->GetSprite()->setColor(Color3B::GREEN);
 		}
@@ -381,13 +404,22 @@ void MenuLayer::SetPowerStationController()
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),4))
 		{
+
+			auto setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
+				static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() - _target->getContentSize() / 2);
+			_target->setZOrder(setPos.x + setPos.y);
+			setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(setPos);
+			_target->setPosition(setPos);
+			
 			_target->GetSprite()->setOpacity(255);
 			_target->GetSprite()->setColor(Color3B(255, 255, 255));
 			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
-				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition());
+				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),4);
 			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetProducerController(_target);
+			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).x,
+				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).y);
 		}
 		else
 		{
@@ -432,7 +464,7 @@ void MenuLayer::SetFactoryController()
 		_target->setPosition(originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() -
 			_target->getContentSize() / 2);
 		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),1))
 		{
 			_target->GetSprite()->setColor(Color3B::GREEN);
 		}
@@ -446,17 +478,22 @@ void MenuLayer::SetFactoryController()
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),1))
 		{
+
+			auto setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
+				static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() - _target->getContentSize() / 2);
+			_target->setZOrder(setPos.x + setPos.y);
+			setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(setPos);
+			_target->setPosition(setPos);
+			
 			_target->GetSprite()->setOpacity(255);
 			_target->GetSprite()->setColor(Color3B(255, 255, 255));
 			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
-				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition());
+				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),1);
 			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetFactoryController(_target);
-			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
-				static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()).x,
-				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
-					static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()).y);
+			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).x,
+				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).y);
 		}
 		else
 		{

@@ -45,12 +45,13 @@ bool GameScene::init()
 	_mapManager->GetTiledInformation();
 
 	_soldierManager->SetSelectBoxController();
+	_soldierManager->SetTargetController();
 
 	Base* base = Base::create();
 	base->BindSprite(Sprite::create("Building/Base.png"));
 	_map->addChild(base,1);
 	base->setPosition(2000,1000);
-	GetMapManager()->SetBuilding(Point(2000,1000)+base->getContentSize()/2);
+	GetMapManager()->SetBuilding(Point(2000,1000)+base->getContentSize()/2,0);
 	_buildingManager->SetBaseController(base);
 	
 

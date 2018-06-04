@@ -12,6 +12,7 @@ public:
 
 	void SetSelectBoxController();
 	void SetSoldierController(Soldier*);
+	void SetTargetController();
 	static cocos2d::Vector<Soldier*> _beChoosed;
 
 private:
@@ -19,6 +20,7 @@ private:
 	
 	cocos2d::Point _getTouchBeganPos;
 	cocos2d::Point _getTouchEndedPos;
+
 	cocos2d::Sprite* _selectBox;
 	
 

@@ -30,5 +30,4 @@ private:
 	std::vector<cocos2d::Sprite*> _buildings;
 	Building* _target;
 	bool _musicOn = true;
-	int _targetBuildingID;
 };
