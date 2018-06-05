@@ -39,3 +39,8 @@ bool Soldier::init()
 //{
 //	_pSoldierManager->DestroySoldier(this);
 //}
+
+int Soldier::GetMineralCost()const
+{
+	return _mineralCost;
+}

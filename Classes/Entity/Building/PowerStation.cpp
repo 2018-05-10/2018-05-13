@@ -9,7 +9,7 @@ PowerStation::PowerStation()
 	_powerCost = 0;
 	_mineralCost = 100;
 	_timeToBuild = 15;
-	_buildingID = buildingsID++;
+	++buildingsID;
 
 	Sprite* spr = Sprite::create("Building/PowerStation.png");
 	this->BindSprite(spr);
@@ -26,6 +26,7 @@ PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelo
 	_powerCost = 0;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	++buildingsID;
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);

@@ -1,5 +1,5 @@
 #include "Tank.h"
-
+#include "Resource/Mineral.h"
 Tank::Tank()
 {
 	_whatAmI = "Tank";
@@ -15,19 +15,19 @@ Tank::Tank()
 	this->BindSprite(spr);
 } 
 
-//Tank::Tank(Mineral* m, SoldierManager* p)
-//{
-//	_whatAmI = "Tank";
-//	_totalHP = 300;
-//	_currentHP = 300;
-//	_attack = 150;
-//	_speed = 3;
-//	_mineralCost = 50;
-//	_attackInterval = 1.0;
-//
-//	_pSoldierManager = p;
-//	m->Cost(_mineralCost);
-//}
+Tank::Tank(Mineral* m, SoldierManager* p)
+{
+	_whatAmI = "Tank";
+	_totalHP = 300;
+	_currentHP = 300;
+	_attack = 150;
+	_speed = 3;
+	_mineralCost = 50;
+	_attackInterval = 1.0;
+
+	_pSoldierManager = p;
+	m->Cost(_mineralCost);
+}
 
 Tank::~Tank() 
 {

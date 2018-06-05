@@ -2,6 +2,11 @@
 #include"cocos2d.h"
 #include"Entity/Building/Building.h"
 #include<vector>
+
+class  MapManager;
+class  BuildingManager;
+class  SoldierManager;
+
 class MenuLayer :public cocos2d::Layer
 {
 public:
@@ -25,9 +30,15 @@ public:
 	void SetMineConstructionController();
 	void SetPowerStationController();
 	void SetFactoryController();
+
+	cocos2d::TMXTiledMap* GetMap();
+	BuildingManager* GetBuildingManager();
+	SoldierManager* GetSoldierManager();
+	MapManager* GetMapManager();
+	
 	
 private:
 	std::vector<cocos2d::Sprite*> _buildings;
-	Building* _target;
+	cocos2d::Sprite* _target;
 	bool _musicOn = true;
 };

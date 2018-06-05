@@ -9,7 +9,7 @@ Barrack::Barrack()
 	_powerCost = 35;
 	_mineralCost = 100;
 	_timeToBuild = 15;
-	_buildingID = buildingsID++;
+	++buildingsID;
 
 	Sprite* spr = Sprite::create("Building/Barrack.png");
 	this->BindSprite(spr);
@@ -26,6 +26,7 @@ Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_powerCost = 35;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	++buildingsID;
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);

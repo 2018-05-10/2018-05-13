@@ -93,12 +93,12 @@ void MapManager::SetKeyboardController()
 
 void MapManager::ControllerUpdate(float dt)
 {
-	auto node = static_cast<GameScene*>(this->getParent())->GetMap();
+	auto node =GetMap();
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto currentPos = node->getPosition();
 	auto origin = Director::getInstance()->getVisibleOrigin();
-	auto mapTiledNum =static_cast<GameScene*>(this->getParent())->GetMap()->getMapSize();
-	auto tiledSize = static_cast<GameScene*>(this->getParent())->GetMap()->getTileSize()*0.78125;
+	auto mapTiledNum =GetMap()->getMapSize();
+	auto tiledSize = GetMap()->getTileSize()*0.78125;
 	
 	
 
@@ -139,7 +139,7 @@ void MapManager::ControllerUpdate(float dt)
 }
 
 
-bool MapManager::BuildingCheck(Point pos,int name)
+bool MapManager::BuildingPositionCheck(Point pos,int name)
 {
 	Vec2 tilePos = ChangeToTiledPos(pos);
 
@@ -215,10 +215,11 @@ void MapManager::SetTestListener()
 	{
 
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
-		Vec2 pos2 = ChangeToTiledPos(pos- static_cast<GameScene*>(this->getParent())->GetMap()->getPosition());
-		log("%f %f", pos2.x, pos2.y);
-	
+		Vec2 pos2 = ChangeToTiledPos(pos- GetMap()->getPosition());
+
 		
+		log("%d", GetMineral()->GetCurrentVal());
+		log("%d", GetPower()->GetAvailableVal());
 	};
 
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
@@ -226,7 +227,7 @@ void MapManager::SetTestListener()
 
 void MapManager::GetTiledInformation()
 {
-	auto map = static_cast<GameScene*>(this->getParent())->GetMap();
+	auto map = GetMap();
 	auto meta = map->getLayer("meta");
 	for (int i = 0; i < 75; ++i)
 	{
@@ -303,8 +304,8 @@ void MapManager::SetBuilding(Point pos,int name)
 
 Vec2 MapManager::ChangeToTiledPos(Point pos)
 {
-	auto mapSize = static_cast<GameScene*>(this->getParent())->GetMap()->getMapSize();
-	auto tileSize = static_cast<GameScene*>(this->getParent())->GetMap()->getTileSize()*0.78125;
+	auto mapSize = GetMap()->getMapSize();
+	auto tileSize = GetMap()->getTileSize()*0.78125;
 	float halfMapWidth = mapSize.width * 0.5f;
 	float mapHeight = mapSize.height;
 	float tileWidth = tileSize.width;
@@ -341,8 +342,8 @@ Vec2 MapManager::ChangeToTiledPos(Point pos)
 
 Vec2 MapManager::ChangeToCocosPos(Vec2 pos)
 {
-	auto mapSize = static_cast<GameScene*>(this->getParent())->GetMap()->getMapSize();
-	auto tileSize = static_cast<GameScene*>(this->getParent())->GetMap()->getTileSize()*0.78125;
+	auto mapSize = GetMap()->getMapSize();
+	auto tileSize = GetMap()->getTileSize()*0.78125;
 	int x =tileSize.width*(mapSize.width+pos.x-pos.y)/2;
 	int y =tileSize.height*mapSize.height- tileSize.height*(pos.x+pos.y)/2 ;
 	return Vec2(x, y);
@@ -418,4 +419,25 @@ void MapManager::SetSoldier(Point pos)
 	auto origin = this->ChangeToTiledPos(pos);
 	_mapVec[origin.x][origin.y] = 0;
 	log("%f %f", origin.x, origin.y);
+}
+
+TMXTiledMap* MapManager::GetMap()
+{
+	return 	static_cast<GameScene*>(this->getParent())->GetMap();
+}
+BuildingManager*  MapManager::GetBuildingManager()
+{
+	return  static_cast<GameScene*>(this->getParent())->GetBuildingManager();
+}
+SoldierManager* MapManager::GetSoldierManager()
+{
+	return static_cast<GameScene*>(this->getParent())->GetSoldierManager();
+}
+Mineral* MapManager::GetMineral()
+{
+	return  static_cast<GameScene*>(this->getParent())->GetMineral();
+}
+Power* MapManager::GetPower()
+{
+	return  static_cast<GameScene*>(this->getParent())->GetPower();
 }

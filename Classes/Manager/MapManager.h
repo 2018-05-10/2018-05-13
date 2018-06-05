@@ -2,6 +2,11 @@
 #include"cocos2d.h"
 #include<vector>
 #include<string>
+class BuildingManager;
+class SoldierManager;
+class Power;
+class Mineral;
+
 class MapManager :public cocos2d::Node
 {
 public:
@@ -19,7 +24,7 @@ public:
 	cocos2d::Vec2 ChangeToTiledPos(cocos2d::Point);
 	cocos2d::Vec2 ChangeToCocosPos(cocos2d::Vec2);
 
-	bool BuildingCheck(cocos2d::Point,int);
+	bool BuildingPositionCheck(cocos2d::Point,int);
 	void GetTiledInformation();
 	void SetBuilding(cocos2d::Point,int);
 	void SetSoldier(cocos2d::Point);
@@ -28,6 +33,13 @@ public:
 	void SetTestListener();
 
 	cocos2d::Point BFS(cocos2d::Point);
+
+	cocos2d::TMXTiledMap* GetMap();
+	BuildingManager* GetBuildingManager();
+	SoldierManager* GetSoldierManager();
+	Mineral* GetMineral();
+	Power* GetPower();
+
 private:
 	std::vector<std::vector<int>> _mapVec;
 

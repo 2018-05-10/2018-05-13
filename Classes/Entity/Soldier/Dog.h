@@ -2,11 +2,13 @@
 #include "Classes/Entity/Soldier/Soldier.h"
 USING_NS_CC;
 
+class Mineral;
+
 class Dog :public Soldier
 {
 public:
 	Dog();
-	/*Dog(Mineral* m, SoldierManager* p);*/
+	Dog(Mineral* m, SoldierManager* p);
 	~Dog();
 	bool init();
 

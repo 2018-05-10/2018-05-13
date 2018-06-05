@@ -42,5 +42,5 @@ int Building::buildingsID = 2;
 
 int Building::GetBuildingID()
 {
-	return _buildingID;
+	return buildingsID;
 }

@@ -89,7 +89,7 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType)
 	Soldier* S = NULL;
 	if (SoldierNameType == "Dog")
 	{
-		S = new Dog();
+		S = new Dog(_pMineral, this);
 		_dogVec.pushBack(S);
 		S->_numInTypeVec = _dogVec.size() - 1;
 		spr = Sprite::create("Dog.png");
@@ -97,7 +97,7 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType)
 	}
 	else if (SoldierNameType == "Infantry")
 	{
-		S = new Infantry();
+		S = new Infantry(_pMineral, this);
 		_infantryVec.pushBack(S);
 		S->_numInTypeVec = _infantryVec.size() - 1;
 		spr = Sprite::create("Infantry.png");
@@ -105,7 +105,7 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType)
 	}
 	else if (SoldierNameType == "Tank")
 	{
-		S = new Tank();
+		S = new Tank(_pMineral, this);
 		_tankVec.pushBack(S);
 		S->_numInTypeVec = _tankVec.size() - 1;
 		spr = Sprite::create("Tank.png");
@@ -133,12 +133,12 @@ void SoldierManager::SetTargetController()
 			_getClickPosition.x = static_cast<EventMouse*>(event)->getCursorX();
 			_getClickPosition.y = static_cast<EventMouse*>(event)->getCursorY();
 
-			auto mapPos = static_cast<GameScene*>(this->getParent())->GetMap()->getPosition();
-			auto mapPoint = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(_getClickPosition - mapPos);
+			auto mapPos = GetMap()->getPosition();
+			auto mapPoint = GetMapManager()->ChangeToTiledPos(_getClickPosition - mapPos);
 			
 			for (auto soldier : _beChoosed)
 			{
-				auto cocosPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(mapPoint);
+				auto cocosPos = GetMapManager()->ChangeToCocosPos(mapPoint);
 				auto moveTo = MoveTo::create(4.0f, cocosPos);
 				soldier->runAction(moveTo);
 			}
@@ -147,6 +147,99 @@ void SoldierManager::SetTargetController()
 		}
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener,this);
+}
+
+void SoldierManager::DestroySoldier(Soldier* S)
+{
+	if (S->_whatAmI == "Dog")
+	{
+		_dogVec.replace(S->_numInTypeVec, NULL);
+	}
+	else if (S->_whatAmI == "Infantry")
+	{
+		_infantryVec.replace(S->_numInTypeVec, NULL);
+	}
+	else if (S->_whatAmI == "Tank")
+	{
+		_tankVec.replace(S->_numInTypeVec, NULL);
+	}
+
+	_soldierVec.replace(S->_numInVec, NULL);
+
+	delete S;
+}
+
+void SoldierManager::ClearAll()
+{
+	Soldier* S = NULL;
+	for (int i = 0; i < _soldierVec.size(); i++)
+	{
+		S = _soldierVec.at(i);
+		if (S != NULL)
+		{
+			delete S;
+		}
+	}
+}
+
+void SoldierManager::SetPlayer(int num)
+{
+	_player = num;
+}
+
+int SoldierManager::GetPlayer()
+{
+	return _player;
+}
+
+void SoldierManager::SetPairManager(BuildingManager* Pair)
+{
+	_pPairManager = Pair;
+}
+
+BuildingManager* SoldierManager::GetPairManager()
+{
+	return _pPairManager;
+}
+
+void SoldierManager::BindMineral(Mineral* m)
+{
+	_pMineral = m;
+}
+
+bool SoldierManager::CheckSoldierResource(char* type)
+{
+	int mineralCost;
+	if (type == "Tank")
+	{
+		mineralCost = 50;
+	}
+	if (GetMineral()->GetCurrentVal() -mineralCost >= 0)
+	{
+		return true;
+	}
+	return false;
+}
+
+TMXTiledMap* SoldierManager::GetMap()
+{
+	return 	static_cast<GameScene*>(this->getParent())->GetMap();
+}
+BuildingManager*  SoldierManager::GetBuildingManager()
+{
+	return  static_cast<GameScene*>(this->getParent())->GetBuildingManager();
+}
+MapManager* SoldierManager::GetMapManager()
+{
+	return static_cast<GameScene*>(this->getParent())->GetMapManager();
+}
+Mineral* SoldierManager::GetMineral()
+{
+	return  static_cast<GameScene*>(this->getParent())->GetMineral();
+}
+Power* SoldierManager::GetPower()
+{
+	return  static_cast<GameScene*>(this->getParent())->GetPower();
 }
 
 Vector<Soldier*> SoldierManager::_soldierVec;

@@ -9,7 +9,7 @@ Mine::Mine()
 	_mineralCost = 50;
 	_powerCost = 25;
 	_timeToBuild = 15;
-	_buildingID = buildingsID++;
+	++buildingsID;
 
 	Sprite* spr = Sprite::create("Building/Mine.png");
 	this->BindSprite(spr);
@@ -26,12 +26,13 @@ Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_mineralCost = 50;
 	_powerCost = 25;
 	_timeToBuild = 15;
+	++buildingsID;
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
 	if (p->GetUsedVal() > p->GetTotalVal())
 	{
-		_isWorking = false;
+		_isWorking = true;
 	}
 	else
 	{

@@ -102,6 +102,9 @@
     <ClCompile Include="..\Classes\Entity\Building\Factory.cpp">
       <Filter>src\Entity\Building</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Manager\ResourceManager.cpp">
+      <Filter>src\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Entity\Building\Factory.h">
       <Filter>src\Entity\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Manager\ResourceManager.h">
+      <Filter>src\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@ USING_NS_CC;
 
 class Power :public Node
 {
+	friend class ResourceManager;
 public:
 	Power();
 	~Power();
@@ -17,6 +18,7 @@ public:
 	void Free(int val);          //将杯子里的水倒出来
 	void Add(int val);           //增加总容量
 	void Reduce(int val);        //减少总容量
+
 private:
 	int _totalVal;
 	int _usedVal;

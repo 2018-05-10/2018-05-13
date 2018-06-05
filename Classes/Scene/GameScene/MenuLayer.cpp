@@ -11,6 +11,7 @@
 #include"ui/CocosGUI.h"
 #include"Manager/BuildingManager.h"
 #include"Manager/SoldierManager.h"
+#include"Manager/MapManager.h"
 
 USING_NS_CC;
 using namespace extension;
@@ -104,16 +105,24 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-			Building* building = static_cast<Building*>(static_cast<GameScene*>(this->getParent())->GetMap()->getChildByTag(buildingID));
-			auto pos = building->getPosition()+building->getContentSize()/2;
-			auto tilePos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(pos);
-			auto tank1 = SoldierManager::CreateSoldier("Tank");
-			static_cast<GameScene*>(this->getParent())->GetMap()->addChild(tank1,6);
-			auto landPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->BFS(pos-_target->getContentSize()/2);
-			tank1->setPosition(landPos);
-			static_cast<GameScene*>(this->getParent())->GetSoldierManager()->SetSoldierController(tank1);
-			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetSoldier(landPos);
-			break;
+
+			if (GetSoldierManager()->CheckSoldierResource("Tank"))
+			{
+				Building* building = static_cast<Building*>(GetMap()->getChildByTag(buildingID));
+				auto pos = building->getPosition() + building->getContentSize() / 2;
+				auto tilePos = GetMapManager()->ChangeToTiledPos(pos);
+				auto tank1 = GetSoldierManager()->CreateSoldier("Tank");
+				GetMap()->addChild(tank1, 6);
+				auto landPos = GetMapManager()->BFS(pos - building->getContentSize() / 2);
+				tank1->setPosition(landPos);
+				GetSoldierManager()->SetSoldierController(tank1);
+				GetMapManager()->SetSoldier(landPos);
+				break;
+			}
+			else
+			{
+				log("not enough mineral");
+			}
 		}
 	});
 
@@ -150,12 +159,11 @@ void MenuLayer::SetBaseConstructionController()
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
-			_target = Base::create();
-			_target->GetSprite()->setOpacity(100);
-			static_cast<GameScene*>(this->getParent())->GetMap()->addChild(_target, 1, _target->GetBuildingID());
-			auto worldPos = Point(_buildings[0]->getPosition().x + visibleSize.width*0.7, _buildings[0]->getPosition().y)
-				- static_cast<GameScene*>(this->getParent())->GetMap()->getPosition();
-			_target->setPosition(worldPos - _target->getContentSize() / 2);
+			_target = Sprite::create("Building/Base.png");
+			_target->setOpacity(100);
+			GetMap()->addChild(_target, 1);
+			auto worldPos = Point(_buildings[0]->getPosition().x + visibleSize.width*0.7, _buildings[0]->getPosition().y)-GetMap()->getPosition();
+			_target->setPosition(worldPos);
 			_buildings[0]->setColor(Color3B(100, 100, 100));
 
 			return true;
@@ -165,43 +173,37 @@ void MenuLayer::SetBaseConstructionController()
 	listener->onTouchMoved = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_target->setPosition(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() - _target->getContentSize() / 2);
-		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),0))
+		_target->setPosition(originPos -GetMap()->getPosition());
+		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),0)&&GetBuildingManager()->BuildingResourceCheck(0))
 		{
-			_target->GetSprite()->setColor(Color3B::GREEN);
+			_target->setColor(Color3B::GREEN);
 		}
 		else
 		{
-			_target->GetSprite()->setColor(Color3B::RED);
+			_target->setColor(Color3B::RED);
 		}
 	};
 	listener->onTouchEnded = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(), 0))
+		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(), 0) && GetBuildingManager()->BuildingResourceCheck(0))
 	{
-		auto setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()-_target->getContentSize()/2);
-		_target->setZOrder(setPos.x + setPos.y);
-		setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(setPos);
-		_target->setPosition(setPos);
-		
-		_target->GetSprite()->setOpacity(255);
-		_target->GetSprite()->setColor(Color3B(255, 255, 255));
-		static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
-			originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(), 0);
-		static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetBaseController(_target);
+		_target->removeFromParent();
+		auto building = GetBuildingManager()->CreateBuilding("Base");
+		auto setPos =GetMapManager()->ChangeToTiledPos(originPos -GetMap()->getPosition()-building->getContentSize()/2);
+		GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
+		setPos =GetMapManager()->ChangeToCocosPos(setPos);
+		building->setPosition(setPos);
 
-		log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).x,
-			static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).y);
+		GetMapManager()->SetBuilding(originPos -GetMap()->getPosition(), 0);
+		GetBuildingManager()->SetBaseController(building);
+
+		log("%f %f",GetMapManager()->ChangeToTiledPos(setPos +building->getContentSize() / 2).x,
+			GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).y);
 	}
 		else
 	{
 		_target->removeFromParent();
-		--Building::buildingsID;
 	}
 		_buildings[0]->setColor(Color3B(255, 255, 255));
 	};
@@ -222,13 +224,11 @@ void MenuLayer::SetBarrackConstructionController()
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
 			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target = Barrack::create();
-			
-			_target->GetSprite()->setOpacity(100);
-			static_cast<GameScene*>(this->getParent())->GetMap()->addChild(_target, 2, _target->GetBuildingID());
-			auto worldPos = Point(_buildings[1]->getPosition().x + visibleSize.width*0.7, _buildings[1]->getPosition().y)
-				- static_cast<GameScene*>(this->getParent())->GetMap()->getPosition();
-			_target->setPosition(worldPos - _target->getContentSize() / 2);
+			_target = Sprite::create("Building/Barrack.png");
+			_target->setOpacity(100);
+			GetMap()->addChild(_target, 1);
+			auto worldPos = Point(_buildings[1]->getPosition().x + visibleSize.width*0.7, _buildings[1]->getPosition().y)-GetMap()->getPosition();
+			_target->setPosition(worldPos);
 			_buildings[1]->setColor(Color3B(100, 100, 100));
 
 			return true;
@@ -238,45 +238,40 @@ void MenuLayer::SetBarrackConstructionController()
 	listener->onTouchMoved = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_target->setPosition(originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() -
-			_target->getContentSize() / 2);
-		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),2))
+		_target->setPosition(originPos -GetMap()->getPosition());
+		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),2) && GetBuildingManager()->BuildingResourceCheck(2))
 		{
-			_target->GetSprite()->setColor(Color3B::GREEN);
+			_target->setColor(Color3B::GREEN);
 		}
 		else
 		{
-			_target->GetSprite()->setColor(Color3B::RED);
+			_target->setColor(Color3B::RED);
 		}
 
 	};
 	listener->onTouchEnded = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),2))
+		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),2) && GetBuildingManager()->BuildingResourceCheck(2))
 		{
 
-			auto setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
-				static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() - _target->getContentSize() / 2);
-			_target->setZOrder(setPos.x + setPos.y);
-			setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(setPos);
-			_target->setPosition(setPos);
-		
-			_target->GetSprite()->setOpacity(255);
-			_target->GetSprite()->setColor(Color3B(255, 255, 255));
-			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
-				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),2);
-			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetBarrackController(_target);
-			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).x,
-				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).y);
+			_target->removeFromParent();
+			auto building = GetBuildingManager()->CreateBuilding("Barrack");
+			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition() - building->getContentSize() / 2);
+			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
+			setPos = GetMapManager()->ChangeToCocosPos(setPos);
+			building->setPosition(setPos);
+
+			GetMapManager()->SetBuilding(originPos - GetMap()->getPosition(), 0);
+			GetBuildingManager()->SetBarrackController(building);
+
+			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
+				GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).y);
 			
 		}
 		else
 		{
 			_target->removeFromParent();
-			--Building::buildingsID;
 		}
 		_buildings[1]->setColor(Color3B(255, 255, 255));
 	};
@@ -297,13 +292,12 @@ void MenuLayer::SetMineConstructionController()
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
 			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target = Mine::create();
-			
-			_target->GetSprite()->setOpacity(100);
-			static_cast<GameScene*>(this->getParent())->GetMap()->addChild(_target, 3,_target->GetBuildingID());
+			_target = Sprite::create("Building/Mine.png");
+			_target->setOpacity(100);
+			GetMap()->addChild(_target, 3);
 			auto worldPos = Point(_buildings[2]->getPosition().x + visibleSize.width*0.7, _buildings[2]->getPosition().y)
-				- static_cast<GameScene*>(this->getParent())->GetMap()->getPosition();
-			_target->setPosition(worldPos - _target->getContentSize() / 2);
+				-GetMap()->getPosition();
+			_target->setPosition(worldPos);
 			_buildings[2]->setColor(Color3B(100, 100, 100));
 
 			return true;
@@ -313,44 +307,40 @@ void MenuLayer::SetMineConstructionController()
 	listener->onTouchMoved = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_target->setPosition(originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() -
-			_target->getContentSize() / 2);
-		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),3))
+		_target->setPosition(originPos -GetMap()->getPosition());
+		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),3) && GetBuildingManager()->BuildingResourceCheck(3))
 		{
-			_target->GetSprite()->setColor(Color3B::GREEN);
+			_target->setColor(Color3B::GREEN);
 		}
 		else
 		{
-			_target->GetSprite()->setColor(Color3B::RED);
+			_target->setColor(Color3B::RED);
 		}
 
 	};
 	listener->onTouchEnded = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(
-			originPos -static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),3))
+		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),3) && GetBuildingManager()->BuildingResourceCheck(3))
 		{
 
-			auto setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
-				static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() - _target->getContentSize() / 2);
-			_target->setZOrder(setPos.x + setPos.y);
-			setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(setPos);
-			_target->setPosition(setPos);
-		
-			_target->GetSprite()->setOpacity(255);
-			_target->GetSprite()->setColor(Color3B(255, 255, 255));
-			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
-				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),3);
-			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetProducerController(_target);
-			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).x,
-				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).y);
+			_target->removeFromParent();
+			auto building = GetBuildingManager()->CreateBuilding("Mine");
+			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition() - building->getContentSize() / 2);
+			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
+			setPos = GetMapManager()->ChangeToCocosPos(setPos);
+			building->setPosition(setPos);
+
+			GetMapManager()->SetBuilding(originPos - GetMap()->getPosition(), 0);
+			GetBuildingManager()->SetProducerController(building);
+
+			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
+				GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).y);
 		}
 		else
 		{
 			_target->removeFromParent();
-			--Building::buildingsID;
+
 		}
 		_buildings[2]->setColor(Color3B(255, 255, 255));
 	};
@@ -371,13 +361,13 @@ void MenuLayer::SetPowerStationController()
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
 			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target = PowerStation::create();
+			_target =Sprite::create("Building/PowerStation.png");
 			
-			_target->GetSprite()->setOpacity(100);
-			static_cast<GameScene*>(this->getParent())->GetMap()->addChild(_target, 4, _target->GetBuildingID());
+			_target->setOpacity(100);
+			GetMap()->addChild(_target, 4);
 			auto worldPos = Point(_buildings[3]->getPosition().x + visibleSize.width*0.7, _buildings[3]->getPosition().y)
-				- static_cast<GameScene*>(this->getParent())->GetMap()->getPosition();
-			_target->setPosition(worldPos - _target->getContentSize() / 2);
+				-GetMap()->getPosition();
+			_target->setPosition(worldPos);
 			_buildings[3]->setColor(Color3B(100, 100, 100));
 
 			return true;
@@ -387,44 +377,39 @@ void MenuLayer::SetPowerStationController()
 	listener->onTouchMoved = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_target->setPosition(originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() -
-			_target->getContentSize() / 2);
-		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),4))
+		_target->setPosition(originPos -GetMap()->getPosition());
+		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),4) && GetBuildingManager()->BuildingResourceCheck(4))
 		{
-			_target->GetSprite()->setColor(Color3B::GREEN);
+			_target->setColor(Color3B::GREEN);
 		}
 		else
 		{
-			_target->GetSprite()->setColor(Color3B::RED);
+			_target->setColor(Color3B::RED);
 		}
 
 	};
 	listener->onTouchEnded = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),4))
+		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),4) && GetBuildingManager()->BuildingResourceCheck(4))
 		{
 
-			auto setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
-				static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() - _target->getContentSize() / 2);
-			_target->setZOrder(setPos.x + setPos.y);
-			setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(setPos);
-			_target->setPosition(setPos);
-			
-			_target->GetSprite()->setOpacity(255);
-			_target->GetSprite()->setColor(Color3B(255, 255, 255));
-			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
-				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),4);
-			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetProducerController(_target);
-			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).x,
-				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).y);
+			_target->removeFromParent();
+			auto building = GetBuildingManager()->CreateBuilding("PowerStation");
+			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition() - building->getContentSize() / 2);
+			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
+			setPos = GetMapManager()->ChangeToCocosPos(setPos);
+			building->setPosition(setPos);
+
+			GetMapManager()->SetBuilding(originPos - GetMap()->getPosition(), 0);
+			GetBuildingManager()->SetProducerController(building);
+
+			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
+				GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).y);
 		}
 		else
 		{
 			_target->removeFromParent();
-			--Building::buildingsID;
 		}
 		_buildings[3]->setColor(Color3B(255, 255, 255));
 	};
@@ -445,13 +430,11 @@ void MenuLayer::SetFactoryController()
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
 			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target = Factory::create();
-
-			_target->GetSprite()->setOpacity(100);
-			static_cast<GameScene*>(this->getParent())->GetMap()->addChild(_target, 5, _target->GetBuildingID());
-			auto worldPos = Point(_buildings[4]->getPosition().x + visibleSize.width*0.7, _buildings[4]->getPosition().y)
-				- static_cast<GameScene*>(this->getParent())->GetMap()->getPosition();
-			_target->setPosition(worldPos - _target->getContentSize() / 2);
+			_target = Sprite::create("Building/Factory.png");
+			_target->setOpacity(100);
+			GetMap()->addChild(_target, 5);
+			auto worldPos = Point(_buildings[4]->getPosition().x + visibleSize.width*0.7, _buildings[4]->getPosition().y)-GetMap()->getPosition();
+			_target->setPosition(worldPos);
 			_buildings[4]->setColor(Color3B(100, 100, 100));
 
 			return true;
@@ -461,44 +444,39 @@ void MenuLayer::SetFactoryController()
 	listener->onTouchMoved = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_target->setPosition(originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() -
-			_target->getContentSize() / 2);
-		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),1))
+		_target->setPosition(originPos -GetMap()->getPosition());
+		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),1) && GetBuildingManager()->BuildingResourceCheck(1))
 		{
-			_target->GetSprite()->setColor(Color3B::GREEN);
+			_target->setColor(Color3B::GREEN);
 		}
 		else
 		{
-			_target->GetSprite()->setColor(Color3B::RED);
+			_target->setColor(Color3B::RED);
 		}
 
 	};
 	listener->onTouchEnded = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (static_cast<GameScene*>(this->getParent())->GetMapManager()->BuildingCheck(originPos -
-			static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),1))
+		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),1) && GetBuildingManager()->BuildingResourceCheck(1))
 		{
 
-			auto setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(originPos -
-				static_cast<GameScene*>(this->getParent())->GetMap()->getPosition() - _target->getContentSize() / 2);
-			_target->setZOrder(setPos.x + setPos.y);
-			setPos = static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToCocosPos(setPos);
-			_target->setPosition(setPos);
-			
-			_target->GetSprite()->setOpacity(255);
-			_target->GetSprite()->setColor(Color3B(255, 255, 255));
-			static_cast<GameScene*>(this->getParent())->GetMapManager()->SetBuilding(
-				originPos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition(),1);
-			static_cast<GameScene*>(this->getParent())->GetBuildingManager()->SetFactoryController(_target);
-			log("%f %f", static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).x,
-				static_cast<GameScene*>(this->getParent())->GetMapManager()->ChangeToTiledPos(setPos + _target->getContentSize() / 2).y);
+			_target->removeFromParent();
+			auto building = GetBuildingManager()->CreateBuilding("Factory");
+			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition() - building->getContentSize() / 2);
+			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
+			setPos = GetMapManager()->ChangeToCocosPos(setPos);
+			building->setPosition(setPos);
+
+			GetMapManager()->SetBuilding(originPos - GetMap()->getPosition(), 0);
+			GetBuildingManager()->SetFactoryController(building);
+
+			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
+				GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).y);
 		}
 		else
 		{
 			_target->removeFromParent();
-			--Building::buildingsID;
 		}
 		_buildings[4]->setColor(Color3B(255, 255, 255));
 	};
@@ -551,4 +529,22 @@ void MenuLayer::MenuMusicCallBack(cocos2d::Ref* pSender)
 
 		_musicOn = true;
 	}
+}
+
+TMXTiledMap* MenuLayer::GetMap()
+{
+	return 	static_cast<GameScene*>(this->getParent())->GetMap();
+}
+BuildingManager*  MenuLayer::GetBuildingManager()
+{
+	return  static_cast<GameScene*>(this->getParent())->GetBuildingManager();
+}
+
+MapManager* MenuLayer::GetMapManager()
+{
+	return static_cast<GameScene*>(this->getParent())->GetMapManager();
+}
+SoldierManager* MenuLayer::GetSoldierManager()
+{
+	return static_cast<GameScene*>(this->getParent())->GetSoldierManager();
 }

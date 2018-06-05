@@ -15,6 +15,9 @@ public:
 	/*virtual void Die();*/
 	int _numInVec;             //在管理类里的总序号
 	int _numInTypeVec;         //在自己同类当中的序号
+	int GetMineralCost()const;
+	
+
 protected:
 	int _attack;
 	int _speed;

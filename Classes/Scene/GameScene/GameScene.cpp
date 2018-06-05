@@ -1,6 +1,7 @@
 #include"GameScene.h"
 #include"MenuLayer.h"
 #include"Entity/Building/Base.h"
+#include"Manager/ResourceManager.h"
 USING_NS_CC;
 
 Scene* GameScene::createScene()
@@ -33,9 +34,15 @@ bool GameScene::init()
 	this->addChild(_menuLayer, 10);
 	_soldierManager = SoldierManager::create();
 	this->addChild(_soldierManager, 1);
-
-
-	
+	_resourceManager = ResourceManager::create();
+	this->addChild(_resourceManager, 1);
+	_power = Power::create();
+	_mineral = Mineral::create();
+	this->addChild(_power, 1);
+	this->addChild(_mineral, 1);
+	_buildingManager->BindMineral(_mineral);
+	_buildingManager->BindPower(_power);
+	_soldierManager->BindMineral(_mineral);
 
 
 	_mapManager->SetMouseController();
@@ -46,6 +53,8 @@ bool GameScene::init()
 
 	_soldierManager->SetSelectBoxController();
 	_soldierManager->SetTargetController();
+
+	_mineral->schedule(schedule_selector(ResourceManager::UpdateMineral), 1.0f);
 
 	Base* base = Base::create();
 	base->BindSprite(Sprite::create("Building/Base.png"));
@@ -58,7 +67,7 @@ bool GameScene::init()
 	return true;
 }
 
-TMXTiledMap* GameScene::GetMap() const
+TMXTiledMap* GameScene::GetMap()
 {
 	return _map;
 }
@@ -78,15 +87,11 @@ SoldierManager* GameScene::GetSoldierManager()const
 {
 	return _soldierManager;
 }
-Size GameScene::GetMapSize()const
+Mineral* GameScene::GetMineral()
 {
-	auto _ground = _map->getLayer("background");
-	auto ZERO_Tile = _ground->getTileAt(Vec2(0, 0));
-	auto ONE_Tile = _ground->getTileAt(Vec2(1, 0));
-	auto pos1 = ZERO_Tile->getPosition();
-	auto pos2 = ONE_Tile->getPosition();
-	auto mapTiledNum = _map->getMapSize();
-	Size size = Size(abs(pos1.x-pos2.x),abs(pos1.x-pos2.x));
-
-	return Size(mapTiledNum.width*size.width, mapTiledNum.height*size.height);
+	return _mineral;
+}
+Power* GameScene::GetPower()
+{
+	return _power;
 }

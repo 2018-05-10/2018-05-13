@@ -6,6 +6,10 @@
 #include"Manager/MapManager.h"
 #include"MenuLayer.h"
 #include"Manager/SoldierManager.h"
+#include"Resource/Mineral.h"
+#include"Resource/Power.h"
+
+class ResourceManager;
 
 class GameScene :public cocos2d::Layer
 {
@@ -15,18 +19,23 @@ public:
 	CREATE_FUNC(GameScene);
 
 	
-	cocos2d::TMXTiledMap* GetMap()const;
+	cocos2d::TMXTiledMap* GetMap();
 	BuildingManager* GetBuildingManager()const;
 	SoldierManager* GetSoldierManager()const;
 	MenuLayer* GetMenuLayer()const;
 	MapManager* GetMapManager()const;
-	cocos2d::Size GetMapSize()const;
+	Mineral* GetMineral();
+	Power* GetPower();
+
 private:
-	cocos2d::Sprite *target;
+	
 	cocos2d::TMXTiledMap* _map;
 	MapManager* _mapManager;
 	MenuLayer* _menuLayer;
 	BuildingManager* _buildingManager;
 	SoldierManager* _soldierManager;
+	Mineral* _mineral;
+	Power* _power;
+	ResourceManager* _resourceManager;
 	
 };
