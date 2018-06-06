@@ -19,6 +19,10 @@ public:
 	void SetSoldierController(Soldier*);
 	void SetTargetController();
 	bool CheckSoldierResource(char*);
+	void MoveUpdate(float dt);
+	void Square(Soldier*);
+	bool CheckNextPos(Point);
+
 	static cocos2d::Vector<Soldier*> _beChoosed;
 
 	cocos2d::TMXTiledMap* GetMap();

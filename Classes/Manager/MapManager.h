@@ -9,6 +9,7 @@ class Mineral;
 
 class MapManager :public cocos2d::Node
 {
+	friend class SoldierManager;
 public:
 	CREATE_FUNC(MapManager);
 	virtual bool init();
@@ -33,6 +34,7 @@ public:
 	void SetTestListener();
 
 	cocos2d::Point BFS(cocos2d::Point);
+	void TargetPosBFS(cocos2d::Point);
 
 	cocos2d::TMXTiledMap* GetMap();
 	BuildingManager* GetBuildingManager();

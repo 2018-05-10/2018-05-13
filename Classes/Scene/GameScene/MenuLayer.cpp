@@ -109,11 +109,11 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 			if (GetSoldierManager()->CheckSoldierResource("Tank"))
 			{
 				Building* building = static_cast<Building*>(GetMap()->getChildByTag(buildingID));
-				auto pos = building->getPosition() + building->getContentSize() / 2;
+				auto pos = building->getPosition();
 				auto tilePos = GetMapManager()->ChangeToTiledPos(pos);
 				auto tank1 = GetSoldierManager()->CreateSoldier("Tank");
 				GetMap()->addChild(tank1, 6);
-				auto landPos = GetMapManager()->BFS(pos - building->getContentSize() / 2);
+				auto landPos = GetMapManager()->BFS(pos);
 				tank1->setPosition(landPos);
 				GetSoldierManager()->SetSoldierController(tank1);
 				GetMapManager()->SetSoldier(landPos);
@@ -190,7 +190,7 @@ void MenuLayer::SetBaseConstructionController()
 	{
 		_target->removeFromParent();
 		auto building = GetBuildingManager()->CreateBuilding("Base");
-		auto setPos =GetMapManager()->ChangeToTiledPos(originPos -GetMap()->getPosition()-building->getContentSize()/2);
+		auto setPos =GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 		GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
 		setPos =GetMapManager()->ChangeToCocosPos(setPos);
 		building->setPosition(setPos);
@@ -257,7 +257,7 @@ void MenuLayer::SetBarrackConstructionController()
 
 			_target->removeFromParent();
 			auto building = GetBuildingManager()->CreateBuilding("Barrack");
-			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition() - building->getContentSize() / 2);
+			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
@@ -326,7 +326,7 @@ void MenuLayer::SetMineConstructionController()
 
 			_target->removeFromParent();
 			auto building = GetBuildingManager()->CreateBuilding("Mine");
-			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition() - building->getContentSize() / 2);
+			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
@@ -396,7 +396,7 @@ void MenuLayer::SetPowerStationController()
 
 			_target->removeFromParent();
 			auto building = GetBuildingManager()->CreateBuilding("PowerStation");
-			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition() - building->getContentSize() / 2);
+			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
@@ -463,7 +463,7 @@ void MenuLayer::SetFactoryController()
 
 			_target->removeFromParent();
 			auto building = GetBuildingManager()->CreateBuilding("Factory");
-			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition() - building->getContentSize() / 2);
+			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);

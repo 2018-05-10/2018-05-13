@@ -218,8 +218,8 @@ void MapManager::SetTestListener()
 		Vec2 pos2 = ChangeToTiledPos(pos- GetMap()->getPosition());
 
 		
-		log("%d", GetMineral()->GetCurrentVal());
-		log("%d", GetPower()->GetAvailableVal());
+		/*log("%d", GetMineral()->GetCurrentVal());
+		log("%d", GetPower()->GetAvailableVal());*/
 	};
 
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
@@ -385,7 +385,7 @@ Point MapManager::BFS(Point start)
 	
 	while (!isSearched.empty())
 	{
-		if (_mapVec[isSearched.front().x][isSearched.front().y] != 0)
+		if (_mapVec[isSearched.front().x][isSearched.front().y] != 0&& _mapVec[isSearched.front().x][isSearched.front().y] != 2)
 		{ 
 			
 			return ChangeToCocosPos(isSearched.front());
@@ -402,7 +402,7 @@ Point MapManager::BFS(Point start)
 			{
 				
 				isSearched.push(Point(isSearched.front().x + dir[i][0], isSearched.front().y + dir[i][1]));
-				
+				searchMap[static_cast<int>(isSearched.front().x + dir[i][0])][static_cast<int>(isSearched.front().y) + dir[i][1]] = 1;
 			}
 			
 		}
@@ -414,10 +414,79 @@ Point MapManager::BFS(Point start)
 	return Point(-1, -1);
 }
 
+void MapManager::TargetPosBFS(Point start)
+{
+	using namespace std;
+	Point tileStart =ChangeToTiledPos(start);
+
+	if (SoldierManager::_beChoosed.empty())
+	{
+		return;
+	}
+
+	if (tileStart.x < 0)
+	{
+		tileStart.x = 0;
+	}
+	else if (tileStart.x > 74)
+	{
+		tileStart.x = 74;
+	}
+	if (tileStart.y < 0)
+	{
+		tileStart.y = 0;
+	}
+	else if (tileStart.y > 74)
+	{
+		tileStart.y = 74;
+	}
+	int dir[8][2] = { { 0,1 },{ 1,0 },{ 1,1 },{ 1,-1 },{ 0,-1 },{ -1,0 },{ -1,-1 },{ -1,1 } };
+	int searchMap[75][75];
+	for (int i = 0; i < 75; ++i)
+	{
+		for (int j = 0; j < 75; ++j) {
+			searchMap[i][j] = 0;
+		}
+	}
+	queue<Point> isSearched;
+	isSearched.push(tileStart);
+	int count = 0;
+	while (!isSearched.empty())
+	{
+		if (_mapVec[isSearched.front().x][isSearched.front().y] != 0&& _mapVec[isSearched.front().x][isSearched.front().y] != 2)
+		{
+			SoldierManager::_beChoosed.at(count++)->_targetPoint =ChangeToCocosPos( isSearched.front());
+			if (count == SoldierManager::_beChoosed.size())
+			{
+				return;
+			}
+		}
+		searchMap[static_cast<int>(isSearched.front().x)][static_cast<int>(isSearched.front().y)] = 1;
+		for (int i = 0; i < 8; ++i)
+		{
+			if (static_cast<int>(isSearched.front().x) + dir[i][0] < 0 || static_cast<int>(isSearched.front().x) + dir[i][0]>74 ||
+				static_cast<int>(isSearched.front().y) + dir[i][1] < 0 || static_cast<int>(isSearched.front().y) + dir[i][1]>74)
+			{
+				continue;
+			}
+			if (!searchMap[static_cast<int>(isSearched.front().x) + dir[i][0]][static_cast<int>(isSearched.front().y) + dir[i][1]])
+			{
+
+				isSearched.push(Point(isSearched.front().x + dir[i][0], isSearched.front().y + dir[i][1]));
+				searchMap[static_cast<int>(isSearched.front().x+dir[i][0])][static_cast<int>(isSearched.front().y)+dir[i][1]] = 1;
+
+			}
+
+		}
+
+		isSearched.pop();
+	}
+}
+
 void MapManager::SetSoldier(Point pos)
 {
 	auto origin = this->ChangeToTiledPos(pos);
-	_mapVec[origin.x][origin.y] = 0;
+	_mapVec[origin.x][origin.y] = 2;
 	log("%f %f", origin.x, origin.y);
 }
 

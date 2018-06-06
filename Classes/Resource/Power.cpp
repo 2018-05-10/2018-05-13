@@ -1,9 +1,9 @@
 #include "Power.h"
 Power::Power()
 {
-	_totalVal = 50;
+	_totalVal = 99999;
 	_usedVal = 0;
-	_availableVal = 50;
+	_availableVal = 99999;
 }
 Power::~Power(){}
 

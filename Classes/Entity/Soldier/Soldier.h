@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity/Entity.h"
+#include<deque>
 USING_NS_CC;
 
 class Soldier :public Entity
@@ -16,7 +17,9 @@ public:
 	int _numInVec;             //在管理类里的总序号
 	int _numInTypeVec;         //在自己同类当中的序号
 	int GetMineralCost()const;
-	
+
+	Point _targetPoint=Point(-1,-1);
+	std::deque<Point> _path;
 
 protected:
 	int _attack;
