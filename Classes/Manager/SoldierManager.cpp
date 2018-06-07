@@ -135,12 +135,22 @@ void SoldierManager::SetTargetController()
 
 			auto mapPos = GetMap()->getPosition();
 			auto mapPoint = GetMapManager()->ChangeToTiledPos(_getClickPosition - mapPos);
+			if (mapPoint.x < 0 || mapPoint.x>74 || mapPoint.y < 0 || mapPoint.y>74)
+			{
+				return;
+			}
+			if (!CheckPos(mapPoint))
+			{
+				return;
+			}
 			GetMapManager()->TargetPosBFS(_getClickPosition - mapPos);
-			
 			for (auto soldier : _beChoosed)
 			{
+			
+				soldier->stopAllActions();
+				soldier->_path.clear();
 				Square(soldier);
-				log("%f %f", soldier->_targetPoint.x, soldier->_targetPoint.y);
+				Move(soldier);
 			
 			}
 
@@ -222,51 +232,13 @@ bool SoldierManager::CheckSoldierResource(char* type)
 	return false;
 }
 
-void SoldierManager::MoveUpdate(float dt)
-{
-	int speed=5;
-	for (auto soldier : _soldierVec)
-	{
-		if (soldier != nullptr)
-		{
 
-			if (soldier->_targetPoint == Point(-1, -1))
-			{
-				continue;
-			}
-			auto tilePos = GetMapManager()->ChangeToTiledPos(soldier->getPosition());
-			if (soldier->_path.empty()|| soldier->_path.front() == soldier->_path.back())
-			{
-				/*soldier->setPosition(soldier->_targetPoint);*/
-				soldier->_targetPoint = Point(-1, -1);
-				continue;
-			}
-			Point direction = GetMapManager()->ChangeToCocosPos( soldier->_path[1])- GetMapManager()->ChangeToCocosPos(soldier->_path[0]);
-			if (!CheckNextPos(soldier->_path[1]))
-			{
-				soldier->_targetPoint = Point(-1, -1);
-				continue;
-			}
-			soldier->setPosition(soldier->getPosition() + direction/20);
-			tilePos= GetMapManager()->ChangeToTiledPos(soldier->getPosition());
-			if (tilePos != soldier->_path[1])
-			{
-				continue;
-			}
-			else
-			{
-				soldier->_path.pop_front();
-			}
-			
-		}
-	}
-}
 
 void SoldierManager::Square(Soldier* soldier)
 {
 	auto tileStart = GetMapManager()->ChangeToTiledPos(soldier->getPosition());
 	auto tileEnd= GetMapManager()->ChangeToTiledPos(soldier->_targetPoint);
-	soldier->_path.clear();
+
 	int direction=0;
 	soldier->_path.push_back(tileStart);
 	if (tileStart.x < tileEnd.x)
@@ -322,13 +294,48 @@ Power* SoldierManager::GetPower()
 	return  static_cast<GameScene*>(this->getParent())->GetPower();
 }
 
-bool SoldierManager::CheckNextPos(Point point)
+bool SoldierManager::CheckPos(Point point)
 {
 	if (GetMapManager()->_mapVec[point.x][point.y] == 0)
 	{
 		return false;
 	}
 	return true;
+}
+
+void SoldierManager::Move(Soldier* soldier)
+{
+	if (soldier != nullptr)
+	{
+
+		if (soldier->_targetPoint == Point(-1, -1))
+		{
+			return;
+		}
+		if (soldier->_path.empty() || soldier->_path.front() == soldier->_path.back())
+		{
+			
+			soldier->_targetPoint = Point(-1, -1);
+			return;
+		}
+		soldier->_path.pop_front();
+		if (!CheckPos(soldier->_path.front()))
+		{
+			soldier->_targetPoint = Point(-1, -1);
+			return;
+		}
+		auto nextPos =GetMapManager()->ChangeToCocosPos(soldier->_path.front());
+
+		auto moveTo = MoveTo::create(0.2f, nextPos);
+		auto func = [&,soldier]()
+		{
+			Move(soldier);
+		};
+		auto callFunc = CallFunc::create(func);
+		auto actions = Sequence::create(moveTo, callFunc,NULL);
+		soldier->runAction(actions);
+
+	}
 }
 
 Vector<Soldier*> SoldierManager::_soldierVec;

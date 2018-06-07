@@ -14,6 +14,8 @@ public:
 	Sprite* GetSprite();
 	int GetTotalHP();
 	int GetCurrentHP();
+
+	//=====将锚点改为了图片中央======
 	void BindSprite(Sprite* sprite);
 	void Hit(int attack);  //被攻击时调用，在Soldier类的Attack函数里被调用
 	bool Isdead();  //判断是否死亡

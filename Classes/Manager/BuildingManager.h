@@ -13,12 +13,13 @@ public:
 	CREATE_FUNC(BuildingManager);
 	
 
-
+	//========不同建筑的点击事件=====
 	void SetBaseController(Building*);
 	void SetBarrackController(Building*);
 	void SetFactoryController(Building*);
 	void SetProducerController(Building*);
 
+	//=======建造建筑时的资源检测=========
 	bool BuildingResourceCheck(int name);
 
 	cocos2d::TMXTiledMap* GetMap();

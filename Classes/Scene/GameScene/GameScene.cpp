@@ -53,7 +53,7 @@ bool GameScene::init()
 
 	_soldierManager->SetSelectBoxController();
 	_soldierManager->SetTargetController();
-	_soldierManager->schedule(schedule_selector(SoldierManager::MoveUpdate));
+
 
 	_mineral->schedule(schedule_selector(ResourceManager::UpdateMineral), 1.0f);
 

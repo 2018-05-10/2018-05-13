@@ -15,14 +15,24 @@ public:
 	CREATE_FUNC(SoldierManager);
 	virtual bool init();
 
+	//======单击选择士兵与框选士兵======
 	void SetSelectBoxController();
 	void SetSoldierController(Soldier*);
+
+	//======为士兵设置目的地=========
 	void SetTargetController();
 	bool CheckSoldierResource(char*);
-	void MoveUpdate(float dt);
-	void Square(Soldier*);
-	bool CheckNextPos(Point);
 
+	//=====简单寻路算法=====
+	void Square(Soldier*);
+
+	//======检测该点是否可通行======
+	bool CheckPos(Point);
+
+	//=======士兵移动函数==========
+	void Move(Soldier*);
+
+	//======存储被选中士兵的vector
 	static cocos2d::Vector<Soldier*> _beChoosed;
 
 	cocos2d::TMXTiledMap* GetMap();
