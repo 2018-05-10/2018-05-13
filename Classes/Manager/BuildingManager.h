@@ -6,12 +6,14 @@ class SoldierManager;
 class MapManager;
 class Mineral;
 class Power;
+class MenuLayer;
 
 class BuildingManager :public cocos2d::Node
 {
 public:
 	CREATE_FUNC(BuildingManager);
 	
+
 
 	//========不同建筑的点击事件=====
 	void SetBaseController(Building*);
@@ -25,6 +27,7 @@ public:
 	cocos2d::TMXTiledMap* GetMap();
 	SoldierManager* GetSoldierManager();
 	MapManager* GetMapManager();
+	MenuLayer* GetMenuLayer();
 	Mineral* GetMineral();
 	Power* GetPower();
 

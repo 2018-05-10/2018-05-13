@@ -1,4 +1,6 @@
 #include "Building.h"
+#include"Manager/BuildingManager.h"
+#include"Scene/GameScene/GameScene.h"
 
 Building::Building() {}
 
@@ -43,4 +45,21 @@ int Building::buildingsID = 2;
 int Building::GetBuildingID()
 {
 	return buildingsID;
+}
+
+void Building::BuildingUpdate(float dt)
+{
+	
+	if (_pPower->GetUsedVal() > _pPower->GetTotalVal())
+	{
+		
+		_isWorking = false;
+	}
+	else
+	{
+		GetSprite()->setColor(Color3B(255, 255, 255));
+		_isWorking = true;
+
+	}
+	
 }

@@ -26,8 +26,11 @@ void SoldierManager::SetSelectBoxController()
 
 	listener->onTouchBegan = [&](Touch *touch, Event *event)
 	{
+		for (auto soldier : _beChoosed)
+		{
+			soldier->GetSprite()->setColor(Color3B(255, 255, 255));
+		}
 		_beChoosed.clear();
-		
 		_selectBox->setOpacity(0);
 		_getTouchBeganPos= convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		return true;
@@ -50,7 +53,7 @@ void SoldierManager::SetSelectBoxController()
 				&& (pos.y - _getTouchBeganPos.y)*(pos.y - _getTouchEndedPos.y) < 0)
 			{
 				_beChoosed.pushBack(soldier);
-				
+				soldier->GetSprite()->setColor(Color3B::GREEN);
 			}
 		}
 		_selectBox->setOpacity(0);
@@ -74,7 +77,7 @@ void SoldierManager::SetSoldierController(Soldier* soldier)
 		{
 			_beChoosed.clear();
 			_beChoosed.pushBack(target1);
-			
+			target1->GetSprite()->setColor(Color3B::GREEN);
 			
 		}
 		return false;

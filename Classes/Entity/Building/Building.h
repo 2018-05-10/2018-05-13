@@ -17,14 +17,16 @@ public:
 	Sprite* Build(char* TypeName);     //通过调用管理类里的函数来建造其他实体单位
 	bool init();
 	int _numInVec;       //在管理类里的Vector的位置，及序号
-	/*virtual void Die();*/
-
+	//virtual void Die();
+	void BuildingUpdate(float dt);
 	//=======building id by cyy=======
 	int GetBuildingID();
 	static int buildingsID;
 
 protected:
 	bool _isWorking;
+
+
 
 	int _powerCost;
 	int _mineralCost;

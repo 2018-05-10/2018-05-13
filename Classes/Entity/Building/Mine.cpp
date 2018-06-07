@@ -42,7 +42,7 @@ Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 
 Mine::~Mine() 
 {
-	/*_pPower->Free(_powerCost);*/
+	_pPower->Free(_powerCost);
 }
 
 int Mine::GetMineralCost()

@@ -11,15 +11,22 @@ void BuildingManager::SetBaseController(Building* building)
 {
 	auto listener = EventListenerTouchOneByOne::create();
 
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
+	listener->onTouchBegan = [&,building](Touch *touch, Event *event)
 	{
+		
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		auto target1 = static_cast<Sprite*>(event->getCurrentTarget());
 		if (target1->getBoundingBox().containsPoint(pos-static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
 		{
-			
-			static_cast<GameScene*>(this->getParent())->GetMenuLayer()->CreateContructionLayer();
+			if (!building->IsWorking())
+			{
+				GetMenuLayer()->CreateMainLayer();
+			}
+			else
+			{
+				GetMenuLayer()->CreateContructionLayer();
+			}
 			return true;
 		}
 		return false;
@@ -99,7 +106,9 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 	{
 		B = new Base(_pPower, _pMineral, this);
 		spr = Sprite::create("Building/Base.png");
+		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
+	
 	}
 	else if (BuildingTypeName == "Barrack")
 	{
@@ -207,6 +216,10 @@ Power* BuildingManager::GetPower()
 {
 	return  static_cast<GameScene*>(this->getParent())->GetPower();
 }
+MenuLayer* BuildingManager::GetMenuLayer()
+{
+	return  static_cast<GameScene*>(this->getParent())->GetMenuLayer();
+}
 
 int BuildingManager::GetMineralPerSecond()const
 {
@@ -249,3 +262,4 @@ bool BuildingManager::BuildingResourceCheck(int name)
 	}
 	return true;
 }
+

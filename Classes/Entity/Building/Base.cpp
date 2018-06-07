@@ -8,7 +8,7 @@ Base::Base()
 	_currentHP = 5000;
 	_powerCost = 40;
 	_mineralCost = 0;
-	_timeToBuild = 0;
+	_timeToBuild = 10;
 	++buildingsID;
 
 	Sprite* spr = Sprite::create("Building/Base.png");
@@ -26,24 +26,18 @@ Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_currentHP = 5000;
 	_powerCost = 40;
 	_mineralCost = 0;
-	_timeToBuild = 0;
+	_timeToBuild = 10;
 	++buildingsID;
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
-	if (p->GetUsedVal() > p->GetTotalVal())
-	{
-		_isWorking = false;
-	}
-	else
-	{
-		_isWorking = true;
-	}
+	_isWorking = false;
+
 }
 
 Base::~Base() 
 {
-	/*_pPower->Free(_powerCost);*/
+	_pPower->Free(_powerCost);
 }
 
 bool Base::init()

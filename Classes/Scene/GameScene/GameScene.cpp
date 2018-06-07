@@ -61,6 +61,7 @@ bool GameScene::init()
 	_map->addChild(base,0);
 	base->setPosition(2000,1000);
 	GetMapManager()->SetBuilding(Point(2000,1000),0);
+	base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0);
 	_buildingManager->SetBaseController(base);
 	
 

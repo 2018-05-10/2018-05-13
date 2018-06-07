@@ -194,8 +194,8 @@ void MenuLayer::SetBaseConstructionController()
 		GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
 		setPos =GetMapManager()->ChangeToCocosPos(setPos);
 		building->setPosition(setPos);
-
-		GetMapManager()->SetBuilding(originPos -GetMap()->getPosition(), 0);
+		GetMapManager()->SetBuilding(originPos - GetMap()->getPosition(), 0);
+		building->scheduleOnce(schedule_selector(Building::BuildingUpdate), 10);
 		GetBuildingManager()->SetBaseController(building);
 
 		log("%f %f",GetMapManager()->ChangeToTiledPos(setPos +building->getContentSize() / 2).x,
@@ -262,7 +262,7 @@ void MenuLayer::SetBarrackConstructionController()
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
-			GetMapManager()->SetBuilding(originPos - GetMap()->getPosition(), 0);
+			GetMapManager()->SetBuilding(setPos, 0);
 			GetBuildingManager()->SetBarrackController(building);
 
 			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
