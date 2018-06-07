@@ -1,6 +1,7 @@
 #include "Building.h"
 #include"Manager/BuildingManager.h"
 #include"Scene/GameScene/GameScene.h"
+#include"PowerStation.h"
 
 Building::Building() {}
 
@@ -60,6 +61,30 @@ void Building::BuildingUpdate(float dt)
 		GetSprite()->setColor(Color3B(255, 255, 255));
 		_isWorking = true;
 
+		int freePower = _pPower->GetAvailableVal();
+		if (_whatAmI == "Mine")
+		{
+			BuildingManager::UpdateMineralPerSecond();
+		}
+		if (_whatAmI == "PowerStation")
+		{
+			if (freePower > 0)
+			{
+				_pPower->Add(static_cast<PowerStation*>(this)->GetPowerProduce());
+				Building* p = NULL;
+				for (int i = 0; i <BuildingManager::_buildingVec.size(); i++)
+				{
+					p = BuildingManager::_buildingVec.at(i);
+					if ((!p->_isWorking) && (p->_powerCost <= freePower))
+					{
+						freePower -= p->_powerCost;
+						p->_isWorking = true;
+						_pPower->Use(p->_powerCost);
+					}
+				}
+			}
+		}
+		
 	}
 	
 }

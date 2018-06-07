@@ -30,13 +30,13 @@ PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelo
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
-	_isWorking = true;
-	p->Add(_powerProduce);
+	_isWorking = false;
+	
 }
 
 PowerStation::~PowerStation() 
 {
-	/*_pPower->Reduce(_powerProduce);*/
+	_pPower->Reduce(_powerProduce);
 }
 
 bool PowerStation::init()
@@ -53,3 +53,4 @@ int PowerStation::GetMineralCost()
 {
 	return _mineralCost;
 }
+

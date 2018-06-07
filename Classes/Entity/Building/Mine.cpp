@@ -30,14 +30,7 @@ Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
-	if (p->GetUsedVal() > p->GetTotalVal())
-	{
-		_isWorking = true;
-	}
-	else
-	{
-		_isWorking = true;
-	}
+	_isWorking = false;
 }
 
 Mine::~Mine() 

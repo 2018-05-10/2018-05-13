@@ -101,7 +101,7 @@ void MapManager::ControllerUpdate(float dt)
 	auto tiledSize = GetMap()->getTileSize()*0.78125;
 	
 	
-
+	log("%d", BuildingManager::_mineralPerSecond);
 	Point mapSize = Point(mapTiledNum.width*tiledSize.width,mapTiledNum.height*tiledSize.height);
 	int speed = 20;
 	
@@ -218,8 +218,7 @@ void MapManager::SetTestListener()
 		Vec2 pos2 = ChangeToTiledPos(pos- GetMap()->getPosition());
 
 		
-		/*log("%d", GetMineral()->GetCurrentVal());
-		log("%d", GetPower()->GetAvailableVal());*/
+		
 	};
 
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);

@@ -194,8 +194,7 @@ void MenuLayer::SetBaseConstructionController()
 		GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
 		setPos =GetMapManager()->ChangeToCocosPos(setPos);
 		building->setPosition(setPos);
-		GetMapManager()->SetBuilding(originPos - GetMap()->getPosition(), 0);
-		building->scheduleOnce(schedule_selector(Building::BuildingUpdate), 10);
+		GetMapManager()->SetBuilding(setPos,0);
 		GetBuildingManager()->SetBaseController(building);
 
 		log("%f %f",GetMapManager()->ChangeToTiledPos(setPos +building->getContentSize() / 2).x,
@@ -262,7 +261,7 @@ void MenuLayer::SetBarrackConstructionController()
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
-			GetMapManager()->SetBuilding(setPos, 0);
+			GetMapManager()->SetBuilding(setPos, 2);
 			GetBuildingManager()->SetBarrackController(building);
 
 			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
@@ -331,7 +330,7 @@ void MenuLayer::SetMineConstructionController()
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
-			GetMapManager()->SetBuilding(originPos - GetMap()->getPosition(), 0);
+			GetMapManager()->SetBuilding(setPos,3);
 			GetBuildingManager()->SetProducerController(building);
 
 			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
@@ -401,7 +400,7 @@ void MenuLayer::SetPowerStationController()
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
-			GetMapManager()->SetBuilding(originPos - GetMap()->getPosition(), 0);
+			GetMapManager()->SetBuilding(setPos,4);
 			GetBuildingManager()->SetProducerController(building);
 
 			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
@@ -468,7 +467,7 @@ void MenuLayer::SetFactoryController()
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
-			GetMapManager()->SetBuilding(originPos - GetMap()->getPosition(), 0);
+			GetMapManager()->SetBuilding(setPos,1);
 			GetBuildingManager()->SetFactoryController(building);
 
 			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,

@@ -30,14 +30,8 @@ Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
-	if (p->GetUsedVal() > p->GetTotalVal())
-	{
-		_isWorking = false;
-	}
-	else
-	{
-		_isWorking = true;
-	}
+	_isWorking = false;
+	
 }
 
 Barrack::~Barrack()

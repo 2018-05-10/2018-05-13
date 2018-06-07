@@ -11,6 +11,7 @@ public:
 	int GetPowerProduce();
 	int GetMineralCost();
 
+
 	CREATE_FUNC(PowerStation);
 private:
 	const int _powerProduce = 50;     //能提供的电力

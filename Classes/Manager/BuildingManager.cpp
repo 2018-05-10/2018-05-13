@@ -39,15 +39,21 @@ void BuildingManager::SetBarrackController(Building* building)
 {
 	auto listener = EventListenerTouchOneByOne::create();
 
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
+	listener->onTouchBegan = [&, building](Touch *touch, Event *event)
 	{
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		auto target1 = static_cast<Building*>(event->getCurrentTarget());
 		if (target1->getBoundingBox().containsPoint(pos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
 		{
-			
-			static_cast<GameScene*>(this->getParent())->GetMenuLayer()->CreateSoldierLayer(target1->GetBuildingID());
+			if (!building->IsWorking())
+			{
+				GetMenuLayer()->CreateMainLayer();
+			}
+			else
+			{
+				GetMenuLayer()->CreateSoldierLayer(target1->GetBuildingID());
+			}
 			return true;
 		}
 		return false;
@@ -60,7 +66,7 @@ void BuildingManager::SetProducerController(Building* building)
 {
 	auto listener = EventListenerTouchOneByOne::create();
 
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
+	listener->onTouchBegan = [&, building](Touch *touch, Event *event)
 	{
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
@@ -81,15 +87,21 @@ void BuildingManager::SetFactoryController(Building* building)
 {
 	auto listener = EventListenerTouchOneByOne::create();
 
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
+	listener->onTouchBegan = [&, building](Touch *touch, Event *event)
 	{
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		auto target1 = static_cast<Building*>(event->getCurrentTarget());
 		if (target1->getBoundingBox().containsPoint(pos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
 		{
-			
-			static_cast<GameScene*>(this->getParent())->GetMenuLayer()->CreateFactoryLayer(target1->GetBuildingID());
+			if (!building->IsWorking())
+			{
+				GetMenuLayer()->CreateMainLayer();
+			}
+			else
+			{
+				GetMenuLayer()->CreateFactoryLayer(target1->GetBuildingID());
+			}
 			return true;
 		}
 		return false;
@@ -108,62 +120,56 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 		spr = Sprite::create("Building/Base.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
-	
+		_buildingVec.pushBack(B);
+		B->_numInVec = _buildingVec.size() - 1;
+		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	}
 	else if (BuildingTypeName == "Barrack")
 	{
 		B = new Barrack(_pPower, _pMineral, this);
 		spr = Sprite::create("Building/Barrack.png");
+		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
+		_buildingVec.pushBack(B);
+		B->_numInVec = _buildingVec.size() - 1;
+		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	}
 	else if (BuildingTypeName == "Mine")
 	{
 		B = new Mine(_pPower, _pMineral, this);
 		spr = Sprite::create("Building/Mine.png");
+		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
+		_buildingVec.pushBack(B);
+		B->_numInVec = _buildingVec.size() - 1;
+		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 
 	}
 	else if (BuildingTypeName == "PowerStation")
 	{
 		B = new PowerStation(_pPower, _pMineral, this);
 		spr = Sprite::create( "Building/PowerStation.png");
+		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
+		_buildingVec.pushBack(B);
+		B->_numInVec = _buildingVec.size() - 1;
+		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	}
 	else if (BuildingTypeName == "Factory")
 	{
 		B = new Factory(_pPower, _pMineral, this);
 		spr = Sprite::create("Building/Factory.png");
+		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
+		_buildingVec.pushBack(B);
+		B->_numInVec = _buildingVec.size() - 1;
+		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	}
 	else
 	{
 		return NULL;
 	}
-	
-	_buildingVec.pushBack(B);
-	B->_numInVec = _buildingVec.size() - 1;
-	int freePower = _pPower->GetAvailableVal();
-	if (B->_whatAmI == "Mine")
-	{
-		UpdateMineralPerSecond();
-	}
-	if (B->_whatAmI == "PowerStation")
-	{
-		if (freePower > 0)
-		{
-			Building* p = NULL;
-			for (int i = 0; i < _buildingVec.size(); i++)
-			{
-				p = _buildingVec.at(i);
-				if ((!p->_isWorking) && (p->_powerCost <= freePower))
-				{
-					freePower -= p->_powerCost;
-					p->_isWorking = true;
-					_pPower->Use(p->_powerCost);
-				}
-			}
-		}
-	}
+
 
 	return B;
 }
@@ -263,3 +269,5 @@ bool BuildingManager::BuildingResourceCheck(int name)
 	return true;
 }
 
+Vector<Building*> BuildingManager::_buildingVec;
+int BuildingManager::_mineralPerSecond = 0;
