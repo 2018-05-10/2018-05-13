@@ -1,14 +1,18 @@
 #pragma once
-#include "Building.h"
-#include "Resource/Mineral.h"
-#include"Resource/Power.h"
-USING_NS_CC;
+#include"cocos2d.h"
+#include<queue>
+#include"Building.h"
+
+class Mineral;
+class Power;
+class Soldier;
 
 class Factory :public Building
 {
+	friend class MenuLayr;
 public:
 	Factory();
-	Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo);
+	Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player);
 	~Factory();
 	bool init();
 	int GetPowerCost();
@@ -16,4 +20,5 @@ public:
 
 	CREATE_FUNC(Factory);
 private:
+	std::queue<Soldier*> _buildingQueue;
 };

@@ -3,6 +3,7 @@
 #include"Entity/Soldier/Infantry.h"
 #include"Entity/Soldier/Dog.h"
 #include"Entity/Soldier/Tank.h"
+#include"Manager/MapManager.h"
 
 USING_NS_CC;
 
@@ -48,7 +49,7 @@ void SoldierManager::SetSelectBoxController()
 		for (auto soldier : _soldierVec)
 		{
 			Point mapPos= static_cast<GameScene*>(this->getParent())->GetMap()->getPosition();
-			Point pos = soldier->getPosition() + soldier->getContentSize() / 2+mapPos;
+			Point pos = soldier->getPosition()+mapPos;
 			if ((pos.x - _getTouchBeganPos.x)*(pos.x - _getTouchEndedPos.x) < 0
 				&& (pos.y - _getTouchBeganPos.y)*(pos.y - _getTouchEndedPos.y) < 0)
 			{
@@ -69,6 +70,7 @@ void SoldierManager::SetSoldierController(Soldier* soldier)
 
 	listener->onTouchBegan = [&](Touch *touch, Event *event)
 	{
+		
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		auto target1 = static_cast<Soldier*>(event->getCurrentTarget());
@@ -78,7 +80,7 @@ void SoldierManager::SetSoldierController(Soldier* soldier)
 			_beChoosed.clear();
 			_beChoosed.pushBack(target1);
 			target1->GetSprite()->setColor(Color3B::GREEN);
-			
+			return true;
 		}
 		return false;
 	};
@@ -86,13 +88,13 @@ void SoldierManager::SetSoldierController(Soldier* soldier)
 }
 
 
-Soldier* SoldierManager::CreateSoldier(char* SoldierNameType)
+Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
 {
 	Sprite* spr = NULL;
 	Soldier* S = NULL;
 	if (SoldierNameType == "Dog")
 	{
-		S = new Dog(_pMineral, this);
+		S = new Dog(_pMineral, this,player);
 		_dogVec.pushBack(S);
 		S->_numInTypeVec = _dogVec.size() - 1;
 		spr = Sprite::create("Dog.png");
@@ -100,7 +102,7 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType)
 	}
 	else if (SoldierNameType == "Infantry")
 	{
-		S = new Infantry(_pMineral, this);
+		S = new Infantry(_pMineral, this,player);
 		_infantryVec.pushBack(S);
 		S->_numInTypeVec = _infantryVec.size() - 1;
 		spr = Sprite::create("Infantry.png");
@@ -108,7 +110,7 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType)
 	}
 	else if (SoldierNameType == "Tank")
 	{
-		S = new Tank(_pMineral, this);
+		S = new Tank(_pMineral, this,player);
 		_tankVec.pushBack(S);
 		S->_numInTypeVec = _tankVec.size() - 1;
 		spr = Sprite::create("Tank.png");
@@ -119,9 +121,11 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType)
 		return NULL;
 	}
 
-	_soldierVec.pushBack(S);
-	S->_numInVec = _soldierVec.size() - 1;
-
+	if (!player)
+	{
+		_soldierVec.pushBack(S);
+		S->_numInVec = _soldierVec.size() - 1;
+	}
 	return S;
 }
 
@@ -146,6 +150,7 @@ void SoldierManager::SetTargetController()
 			{
 				return;
 			}
+			
 			GetMapManager()->TargetPosBFS(_getClickPosition - mapPos);
 			for (auto soldier : _beChoosed)
 			{
@@ -163,25 +168,6 @@ void SoldierManager::SetTargetController()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener,this);
 }
 
-void SoldierManager::DestroySoldier(Soldier* S)
-{
-	if (S->_whatAmI == "Dog")
-	{
-		_dogVec.replace(S->_numInTypeVec, NULL);
-	}
-	else if (S->_whatAmI == "Infantry")
-	{
-		_infantryVec.replace(S->_numInTypeVec, NULL);
-	}
-	else if (S->_whatAmI == "Tank")
-	{
-		_tankVec.replace(S->_numInTypeVec, NULL);
-	}
-
-	_soldierVec.replace(S->_numInVec, NULL);
-
-	delete S;
-}
 
 void SoldierManager::ClearAll()
 {
@@ -194,6 +180,11 @@ void SoldierManager::ClearAll()
 			delete S;
 		}
 	}
+}
+
+void SoldierManager::DestroySoldier(Soldier* S)
+{
+	S->removeFromParent();
 }
 
 void SoldierManager::SetPlayer(int num)
@@ -299,7 +290,7 @@ Power* SoldierManager::GetPower()
 
 bool SoldierManager::CheckPos(Point point)
 {
-	if (GetMapManager()->_mapVec[point.x][point.y] == 0)
+	if (GetMapManager()->_mapVec[point.x][point.y] == 0|| GetMapManager()->_objectVec[point.x][point.y] == 0)
 	{
 		return false;
 	}
@@ -317,19 +308,25 @@ void SoldierManager::Move(Soldier* soldier)
 		}
 		if (soldier->_path.empty() || soldier->_path.front() == soldier->_path.back())
 		{
+
+		
+			soldier->_targetPoint = Point(-1, -1);
+			return;
+		}
+		if (!CheckPos(soldier->_path[1]))
+		{
 			
 			soldier->_targetPoint = Point(-1, -1);
 			return;
 		}
+
+		GetMapManager()->SoldierDoMove(soldier->_path[0], soldier->_path[1]);
 		soldier->_path.pop_front();
-		if (!CheckPos(soldier->_path.front()))
-		{
-			soldier->_targetPoint = Point(-1, -1);
-			return;
-		}
+	
 		auto nextPos =GetMapManager()->ChangeToCocosPos(soldier->_path.front());
 
-		auto moveTo = MoveTo::create(0.2f, nextPos);
+		auto moveTo = MoveTo::create(1.0f/static_cast<float>(soldier->GetSpeed()), nextPos);
+
 		auto func = [&,soldier]()
 		{
 			Move(soldier);
@@ -341,6 +338,7 @@ void SoldierManager::Move(Soldier* soldier)
 	}
 }
 
+Vector<Soldier*> SoldierManager::_enemySoldierVec;
 Vector<Soldier*> SoldierManager::_soldierVec;
 Vector<Soldier*> SoldierManager::_infantryVec;
 Vector<Soldier*> SoldierManager::_tankVec;

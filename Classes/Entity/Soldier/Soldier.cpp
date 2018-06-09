@@ -1,4 +1,6 @@
 #include "Soldier.h"
+#include"Manager/SoldierManager.h"
+#include"Scene/GameScene/GameScene.h"
 
 Soldier::Soldier() {}
 
@@ -35,12 +37,18 @@ bool Soldier::init()
 	return true;
 }
 
-//void Soldier::Die()     
-//{
-//	_pSoldierManager->DestroySoldier(this);
-//}
+void Soldier::Die()     
+{
+	_pSoldierManager->DestroySoldier(this);
+}
 
 int Soldier::GetMineralCost()const
 {
 	return _mineralCost;
 }
+
+int Soldier::GetSpeed()
+{
+	return _speed;
+}
+

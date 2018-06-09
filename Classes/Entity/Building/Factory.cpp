@@ -1,4 +1,7 @@
 #include "Factory.h"
+#include "Building.h"
+#include "Resource/Mineral.h"
+#include"Resource/Power.h"
 
 Factory::Factory()
 {
@@ -15,7 +18,7 @@ Factory::Factory()
 	this->BindSprite(spr);
 }
 
-Factory::Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
+Factory::Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
 {
 	_whatAmI = "Factory";
 	_pPower = p;
@@ -26,6 +29,8 @@ Factory::Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_powerCost = 35;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	_player = player;
+	_buildingID = buildingsID;
 	++buildingsID;
 
 	m->Cost(_mineralCost);

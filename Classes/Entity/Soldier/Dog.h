@@ -8,7 +8,7 @@ class Dog :public Soldier
 {
 public:
 	Dog();
-	Dog(Mineral* m, SoldierManager* p);
+	Dog(Mineral* m, SoldierManager* p,int player);
 	~Dog();
 	bool init();
 

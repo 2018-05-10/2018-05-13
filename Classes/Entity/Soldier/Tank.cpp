@@ -15,7 +15,7 @@ Tank::Tank()
 	this->BindSprite(spr);
 } 
 
-Tank::Tank(Mineral* m, SoldierManager* p)
+Tank::Tank(Mineral* m, SoldierManager* p,int player)
 {
 	_whatAmI = "Tank";
 	_totalHP = 300;
@@ -24,6 +24,7 @@ Tank::Tank(Mineral* m, SoldierManager* p)
 	_speed = 3;
 	_mineralCost = 50;
 	_attackInterval = 1.0;
+	_player = player;
 
 	_pSoldierManager = p;
 	m->Cost(_mineralCost);

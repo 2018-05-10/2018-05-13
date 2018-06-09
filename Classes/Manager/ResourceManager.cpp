@@ -1,5 +1,6 @@
 #include"ResourceManager.h"
 #include"Scene/GameScene/GameScene.h"
+#include"BuildingManager.h"
 
 USING_NS_CC;
 

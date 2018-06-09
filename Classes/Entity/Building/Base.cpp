@@ -15,7 +15,7 @@ Base::Base()
 	this->BindSprite(spr);
 }
 
-Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
+Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
 {
 	_whatAmI = "Base";
 	_pPower = p;
@@ -27,7 +27,9 @@ Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_powerCost = 40;
 	_mineralCost = 0;
 	_timeToBuild = 10;
-	++buildingsID;
+	_player = player;
+	_buildingID=buildingsID++;
+
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);

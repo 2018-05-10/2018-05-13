@@ -17,26 +17,17 @@ void Building::SetIsWorking(bool a)
 	_isWorking = a;
 }
 
-//Sprite* Building::Build(char* TypeName)
-//{
-//	Sprite* a = NULL;
-//	a = _pManager->CreateBuilding(TypeName);
-//	if (a == NULL)
-//	{
-//		a = _pManager->GetPairManager()->CreateSoldier(TypeName);
-//	}
-//	return a;
-//}
+
 
 bool Building::init()
 {
 	return true;
 }
 
-//void Building::Die()
-//{
-//	_pManager->DestroyBuilding(this);
-//}
+void Building::Die()
+{
+	_pManager->DestroyBuilding(this);
+}
 
 
 
@@ -45,12 +36,17 @@ int Building::buildingsID = 2;
 
 int Building::GetBuildingID()
 {
-	return buildingsID;
+	return _buildingID;
 }
 
 void Building::BuildingUpdate(float dt)
 {
-	
+	if (_buildingTimeUI != nullptr)
+	{
+		this->unscheduleUpdate();
+		auto timrBar = Helper::seekWidgetByName(_buildingTimeUI, "buildingTimeBar");
+		timrBar->removeFromParent();
+	}
 	if (_pPower->GetUsedVal() > _pPower->GetTotalVal())
 	{
 		
@@ -87,4 +83,10 @@ void Building::BuildingUpdate(float dt)
 		
 	}
 	
+}
+
+void Building::update(float dt)
+{
+	auto timeBar = static_cast<LoadingBar*>(Helper::seekWidgetByName(_buildingTimeUI, "buildingTimeBar"));
+	timeBar->setPercent(timeBar->getPercent()+100.0f/(static_cast<float>(_timeToBuild)*60));
 }

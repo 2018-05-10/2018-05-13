@@ -22,11 +22,12 @@ public:
 	Size VisualField;    //视野
 	char* WhatAmI();
 	virtual void Die();    //死亡，调用管理类的函数，再调用析构函数；在子类里定义
-private:
-	int _player;       //属于哪一方
+
+	
 protected:
 	Sprite * _sprite;
 	int _totalHP;
 	int _currentHP;
 	char* _whatAmI;     //类名
+	int _player;       //属于哪一方
 };

@@ -15,7 +15,7 @@ Infantry::Infantry()
 	this->BindSprite(spr);
 }
 
-Infantry::Infantry(Mineral *m, SoldierManager* p)
+Infantry::Infantry(Mineral *m, SoldierManager* p,int player)
 {
 	_whatAmI = "Infantry";
 	_totalHP = 150;
@@ -24,6 +24,7 @@ Infantry::Infantry(Mineral *m, SoldierManager* p)
 	_speed = 1;
 	_mineralCost = 20;
 	_attackInterval = 0.3;
+	_player = player;
 
 	_pSoldierManager = p;
 	m->Cost(_mineralCost);

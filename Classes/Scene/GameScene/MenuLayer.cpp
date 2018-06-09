@@ -25,6 +25,7 @@ bool MenuLayer::init()
 	}
 
 	this->CreateMainLayer();
+	this->scheduleUpdate();
 	
 	return true;
 }
@@ -111,8 +112,8 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 				Building* building = static_cast<Building*>(GetMap()->getChildByTag(buildingID));
 				auto pos = building->getPosition();
 				auto tilePos = GetMapManager()->ChangeToTiledPos(pos);
-				auto tank1 = GetSoldierManager()->CreateSoldier("Tank");
-				GetMap()->addChild(tank1, 6);
+				auto tank1 = GetSoldierManager()->CreateSoldier("Tank",0);
+				GetMap()->addChild(tank1, 150);
 				auto landPos = GetMapManager()->BFS(pos);
 				tank1->setPosition(landPos);
 				GetSoldierManager()->SetSoldierController(tank1);
@@ -189,16 +190,16 @@ void MenuLayer::SetBaseConstructionController()
 		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(), 0) && GetBuildingManager()->BuildingResourceCheck(0))
 	{
 		_target->removeFromParent();
-		auto building = GetBuildingManager()->CreateBuilding("Base");
+		auto building = GetBuildingManager()->CreateBuilding("Base",0);
 		auto setPos =GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
-		GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
+		log("%f %f", setPos.x, setPos.y);
+		GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
 		setPos =GetMapManager()->ChangeToCocosPos(setPos);
 		building->setPosition(setPos);
 		GetMapManager()->SetBuilding(setPos,0);
 		GetBuildingManager()->SetBaseController(building);
 
-		log("%f %f",GetMapManager()->ChangeToTiledPos(setPos +building->getContentSize() / 2).x,
-			GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).y);
+	
 	}
 		else
 	{
@@ -255,17 +256,17 @@ void MenuLayer::SetBarrackConstructionController()
 		{
 
 			_target->removeFromParent();
-			auto building = GetBuildingManager()->CreateBuilding("Barrack");
+			auto building = GetBuildingManager()->CreateBuilding("Barrack",0);
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
-			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
+			log("%f %f", setPos.x, setPos.y);
+			GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
 			GetMapManager()->SetBuilding(setPos, 2);
 			GetBuildingManager()->SetBarrackController(building);
 
-			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
-				GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).y);
+		
 			
 		}
 		else
@@ -324,17 +325,16 @@ void MenuLayer::SetMineConstructionController()
 		{
 
 			_target->removeFromParent();
-			auto building = GetBuildingManager()->CreateBuilding("Mine");
+			auto building = GetBuildingManager()->CreateBuilding("Mine",0);
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
-			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
+			log("%f %f", setPos.x, setPos.y);
+			GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
 			GetMapManager()->SetBuilding(setPos,3);
 			GetBuildingManager()->SetProducerController(building);
 
-			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
-				GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).y);
 		}
 		else
 		{
@@ -394,17 +394,17 @@ void MenuLayer::SetPowerStationController()
 		{
 
 			_target->removeFromParent();
-			auto building = GetBuildingManager()->CreateBuilding("PowerStation");
+			auto building = GetBuildingManager()->CreateBuilding("PowerStation",0);
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
-			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
+			log("%f %f", setPos.x, setPos.y);
+			GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
 			GetMapManager()->SetBuilding(setPos,4);
 			GetBuildingManager()->SetProducerController(building);
 
-			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
-				GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).y);
+			
 		}
 		else
 		{
@@ -461,17 +461,17 @@ void MenuLayer::SetFactoryController()
 		{
 
 			_target->removeFromParent();
-			auto building = GetBuildingManager()->CreateBuilding("Factory");
+			auto building = GetBuildingManager()->CreateBuilding("Factory",0);
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
-			GetMap()->addChild(building, setPos.x + setPos.y, Building::buildingsID);
+			log("%f %f", setPos.x, setPos.y);
+			GetMap()->addChild(building, setPos.x + setPos.y,building->GetBuildingID());
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
 			GetMapManager()->SetBuilding(setPos,1);
 			GetBuildingManager()->SetFactoryController(building);
 
-			log("%f %f", GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).x,
-				GetMapManager()->ChangeToTiledPos(setPos + building->getContentSize() / 2).y);
+			
 		}
 		else
 		{
@@ -489,6 +489,8 @@ Layer* MenuLayer::CreateLayer()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto menuLayer = LayerColor::create(Color4B(0, 128, 128, 255));
 
+	_resourceUI = GUIReader::getInstance()->widgetFromJsonFile("UI/ResourceUi_1.ExportJson");
+	menuLayer->addChild(_resourceUI);
 	menuLayer->setContentSize(Size(visibleSize.width *0.3, visibleSize.height));
 	menuLayer->setOpacity(100);
 	menuLayer->setPosition(visibleSize.width*0.7, 0);
@@ -546,4 +548,33 @@ MapManager* MenuLayer::GetMapManager()
 SoldierManager* MenuLayer::GetSoldierManager()
 {
 	return static_cast<GameScene*>(this->getParent())->GetSoldierManager();
+}
+Mineral* MenuLayer::GetMineral()
+{
+	return static_cast<GameScene*>(this->getParent())->GetMineral();
+}
+Power* MenuLayer::GetPower()
+{
+	return static_cast<GameScene*>(this->getParent())->GetPower();
+}
+
+void MenuLayer::update(float dt)
+{
+	auto powerBar = static_cast<LoadingBar*>(Helper::seekWidgetByName(_resourceUI, "PowerBar"));
+	powerBar->setPercent(100*static_cast<float>(GetPower()->GetAvailableVal()) / static_cast<float>(GetPower()->GetTotalVal()));
+	auto mineralBar = static_cast<LoadingBar*>(Helper::seekWidgetByName(_resourceUI, "MineralBar"));
+	mineralBar->setPercent(100 * static_cast<float>(GetMineral()->GetCurrentVal()) / 1000);
+	auto powerNum= static_cast<Text*>(Helper::seekWidgetByName(_resourceUI, "AllPower"));
+	int allPower = GetPower()->GetTotalVal();
+	powerNum->setText(Value(allPower).asString());
+	auto availablePowerNum= static_cast<Text*>(Helper::seekWidgetByName(_resourceUI, "AvailablePower"));
+	int availablePower= GetPower()->GetAvailableVal();
+	availablePowerNum->setText(Value(availablePower).asString());
+	auto mineralNum = static_cast<Text*>(Helper::seekWidgetByName(_resourceUI, "AllMineral"));
+	int allMineral = GetMineral()->GetCurrentVal();
+	mineralNum->setText(Value(allMineral).asString());
+	auto mineralSpeedNum = static_cast<Text*>(Helper::seekWidgetByName(_resourceUI, "ProduceSpeed"));
+	int mineralSpeed = GetBuildingManager()->_mineralPerSecond;
+	mineralSpeedNum->setText(Value(mineralSpeed).asString());
+
 }

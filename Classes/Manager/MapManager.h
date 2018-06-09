@@ -35,6 +35,7 @@ public:
 	//=========建筑与士兵建造时，更新地图vector上的信息，建筑占的点设为0，士兵设为2=======
 	void SetBuilding(cocos2d::Point,int);
 	void SetSoldier(cocos2d::Point);
+	void SoldierDoMove(cocos2d::Point, cocos2d::Point);
 
 	//=========测试时使用的函数========
 	void SetTestListener();
@@ -50,10 +51,12 @@ public:
 	Mineral* GetMineral();
 	Power* GetPower();
 
-private:
-
 	//用于存储信息
 	std::vector<std::vector<int>> _mapVec;
+	std::vector<std::vector<int>>_objectVec;
+
+private:
+
 
 
 	bool _isClick = false;

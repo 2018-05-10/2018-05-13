@@ -2,13 +2,19 @@
 
 #pragma once
 #include"cocos2d.h"
-
 #include<vector>
+#include"ui/CocosGUI.h"
+#include"cocostudio/CocoStudio.h"
+
+using namespace cocos2d::ui;
+using namespace cocostudio;
 
 class  MapManager;
 class  BuildingManager;
 class  SoldierManager;
 class  Building;
+class Mineral;
+class Power;
 
 class MenuLayer :public cocos2d::Layer
 {
@@ -17,6 +23,7 @@ public:
 	virtual bool init();
 	CREATE_FUNC(MenuLayer);
 
+	void update(float dt);
 	//=====初始化主菜单=====
 	void CreateMainLayer();
 
@@ -52,10 +59,12 @@ public:
 	BuildingManager* GetBuildingManager();
 	SoldierManager* GetSoldierManager();
 	MapManager* GetMapManager();
-	
+	Mineral* GetMineral();
+	Power* GetPower();
 	
 private:
 	std::vector<cocos2d::Sprite*> _buildings;
 	cocos2d::Sprite* _target;
 	bool _musicOn = true;
+	Widget* _resourceUI;
 };

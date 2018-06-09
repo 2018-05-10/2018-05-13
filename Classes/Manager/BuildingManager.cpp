@@ -5,6 +5,8 @@
 #include"Entity/Building/Mine.h"
 #include"Entity/Building/PowerStation.h"
 #include"Scene/GameScene/GameScene.h"
+#include"Scene/GameScene/MenuLayer.h"
+
 USING_NS_CC;
 
 void BuildingManager::SetBaseController(Building* building)
@@ -92,7 +94,7 @@ void BuildingManager::SetFactoryController(Building* building)
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		auto target1 = static_cast<Building*>(event->getCurrentTarget());
-		if (target1->getBoundingBox().containsPoint(pos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+		if (target1->getBoundingBox().containsPoint(pos - GetMap()->getPosition()))
 		{
 			if (!building->IsWorking())
 			{
@@ -100,7 +102,8 @@ void BuildingManager::SetFactoryController(Building* building)
 			}
 			else
 			{
-				GetMenuLayer()->CreateFactoryLayer(target1->GetBuildingID());
+				GetMenuLayer()->CreateFactoryLayer(building->GetBuildingID());
+				
 			}
 			return true;
 		}
@@ -110,66 +113,58 @@ void BuildingManager::SetFactoryController(Building* building)
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, building);
 }
 
-Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
+Building* BuildingManager::CreateBuilding(char* BuildingTypeName,int player)
 {
 	Building* B = NULL;
 	Sprite* spr = NULL;
 	if (BuildingTypeName == "Base")
 	{
-		B = new Base(_pPower, _pMineral, this);
+		B = new Base(_pPower, _pMineral, this,player);
 		spr = Sprite::create("Building/Base.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
-		_buildingVec.pushBack(B);
-		B->_numInVec = _buildingVec.size() - 1;
-		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
+
 	}
 	else if (BuildingTypeName == "Barrack")
 	{
-		B = new Barrack(_pPower, _pMineral, this);
+		B = new Barrack(_pPower, _pMineral, this, player);
 		spr = Sprite::create("Building/Barrack.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
-		_buildingVec.pushBack(B);
-		B->_numInVec = _buildingVec.size() - 1;
-		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	}
 	else if (BuildingTypeName == "Mine")
 	{
-		B = new Mine(_pPower, _pMineral, this);
+		B = new Mine(_pPower, _pMineral, this, player);
 		spr = Sprite::create("Building/Mine.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
-		_buildingVec.pushBack(B);
-		B->_numInVec = _buildingVec.size() - 1;
-		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 
 	}
 	else if (BuildingTypeName == "PowerStation")
 	{
-		B = new PowerStation(_pPower, _pMineral, this);
+		B = new PowerStation(_pPower, _pMineral, this, player);
 		spr = Sprite::create( "Building/PowerStation.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
-		_buildingVec.pushBack(B);
-		B->_numInVec = _buildingVec.size() - 1;
-		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	}
 	else if (BuildingTypeName == "Factory")
 	{
-		B = new Factory(_pPower, _pMineral, this);
+		B = new Factory(_pPower, _pMineral, this, player);
 		spr = Sprite::create("Building/Factory.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
-		_buildingVec.pushBack(B);
-		B->_numInVec = _buildingVec.size() - 1;
-		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
+	
 	}
 	else
 	{
 		return NULL;
 	}
-
+	B->_buildingTimeUI = GUIReader::getInstance()->widgetFromJsonFile("UI/NewUi_1.ExportJson");
+	B->addChild(B->_buildingTimeUI);
+	B->scheduleUpdate();
+	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
+	_buildingVec.pushBack(B);
+	B->_numInVec = _buildingVec.size() - 1;
 
 	return B;
 }
@@ -268,6 +263,38 @@ bool BuildingManager::BuildingResourceCheck(int name)
 	}
 	return true;
 }
+
+void BuildingManager::DestroyBuilding(Building* B)
+{
+	if (B->_whatAmI == "PowerStation")
+	{
+		int freePower = _pPower->GetAvailableVal();
+		while (true)
+		{
+			int i = _buildingVec.size() - 1;
+			if (freePower < 0)
+			{
+				Building* p = _buildingVec.at(i);
+				if (p != NULL)
+				{
+					p->_isWorking = false;
+					freePower += p->_powerCost;
+				}
+				--i;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	if (B->_whatAmI == "Mine")
+	{
+		UpdateMineralPerSecond();
+	}
+	B->removeFromParent();
+}
+
 
 Vector<Building*> BuildingManager::_buildingVec;
 int BuildingManager::_mineralPerSecond = 0;

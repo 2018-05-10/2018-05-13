@@ -16,7 +16,7 @@ Dog::Dog()
 	this->BindSprite(spr);
 }
 
-Dog::Dog(Mineral* m ,SoldierManager* p)
+Dog::Dog(Mineral* m ,SoldierManager* p,int player)
 {
 	_whatAmI = "Dog";
 	_totalHP = 100;
@@ -25,6 +25,7 @@ Dog::Dog(Mineral* m ,SoldierManager* p)
 	_speed = 6;
 	_mineralCost = 10;
 	_attackInterval = 0.8;
+	_player = player;
 
 	_pSoldierManager = p;
 	m->Cost(_mineralCost);

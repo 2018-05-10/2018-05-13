@@ -8,7 +8,7 @@ class Tank :public Soldier
 {
 public:
 	Tank();
-	Tank(Mineral* m, SoldierManager* p);
+	Tank(Mineral* m, SoldierManager* p,int player);
 	~Tank();
 	bool init();
 

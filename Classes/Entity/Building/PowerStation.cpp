@@ -15,7 +15,7 @@ PowerStation::PowerStation()
 	this->BindSprite(spr);
 }
 
-PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
+PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
 {
 	_whatAmI = "PowerStation";
 	_pPower = p;
@@ -26,6 +26,8 @@ PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelo
 	_powerCost = 0;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	_player = player;
+	_buildingID = buildingsID;
 	++buildingsID;
 
 	m->Cost(_mineralCost);

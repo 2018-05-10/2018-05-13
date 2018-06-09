@@ -2,14 +2,17 @@
 
 #pragma once
 #include "cocos2d.h"
-#include"Manager/BuildingManager.h"
-#include"Manager/MapManager.h"
-#include"MenuLayer.h"
-#include"Manager/SoldierManager.h"
+
 #include"Resource/Mineral.h"
 #include"Resource/Power.h"
 
+
 class ResourceManager;
+class SoldierManager;
+class MenuLayer;
+
+class MapManager;
+class BuildingManager;
 
 class GameScene :public cocos2d::Layer
 {
@@ -26,6 +29,7 @@ public:
 
 	//======获取建筑管理器========
 	BuildingManager* GetBuildingManager()const;
+	BuildingManager* GetEnemyBuildingManager()const;
 
 	//=========获取士兵管理器======
 	SoldierManager* GetSoldierManager()const;
@@ -46,9 +50,14 @@ private:
 	MapManager* _mapManager;
 	MenuLayer* _menuLayer;
 	BuildingManager* _buildingManager;
+	BuildingManager* _enemyBuildingManager;
 	SoldierManager* _soldierManager;
+
 	Mineral* _mineral;
 	Power* _power;
+	Mineral* _enemyMineral;
+	Power* _enemyPower;
+
 	ResourceManager* _resourceManager;
 	
 };

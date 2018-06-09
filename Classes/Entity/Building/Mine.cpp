@@ -15,7 +15,7 @@ Mine::Mine()
 	this->BindSprite(spr);
 }
 
-Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
+Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
 {
 	_whatAmI = "Mine";
 	_pPower = p;
@@ -26,6 +26,8 @@ Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_mineralCost = 50;
 	_powerCost = 25;
 	_timeToBuild = 15;
+	_player = player;
+	_buildingID = buildingsID;
 	++buildingsID;
 
 	m->Cost(_mineralCost);

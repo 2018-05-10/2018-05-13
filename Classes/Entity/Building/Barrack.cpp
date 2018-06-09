@@ -15,7 +15,7 @@ Barrack::Barrack()
 	this->BindSprite(spr);
 }
 
-Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
+Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
 {
 	_whatAmI = "Barrack";
 	_pPower = p;
@@ -26,6 +26,8 @@ Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_powerCost = 35;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	_player = player;
+	_buildingID = buildingsID;
 	++buildingsID;
 
 	m->Cost(_mineralCost);

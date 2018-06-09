@@ -46,6 +46,7 @@ private:
 	
 	cocos2d::Point _getTouchBeganPos;
 	cocos2d::Point _getTouchEndedPos;
+	static  cocos2d::Vector<Soldier*> _enemySoldierVec;
 
 	cocos2d::Sprite* _selectBox;
 	
@@ -61,7 +62,7 @@ private:
 
 	BuildingManager* _pPairManager;
 public:
-	Soldier *CreateSoldier(char* SoldierTypeName);
+	Soldier *CreateSoldier(char* SoldierTypeName,int player);
 
 	void BindMineral(Mineral* m);
 	void DestroySoldier(Soldier* S);

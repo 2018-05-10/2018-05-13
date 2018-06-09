@@ -1,5 +1,6 @@
 #include"MapManager.h"
 #include"Scene/GameScene/GameScene.h"
+#include"SoldierManager.h"
 #include<queue>
 #include<string>
 USING_NS_CC;
@@ -17,6 +18,7 @@ bool MapManager::init()
 			temp.push_back(1);
 		}
 		_mapVec.push_back(temp);
+		_objectVec.push_back(temp);
 	}
 	
 
@@ -100,8 +102,6 @@ void MapManager::ControllerUpdate(float dt)
 	auto mapTiledNum =GetMap()->getMapSize();
 	auto tiledSize = GetMap()->getTileSize()*0.78125;
 	
-	
-	log("%d", BuildingManager::_mineralPerSecond);
 	Point mapSize = Point(mapTiledNum.width*tiledSize.width,mapTiledNum.height*tiledSize.height);
 	int speed = 20;
 	
@@ -193,7 +193,7 @@ bool MapManager::BuildingPositionCheck(Point pos,int name)
 		for (int j = 0; j < height+1; ++j)
 		{
 			if (_mapVec[static_cast<int>(originPos.x - i)][static_cast<int>(originPos.y - j)] == 0||
-				_mapVec[static_cast<int>(originPos.x - i)][static_cast<int>(originPos.y - j)] == 2)
+				_objectVec[static_cast<int>(originPos.x - i)][static_cast<int>(originPos.y - j)] !=1)
 			{
 				return false;
 			}
@@ -214,10 +214,10 @@ void MapManager::SetTestListener()
 	listener->onTouchEnded = [&](Touch *touch, Event *event)
 	{
 
-		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
+		/*Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		Vec2 pos2 = ChangeToTiledPos(pos- GetMap()->getPosition());
-
-		
+		log("%f %f", pos2.x, pos2.y);
+		log("%d", _objectVec[pos2.x][pos2.y])*/;
 		
 	};
 
@@ -288,13 +288,13 @@ void MapManager::SetBuilding(Point pos,int name)
 			{
 				continue;
 			}
-			if ((i == -1 || j == height+1||j==-width+1||i==4)&&_mapVec[originPos.x - i][originPos.y - j]!=0)
+			if (i == -1 || j == height+1||i==-width+1||j==-1)
 			{
-				_mapVec[originPos.x - i][originPos.y - j] = 2;
+				_objectVec[originPos.x - i][originPos.y - j] = 3;
 			}
 			else
 			{
-				_mapVec[originPos.x - i][originPos.y - j] = 0;
+				_objectVec[originPos.x - i][originPos.y - j] = 0;
 			}
 		}
 	}
@@ -353,7 +353,7 @@ Point MapManager::BFS(Point start)
 {
 	using namespace std;
 	int count=0;
-	Point tileStart = ChangeToTiledPos(start);
+	Point tileStart = ChangeToTiledPos(start-Point(1,1));
 
 	if (tileStart.x < 0)
 	{
@@ -384,7 +384,8 @@ Point MapManager::BFS(Point start)
 	
 	while (!isSearched.empty())
 	{
-		if (_mapVec[isSearched.front().x][isSearched.front().y] != 0&& _mapVec[isSearched.front().x][isSearched.front().y] != 2)
+		if (_mapVec[isSearched.front().x][isSearched.front().y] != 0&& _objectVec[isSearched.front().x][isSearched.front().y] != 2
+			&& _objectVec[isSearched.front().x][isSearched.front().y] != 0)
 		{ 
 			
 			return ChangeToCocosPos(isSearched.front());
@@ -423,6 +424,11 @@ void MapManager::TargetPosBFS(Point start)
 		return;
 	}
 
+	for (auto soldier : SoldierManager::_beChoosed)
+	{
+		_objectVec[ChangeToTiledPos(soldier->getPosition()).x][ChangeToTiledPos(soldier->getPosition()).y] = 1;
+	}
+
 	if (tileStart.x < 0)
 	{
 		tileStart.x = 0;
@@ -452,7 +458,8 @@ void MapManager::TargetPosBFS(Point start)
 	int count = 0;
 	while (!isSearched.empty())
 	{
-		if (_mapVec[isSearched.front().x][isSearched.front().y] != 0&& _mapVec[isSearched.front().x][isSearched.front().y] != 2)
+		if (_mapVec[isSearched.front().x][isSearched.front().y] != 0&& _objectVec[isSearched.front().x][isSearched.front().y] != 2
+			&& _objectVec[isSearched.front().x][isSearched.front().y] != 0)
 		{
 			SoldierManager::_beChoosed.at(count++)->_targetPoint =ChangeToCocosPos( isSearched.front());
 			if (count == SoldierManager::_beChoosed.size())
@@ -485,8 +492,14 @@ void MapManager::TargetPosBFS(Point start)
 void MapManager::SetSoldier(Point pos)
 {
 	auto origin = this->ChangeToTiledPos(pos);
-	_mapVec[origin.x][origin.y] = 2;
+	_objectVec[origin.x][origin.y] = 2;
 	log("%f %f", origin.x, origin.y);
+}
+
+void MapManager:: SoldierDoMove(Point pos1, Point pos2)
+{
+	_objectVec[pos1.x][pos1.y] = 1;
+	_objectVec[pos2.x][pos2.y] = 2;
 }
 
 TMXTiledMap* MapManager::GetMap()

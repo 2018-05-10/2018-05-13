@@ -9,7 +9,7 @@ class Infantry :public Soldier
 {
 public:
 	Infantry();
-	Infantry(Mineral *m, SoldierManager* p);
+	Infantry(Mineral *m, SoldierManager* p,int player);
 	~Infantry();
 	bool init();
 
