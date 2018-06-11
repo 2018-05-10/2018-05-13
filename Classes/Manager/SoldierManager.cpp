@@ -15,7 +15,7 @@ bool SoldierManager::init()
 	}
 
 	
-	_selectBox = Sprite::create("selectbox.jpeg");
+	_selectBox = Sprite::create("selectbox.png");
 	this->addChild(_selectBox);
 	_selectBox->setOpacity(0);
 	return true;

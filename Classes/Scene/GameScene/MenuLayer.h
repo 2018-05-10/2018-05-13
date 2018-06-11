@@ -43,7 +43,7 @@ public:
 	cocos2d::Layer* CreateLayer();
 
 	//========音乐开关及其调用函数=========
-	void CreateMusicButton();
+	cocos2d::Menu* CreateMusicButton();
 	void MenuMusicCallBack(cocos2d::Ref* pSender);
 
 	//=========对建筑建造按钮的监控函数========
@@ -65,6 +65,7 @@ public:
 private:
 	std::vector<cocos2d::Sprite*> _buildings;
 	cocos2d::Sprite* _target;
+	cocos2d::Layer* _layer;
 	bool _musicOn = true;
 	Widget* _resourceUI;
 };

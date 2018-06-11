@@ -24,22 +24,25 @@ bool MenuLayer::init()
 		return false;
 	}
 
-	this->CreateMainLayer();
-	this->scheduleUpdate();
+	_layer=CreateLayer();
+
+	this->addChild(_layer);
+	this->schedule(schedule_selector(MenuLayer::update), 1.0f);
 	
 	return true;
 }
 
 void MenuLayer::CreateMainLayer()
 {
-	auto menuLayer = CreateLayer();
+	this->ClearLayer();
 	
-	this->addChild(menuLayer);
 }
 void  MenuLayer::CreateContructionLayer()
 {
 	
-	auto menuLayer = CreateLayer();
+	auto menuLayer = Layer::create();
+	this->ClearLayer();
+	menuLayer->setContentSize(Size(480, 900));
 	auto contentSize = menuLayer->getContentSize();
 
 	auto base =Sprite::create("Building/Base.png");
@@ -74,22 +77,31 @@ void  MenuLayer::CreateContructionLayer()
 
 	this->SetBuildingListController();
 
-	this->addChild(menuLayer);
+	_layer->addChild(menuLayer,1,1);
 }
 
 void MenuLayer::CreateSoldierLayer(int buildingID)
 {
-	auto menuLayer = CreateLayer();
+
+	auto menuLayer = Layer::create();
+	this->ClearLayer();
+	menuLayer->setContentSize(Size(480, 900));
 	auto contentSize = menuLayer->getContentSize();
 
+	auto soldier = Button::create("soldier.png");
+	soldier->setScale(0.5);
+	soldier->setPosition(Size(contentSize.width / 4, contentSize.height / 2));
 	
+	menuLayer->addChild(soldier);
+	_layer->addChild(menuLayer,1,1);
 
-	this->addChild(menuLayer);
 }
 
 void MenuLayer::CreateFactoryLayer(int buildingID)
 {
-	auto menuLayer = CreateLayer();
+	auto menuLayer = Layer::create();
+	this->ClearLayer();
+	menuLayer->setContentSize(Size(480, 900));
 	auto contentSize = menuLayer->getContentSize();
 
 	auto tank = Button::create("tankpicture.png");
@@ -129,7 +141,7 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 
 	menuLayer->addChild(tank);
 	
-	this->addChild(menuLayer);
+	_layer->addChild(menuLayer,1,1);
 }
 
 void MenuLayer::SetBuildingListController()
@@ -144,7 +156,7 @@ void MenuLayer::SetBuildingListController()
 void MenuLayer::ClearLayer()
 {
 	_buildings.clear();
-	this->removeAllChildren();
+	_layer->removeChildByTag(1);
 }
 
 void MenuLayer::SetBaseConstructionController()
@@ -193,7 +205,7 @@ void MenuLayer::SetBaseConstructionController()
 		auto building = GetBuildingManager()->CreateBuilding("Base",0);
 		auto setPos =GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 		log("%f %f", setPos.x, setPos.y);
-		GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
+		GetMap()->addChild(building, 1, building->GetBuildingID());
 		setPos =GetMapManager()->ChangeToCocosPos(setPos);
 		building->setPosition(setPos);
 		GetMapManager()->SetBuilding(setPos,0);
@@ -259,7 +271,7 @@ void MenuLayer::SetBarrackConstructionController()
 			auto building = GetBuildingManager()->CreateBuilding("Barrack",0);
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			log("%f %f", setPos.x, setPos.y);
-			GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
+			GetMap()->addChild(building, 2, building->GetBuildingID());
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
@@ -328,7 +340,7 @@ void MenuLayer::SetMineConstructionController()
 			auto building = GetBuildingManager()->CreateBuilding("Mine",0);
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			log("%f %f", setPos.x, setPos.y);
-			GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
+			GetMap()->addChild(building,3, building->GetBuildingID());
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
@@ -397,7 +409,7 @@ void MenuLayer::SetPowerStationController()
 			auto building = GetBuildingManager()->CreateBuilding("PowerStation",0);
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			log("%f %f", setPos.x, setPos.y);
-			GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
+			GetMap()->addChild(building, 4, building->GetBuildingID());
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
@@ -464,7 +476,7 @@ void MenuLayer::SetFactoryController()
 			auto building = GetBuildingManager()->CreateBuilding("Factory",0);
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			log("%f %f", setPos.x, setPos.y);
-			GetMap()->addChild(building, setPos.x + setPos.y,building->GetBuildingID());
+			GetMap()->addChild(building, 5,building->GetBuildingID());
 			setPos = GetMapManager()->ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
@@ -485,7 +497,6 @@ void MenuLayer::SetFactoryController()
 
 Layer* MenuLayer::CreateLayer()
 {
-	this->ClearLayer();
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto menuLayer = LayerColor::create(Color4B(0, 128, 128, 255));
 
@@ -495,12 +506,12 @@ Layer* MenuLayer::CreateLayer()
 	menuLayer->setOpacity(100);
 	menuLayer->setPosition(visibleSize.width*0.7, 0);
 
-	CreateMusicButton();
+	menuLayer->addChild(CreateMusicButton());
 
 	return menuLayer;
 }
 
-void MenuLayer::CreateMusicButton()
+Menu* MenuLayer::CreateMusicButton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto visibleOrigin = Director::getInstance()->getVisibleOrigin();
@@ -513,7 +524,8 @@ void MenuLayer::CreateMusicButton()
 	toggleItem->setPosition(Point(visibleOrigin.x + visibleSize.width * 0.97, visibleOrigin.y + visibleSize.height * 0.05));
 	auto menu = Menu::create(toggleItem, NULL);
 	menu->setPosition(Point::ZERO);
-	this->addChild(menu,5);
+
+	return menu;
 }
 
 void MenuLayer::MenuMusicCallBack(cocos2d::Ref* pSender)
