@@ -1,4 +1,4 @@
-#include "Heads.h"
+#include "Barrack.h"
 
 Barrack::Barrack()
 {
@@ -9,8 +9,9 @@ Barrack::Barrack()
 	_powerCost = 35;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	++buildingsID;
 
-	Sprite* spr = Sprite::create("Barrack.png");
+	Sprite* spr = Sprite::create("Building/Barrack.png");
 	this->BindSprite(spr);
 }
 
@@ -25,22 +26,20 @@ Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_powerCost = 35;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	++buildingsID;
+
+	Sprite* spr = Sprite::create("Barrack_gray.png");
+	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
-	if (p->GetUsedVal() > p->GetTotalVal())
-	{
-		_isWorking = false;
-	}
-	else
-	{
-		_isWorking = true;
-	}
+	_isWorking = false;
+	
 }
 
 Barrack::~Barrack()
 {
-	_pPower->Free(_powerCost);
+	/*_pPower->Free(_powerCost);*/
 }
 
 bool Barrack::init()

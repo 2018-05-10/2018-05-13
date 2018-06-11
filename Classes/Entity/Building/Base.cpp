@@ -1,4 +1,4 @@
-#include "Heads.h"
+#include "Base.h"
 
 Base::Base()
 {
@@ -8,9 +8,10 @@ Base::Base()
 	_currentHP = 5000;
 	_powerCost = 40;
 	_mineralCost = 0;
-	_timeToBuild = 0;
+	_timeToBuild = 10;
+	++buildingsID;
 
-	Sprite* spr = Sprite::create("Base.png");
+	Sprite* spr = Sprite::create("Building/Base.png");
 	this->BindSprite(spr);
 }
 
@@ -18,24 +19,23 @@ Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 {
 	_whatAmI = "Base";
 	_pPower = p;
+	_pMineral = m;
 	_pManager = pManagerItBelongsTo;
 
 	_totalHP = 5000;
 	_currentHP = 5000;
 	_powerCost = 40;
 	_mineralCost = 0;
-	_timeToBuild = 0;
+	_timeToBuild = 10;
+	++buildingsID;
+
+	Sprite* spr = Sprite::create("Base_gray.png");
+	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
-	if (p->GetUsedVal() > p->GetTotalVal())
-	{
-		_isWorking = false;
-	}
-	else
-	{
-		_isWorking = true;
-	}
+	_isWorking = false;
+
 }
 
 Base::~Base() 

@@ -35,7 +35,22 @@ bool SettingScene::init()
 	this->CreateSlider();
 	this->CreateMusicButton();
 
-
+	auto OKButton=CreateButton("OK", 1);
+	OKButton->addTouchEventListener([&](Ref*, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::BEGAN:
+			break;
+		case Widget::TouchEventType::MOVED:
+			break;
+		case Widget::TouchEventType::ENDED:
+			
+			Director::getInstance()->popScene();
+			break;
+		}
+	});
+	this->addChild(OKButton);
 	return true;
 }
 
@@ -51,21 +66,19 @@ void SettingScene::BGinit()
 	_bg->setPosition(_visibleSize.width / 2, _visibleSize.height / 2);
 }
 
-ControlButton* SettingScene::CreateButton(std::string title, int site)
+Button* SettingScene::CreateButton(std::string title, int site)
 {
-	auto _visibleSize = Director::getInstance()->getVisibleSize();
-	auto _visibleOrigin = Director::getInstance()->getVisibleOrigin();
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto visibleOrigin = Director::getInstance()->getVisibleOrigin();
 
-	auto BtnNormal = Scale9Sprite::create("button.png");
-	auto BtnDown = Scale9Sprite::create("buttonHighlighted.png");
-	auto Title = Label::create(title, "Marker Felt", 30);
-	auto ControlBtn = ControlButton::create(Title, BtnNormal);
+	auto button = Button::create("button.png", "buttonHighlighted.png");
+	button->setScale9Enabled(true);
+	button->setSize(Size(300, 50));
+	button->setTitleText(title);
+	button->setTitleFontSize(20);
+	button->setPosition(Vec2(visibleOrigin.x + visibleSize.width / 2, visibleOrigin.y + visibleSize.height / 4 * site));
 
-	ControlBtn->setBackgroundSpriteForState(BtnDown, Control::State::HIGH_LIGHTED);
-	ControlBtn->setPosition(Point(_visibleOrigin.x + _visibleSize.width / 4, _visibleOrigin.y + _visibleSize.height / 4 * site));
-	ControlBtn->setPreferredSize(CCSize(300, 50));
-
-	return ControlBtn;
+	return button;
 }
 
 void SettingScene::CreateSlider()
@@ -96,7 +109,6 @@ void SettingScene::CreateMusicButton()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto visibleOrigin = Director::getInstance()->getVisibleOrigin();
 
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("backgroundmusic.mp3", true);
 	auto music_button = MenuItemImage::create("music.png", "nomusic.png");
 	auto pause_button = MenuItemImage::create("nomusic.png", "music.png");
 

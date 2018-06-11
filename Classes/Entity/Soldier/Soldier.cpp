@@ -1,4 +1,4 @@
-#include "Heads.h"
+#include "Soldier.h"
 
 Soldier::Soldier() {}
 
@@ -35,7 +35,27 @@ bool Soldier::init()
 	return true;
 }
 
-void Soldier::Die()     
+//void Soldier::Die()     
+//{
+//	_pSoldierManager->DestroySoldier(this);
+//}
+
+int Soldier::GetMineralCost()const
 {
-	_pSoldierManager->DestroySoldier(this);
+	return _mineralCost;
+}
+
+cocos2d::Animate* Soldier::AnimateDie()
+{
+
+}
+
+cocos2d::Animate* Soldier::AnimateMove(Point target)
+{
+
+}
+
+cocos2d::Animate* Soldier::AnimateAttack(Point target)
+{
+
 }

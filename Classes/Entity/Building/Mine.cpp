@@ -1,4 +1,4 @@
-#include "Heads.h"
+#include "Mine.h"
 
 Mine::Mine()
 {
@@ -9,8 +9,9 @@ Mine::Mine()
 	_mineralCost = 50;
 	_powerCost = 25;
 	_timeToBuild = 15;
+	++buildingsID;
 
-	Sprite* spr = Sprite::create("Mine.png");
+	Sprite* spr = Sprite::create("Building/Mine.png");
 	this->BindSprite(spr);
 }
 
@@ -25,17 +26,14 @@ Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_mineralCost = 50;
 	_powerCost = 25;
 	_timeToBuild = 15;
+	++buildingsID;
+
+	Sprite* spr = Sprite::create("Mine_gray.png");
+	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
-	if (p->GetUsedVal() > p->GetTotalVal())
-	{
-		_isWorking = false;
-	}
-	else
-	{
-		_isWorking = true;
-	}
+	_isWorking = false;
 }
 
 Mine::~Mine() 

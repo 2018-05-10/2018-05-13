@@ -1,4 +1,4 @@
-#include "Heads.h"
+#include "Factory.h"
 
 Factory::Factory()
 {
@@ -9,8 +9,9 @@ Factory::Factory()
 	_powerCost = 35;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	++buildingsID;
 
-	Sprite* spr = Sprite::create("Factory.png");
+	Sprite* spr = Sprite::create("Building/Factory.png");
 	this->BindSprite(spr);
 }
 
@@ -25,22 +26,19 @@ Factory::Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_powerCost = 35;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	++buildingsID;
+
+	Sprite* spr = Sprite::create("Factory_gray.png");
+	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
-	if (p->GetUsedVal() > p->GetTotalVal())
-	{
-		_isWorking = false;
-	}
-	else
-	{
-		_isWorking = true;
-	}
+	_isWorking = false;
 }
 
 Factory::~Factory()
 {
-	_pPower->Free(_powerCost);
+	/*_pPower->Free(_powerCost);*/
 }
 
 bool Factory::init()

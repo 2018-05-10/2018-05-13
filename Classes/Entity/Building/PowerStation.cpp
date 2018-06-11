@@ -1,4 +1,4 @@
-#include "Heads.h"
+#include "PowerStation.h"
 
 PowerStation::PowerStation()
 {
@@ -9,8 +9,9 @@ PowerStation::PowerStation()
 	_powerCost = 0;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	++buildingsID;
 
-	Sprite* spr = Sprite::create("PowerStation.png");
+	Sprite* spr = Sprite::create("Building/PowerStation.png");
 	this->BindSprite(spr);
 }
 
@@ -25,11 +26,15 @@ PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelo
 	_powerCost = 0;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	++buildingsID;
+
+	Sprite* spr = Sprite::create("PowerStation_gray.png");
+	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
-	_isWorking = true;
-	p->Add(_powerProduce);
+	_isWorking = false;
+	
 }
 
 PowerStation::~PowerStation() 
@@ -51,3 +56,4 @@ int PowerStation::GetMineralCost()
 {
 	return _mineralCost;
 }
+

@@ -12,7 +12,7 @@ public:
 
 	void BGinit();
 
-	cocos2d::extension::ControlButton* CreateButton(std::string,int);
+	cocos2d::ui::Button* CreateButton(std::string,int);
 
 	void CreateMusicButton();
 	void MenuMusicCallBack(cocos2d::Ref* pSender);

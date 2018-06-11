@@ -1,5 +1,6 @@
 #include"MenuScene.h"
 #include"SettingScene.h"
+#include"GameScene/GameScene.h"
 #include"SimpleAudioEngine.h"
 #include"extensions/cocos-ext.h"
 #include"ui/CocosGUI.h"
@@ -32,16 +33,54 @@ bool MenuScene::init()
 	//开始按钮
 	auto _startControlBtn=CreateButton("Start",3);
 	this->addChild(_startControlBtn);
-
+	_startControlBtn->addTouchEventListener([&](Ref*, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::BEGAN:
+			break;
+		case Widget::TouchEventType::MOVED:
+			break;
+		case Widget::TouchEventType::ENDED:
+			auto transition = TransitionFade::create(0.5,GameScene::createScene());
+			Director::getInstance()->replaceScene(transition);
+			break;
+		}
+	});
 	//设定按钮
 	auto _setControlBtn = CreateButton("Setting", 2);
 	this->addChild(_setControlBtn);
-	_setControlBtn->addTargetWithActionForControlEvents(this, cccontrol_selector(MenuScene::TouchSetting), Control::EventType::TOUCH_UP_INSIDE);
+	_setControlBtn->addTouchEventListener ([&](Ref*, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::BEGAN:
+			break;
+		case Widget::TouchEventType::MOVED:
+			break;
+		case Widget::TouchEventType::ENDED:
+			auto transition = TransitionFade::create(0.5, SettingScene::createScene());
+			Director::getInstance()->pushScene(transition);
+			break;
+		}
+	});
 	
 	//退出按钮
 	auto _quitControlBtn = CreateButton("Quit", 1);
 	this->addChild(_quitControlBtn);
-	_quitControlBtn->addTargetWithActionForControlEvents(this, cccontrol_selector(MenuScene::TouchQuit), Control::EventType::TOUCH_UP_INSIDE);
+	_quitControlBtn->addTouchEventListener([&](Ref*, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::BEGAN:
+			break;
+		case Widget::TouchEventType::MOVED:
+			break;
+		case Widget::TouchEventType::ENDED:
+			Director::getInstance()->end();
+			break;
+		}
+	});
 
 	auto keyEventListener = EventListenerKeyboard::create();
 	keyEventListener->onKeyReleased = [](EventKeyboard::KeyCode code, Event* event)
@@ -59,21 +98,19 @@ bool MenuScene::init()
 	return true;
 }
 
-ControlButton* MenuScene::CreateButton(std::string title, int site)
+Button* MenuScene::CreateButton(std::string title, int site)
 {
-	auto _visibleSize = Director::getInstance()->getVisibleSize();
-	auto _visibleOrigin = Director::getInstance()->getVisibleOrigin();
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto visibleOrigin = Director::getInstance()->getVisibleOrigin();
 
-	auto BtnNormal = Scale9Sprite::create("button.png");
-	auto BtnDown = Scale9Sprite::create("buttonHighlighted.png");
-	auto Title = Label::create(title, "Marker Felt", 30);
-	auto ControlBtn = ControlButton::create(Title, BtnNormal);
+	auto button = Button::create("button.png", "buttonHighlighted.png");
+	button->setScale9Enabled(true);
+	button->setSize(Size(300,50));
+	button->setTitleText(title);
+	button->setTitleFontSize(20);
+	button->setPosition(Vec2(visibleOrigin.x + visibleSize.width / 4, visibleOrigin.y + visibleSize.height / 4 * site));
 
-	ControlBtn->setBackgroundSpriteForState(BtnDown, Control::State::HIGH_LIGHTED);
-	ControlBtn->setPosition(Point(_visibleOrigin.x + _visibleSize.width / 4, _visibleOrigin.y + _visibleSize.height / 4 * site));
-	ControlBtn->setPreferredSize(CCSize(300, 50));
-
-	return ControlBtn;
+	return button;
 }
 
 void MenuScene::MenuMusicCallBack(cocos2d::Ref* pSender)

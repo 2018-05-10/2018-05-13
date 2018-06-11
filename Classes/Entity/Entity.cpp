@@ -1,4 +1,4 @@
-#include "Heads.h"
+#include "Entity.h"
 
 Entity::Entity()
 {
@@ -17,8 +17,9 @@ void Entity::BindSprite(Sprite* sprite)
 	this->addChild(_sprite);
 
 	Size size = _sprite->getContentSize();
-	_sprite->setPosition(Point(size.width / 2, size.height / 2));
+	_sprite->setPosition(Point(size.width/2,size.height/2));
 	this->setContentSize(size);
+	this->setAnchorPoint(Point(0.5,0.5));
 }
 int Entity::GetTotalHP()
 {

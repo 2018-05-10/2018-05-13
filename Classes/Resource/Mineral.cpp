@@ -1,13 +1,14 @@
-#include "Heads.h"
-
+#include "Mineral.h"
+#include"Scene/GameScene/GameScene.h"
 Mineral::Mineral()
 {
-	_currentVal = 150;
+
 }
 Mineral::~Mineral(){}
 
 bool Mineral::init()
 {
+	_currentVal = 99999;
 	return true;
 }
 
