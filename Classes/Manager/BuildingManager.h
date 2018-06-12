@@ -39,12 +39,14 @@ public:
 	void DestroyBuilding(Building* B);
 
 	Building* CreateBuilding(char* BuildingTypeName,int player);          //创建一个建筑对象并绑定其精灵，参数是建筑名字的字符串，例如“Mine”等等
-	static Vector<Building*> _buildingVec;
+	Building* CreateEnemyBuilding(char* BuildingTypeName, int player);
+	static std::vector<Building*> _buildingVec;
+	static std::vector<Building*> _enemyBuildingVec;
 	static int _mineralPerSecond;
 private:
 
 	Power * _pPower = NULL;
 	Mineral* _pMineral = NULL;
 
-	int _player;
+
 };

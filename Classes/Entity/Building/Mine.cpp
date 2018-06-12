@@ -9,6 +9,7 @@ Mine::Mine()
 	_mineralCost = 50;
 	_powerCost = 25;
 	_timeToBuild = 15;
+	_player = 1;
 	++buildingsID;
 
 	Sprite* spr = Sprite::create("Building/Mine.png");

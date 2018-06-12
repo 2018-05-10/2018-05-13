@@ -35,8 +35,6 @@ bool GameScene::init()
 
 	_buildingManager = BuildingManager::create();
 	this->addChild(_buildingManager, 1);
-	_enemyBuildingManager = BuildingManager::create();
-	this->addChild(_enemyBuildingManager, 1);
 
 	_menuLayer = MenuLayer::create();
 	this->addChild(_menuLayer, 10);
@@ -56,8 +54,7 @@ bool GameScene::init()
 	_buildingManager->BindMineral(_mineral);
 	_buildingManager->BindPower(_power);
 	_soldierManager->BindMineral(_mineral);
-	_enemyBuildingManager->BindMineral(_enemyMineral);
-	_enemyBuildingManager->BindPower(_enemyPower);
+
 
 
 	_mapManager->SetMouseController();
@@ -79,7 +76,7 @@ bool GameScene::init()
 	base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0);
 	_buildingManager->SetBaseController(base);
 
-	auto enemyBase = _enemyBuildingManager->CreateBuilding("Base", 1);
+	auto enemyBase = _buildingManager->CreateEnemyBuilding("Base", 1);
 	_map->addChild(enemyBase, 0);
 	enemyBase->setPosition(1600, 1000);
 	GetMapManager()->SetBuilding(Point(1600, 1000), 0);

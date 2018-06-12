@@ -1,6 +1,7 @@
 #include"MapManager.h"
 #include"Scene/GameScene/GameScene.h"
 #include"SoldierManager.h"
+#include"Entity/Building/Building.h"
 #include<queue>
 #include<string>
 USING_NS_CC;
@@ -280,25 +281,72 @@ void MapManager::SetBuilding(Point pos,int name)
 		break;
 	}
 
-	for (int i = -1; i < width+2; ++i)
+	for (int i = 0; i < width+1; ++i)
 	{
-		for (int j = -1; j < height+2; ++j)
+		for (int j = 0; j < height+1; ++j)
 		{
 			if (originPos.x - i < 0 || originPos.x - i>74 || originPos.y - j < 0 || originPos.y - j>74)
 			{
 				continue;
 			}
-			if (i == -1 || j == height+1||i==-width+1||j==-1)
-			{
-				_objectVec[originPos.x - i][originPos.y - j] = 3;
-			}
-			else
-			{
-				_objectVec[originPos.x - i][originPos.y - j] = 0;
-			}
+			_objectVec[originPos.x - i][originPos.y - j] = 0;
+			
 		}
 	}
 	
+}
+
+void MapManager::RemoveBuilding(Building* building, char* name)
+{
+	auto pos = building->getPosition();
+	auto originPos = ChangeToTiledPos(pos);
+
+	int width, height;
+	
+
+	if (name == "Base")
+	{
+		width = 4;
+		height = 4;
+		originPos += Point(3, 3);
+	}
+	else if (name == "Factory")
+	{
+		width = 3;
+		height = 3;
+		originPos += Point(3, 3);
+	}
+	if (name == "Barrack")
+	{
+		width = 4;
+		height = 4;
+		originPos += Point(3, 3);
+	}
+	if (name == "Mine")
+	{
+		width = 4;
+		height = 4;
+		originPos += Point(3, 3);
+	}
+	else if (name == "PowerStation")
+	{
+		width = 3;
+		height = 3;
+		originPos += Point(3, 3);
+	}
+
+	for (int i = 0; i < width + 1; ++i)
+	{
+		for (int j = 0; j < height + 1; ++j)
+		{
+			if (originPos.x - i < 0 || originPos.x - i>74 || originPos.y - j < 0 || originPos.y - j>74)
+			{
+				continue;
+			}
+			_objectVec[originPos.x - i][originPos.y - j] = 1;
+
+		}
+	}
 }
 
 Vec2 MapManager::ChangeToTiledPos(Point pos)

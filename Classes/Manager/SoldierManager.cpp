@@ -184,6 +184,7 @@ void SoldierManager::ClearAll()
 
 void SoldierManager::DestroySoldier(Soldier* S)
 {
+
 	S->removeFromParent();
 }
 

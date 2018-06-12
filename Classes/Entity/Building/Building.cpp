@@ -1,9 +1,13 @@
 #include "Building.h"
 #include"Manager/BuildingManager.h"
 #include"Scene/GameScene/GameScene.h"
+#include"Manager/MapManager.h"
 #include"PowerStation.h"
 
-Building::Building() {}
+Building::Building() 
+{
+
+}
 
 Building::~Building() {}
 
@@ -26,6 +30,10 @@ bool Building::init()
 
 void Building::Die()
 {
+
+	auto map = this->getParent();
+	GameScene* scene = static_cast<GameScene*>(map->getParent());
+	scene->GetMapManager()->RemoveBuilding(this, _whatAmI);
 	_pManager->DestroyBuilding(this);
 }
 
@@ -41,11 +49,16 @@ int Building::GetBuildingID()
 
 void Building::BuildingUpdate(float dt)
 {
-	if (_buildingTimeUI != nullptr)
+	if (_buildingTimeUI != nullptr&&!_player)
 	{
 		this->unscheduleUpdate();
 		auto timrBar = Helper::seekWidgetByName(_buildingTimeUI, "buildingTimeBar");
 		timrBar->removeFromParent();
+	}
+	if (_player)
+	{
+		GetSprite()->setColor(Color3B(255, 255, 255));
+		return;
 	}
 	if (_pPower->GetUsedVal() > _pPower->GetTotalVal())
 	{

@@ -9,6 +9,7 @@ PowerStation::PowerStation()
 	_powerCost = 0;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	_player = 1;
 	++buildingsID;
 
 	Sprite* spr = Sprite::create("Building/PowerStation.png");

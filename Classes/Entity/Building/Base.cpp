@@ -1,6 +1,6 @@
 #include "Base.h"
 
-Base::Base()
+Base::Base(BuildingManager* pManagerItBelongsTo)
 {
 	_whatAmI = "Base";
 
@@ -9,10 +9,13 @@ Base::Base()
 	_powerCost = 40;
 	_mineralCost = 0;
 	_timeToBuild = 10;
+	_player = 1; 
+	_pManager = pManagerItBelongsTo;
 	++buildingsID;
 
 	Sprite* spr = Sprite::create("Building/Base.png");
 	this->BindSprite(spr);
+	this->autorelease();
 }
 
 Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
@@ -39,7 +42,10 @@ Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
 
 Base::~Base() 
 {
-	_pPower->Free(_powerCost);
+	if (!_player)
+	{
+		_pPower->Free(_powerCost);
+	}
 }
 
 bool Base::init()
@@ -51,3 +57,4 @@ int Base::GetPowerCost()
 {
 	return _powerCost;
 }
+

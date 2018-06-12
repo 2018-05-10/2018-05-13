@@ -2,6 +2,7 @@
 #include"cocos2d.h"
 #include<vector>
 #include<string>
+class Building;
 class BuildingManager;
 class SoldierManager;
 class Power;
@@ -34,6 +35,7 @@ public:
 
 	//=========建筑与士兵建造时，更新地图vector上的信息，建筑占的点设为0，士兵设为2=======
 	void SetBuilding(cocos2d::Point,int);
+	void RemoveBuilding(Building*,char*);
 	void SetSoldier(cocos2d::Point);
 	void SoldierDoMove(cocos2d::Point, cocos2d::Point);
 

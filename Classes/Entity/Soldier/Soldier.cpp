@@ -1,6 +1,7 @@
 #include "Soldier.h"
 #include"Manager/SoldierManager.h"
 #include"Scene/GameScene/GameScene.h"
+#include"Manager/BuildingManager.h"
 
 Soldier::Soldier() {}
 
@@ -52,3 +53,17 @@ int Soldier::GetSpeed()
 	return _speed;
 }
 
+void Soldier::SearchEnemyUpdate(float dt)
+{
+	for (auto building : static_cast<GameScene*>(this->getParent()->getParent())->GetBuildingManager()->_enemyBuildingVec)
+	{
+
+		if (building != nullptr)
+		{
+
+
+			auto deltaPos = building->getPosition() - this->getPosition();
+			this->Attack(building);
+		}
+	}
+}

@@ -163,7 +163,7 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName,int player)
 	B->addChild(B->_buildingTimeUI);
 	B->scheduleUpdate();
 	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
-	_buildingVec.pushBack(B);
+	_buildingVec.push_back(B);
 	B->_numInVec = _buildingVec.size() - 1;
 
 	return B;
@@ -266,7 +266,7 @@ bool BuildingManager::BuildingResourceCheck(int name)
 
 void BuildingManager::DestroyBuilding(Building* B)
 {
-	if (B->_whatAmI == "PowerStation")
+	if (B->_whatAmI == "PowerStation"&&!B->_player)
 	{
 		int freePower = _pPower->GetAvailableVal();
 		while (true)
@@ -288,13 +288,69 @@ void BuildingManager::DestroyBuilding(Building* B)
 			}
 		}
 	}
-	if (B->_whatAmI == "Mine")
+	if (B->_whatAmI == "Mine" && !B->_player)
 	{
 		UpdateMineralPerSecond();
 	}
-	B->removeFromParent();
+	if (B->_player)
+	{
+		_enemyBuildingVec[B->_numInVec] = nullptr;
+	}
+    B->removeFromParent();
 }
 
+Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName, int player)
+{
+	Building* B = NULL;
+	Sprite* spr = NULL;
+	if (BuildingTypeName == "Base")
+	{
+		B = new Base(this);
+		spr = Sprite::create("Building/Base.png");
+		spr->setColor(Color3B(100, 100, 100));
+		B->BindSprite(spr);
 
-Vector<Building*> BuildingManager::_buildingVec;
+	}
+	else if (BuildingTypeName == "Barrack")
+	{
+		B = new Barrack();
+		spr = Sprite::create("Building/Barrack.png");
+		spr->setColor(Color3B(100, 100, 100));
+		B->BindSprite(spr);
+	}
+	else if (BuildingTypeName == "Mine")
+	{
+		B = new Mine();
+		spr = Sprite::create("Building/Mine.png");
+		spr->setColor(Color3B(100, 100, 100));
+		B->BindSprite(spr);
+
+	}
+	else if (BuildingTypeName == "PowerStation")
+	{
+		B = new PowerStation();
+		spr = Sprite::create("Building/PowerStation.png");
+		spr->setColor(Color3B(100, 100, 100));
+		B->BindSprite(spr);
+	}
+	else if (BuildingTypeName == "Factory")
+	{
+		B = new Factory();
+		spr = Sprite::create("Building/Factory.png");
+		spr->setColor(Color3B(100, 100, 100));
+		B->BindSprite(spr);
+
+	}
+	else
+	{
+		return NULL;
+	}
+	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
+	_enemyBuildingVec.push_back(B);
+	B->_numInVec = _enemyBuildingVec.size() - 1;
+	return B;
+}
+
+std::vector<Building*> BuildingManager::_buildingVec;
+std::vector<Building*> BuildingManager::_enemyBuildingVec;
 int BuildingManager::_mineralPerSecond = 0;

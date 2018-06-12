@@ -12,6 +12,7 @@ Factory::Factory()
 	_powerCost = 35;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	_player = 1;
 	++buildingsID;
 
 	Sprite* spr = Sprite::create("Building/Factory.png");

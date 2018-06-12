@@ -57,6 +57,7 @@ private:
 	static cocos2d::Vector<Soldier*> _dogVec;
 	static cocos2d::Vector<Soldier*> _infantryVec;
 	static cocos2d::Vector<Soldier*> _tankVec;
+	static cocos2d::Vector<Soldier*> _enemySoldier;
 	Mineral* _pMineral;
 	int _player;
 

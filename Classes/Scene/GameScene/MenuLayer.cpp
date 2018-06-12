@@ -128,6 +128,7 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 				GetMap()->addChild(tank1, 150);
 				auto landPos = GetMapManager()->BFS(pos);
 				tank1->setPosition(landPos);
+				tank1->schedule(schedule_selector(Soldier::SearchEnemyUpdate), 0.5f);
 				GetSoldierManager()->SetSoldierController(tank1);
 				GetMapManager()->SetSoldier(landPos);
 				break;
