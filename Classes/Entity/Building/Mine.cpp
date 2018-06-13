@@ -11,7 +11,7 @@ Mine::Mine()
 	_timeToBuild = 15;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Building/Mine.png");
+	Sprite* spr = Sprite::createWithSpriteFrameName("Mine.png");
 	this->BindSprite(spr);
 }
 
@@ -28,7 +28,7 @@ Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_timeToBuild = 15;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Mine_gray.png");
+	Sprite* spr = Sprite::createWithSpriteFrameName("Mine.png");
 	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);

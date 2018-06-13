@@ -11,7 +11,7 @@ Barrack::Barrack()
 	_timeToBuild = 15;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Building/Barrack.png");
+	Sprite* spr = Sprite::createWithSpriteFrameName("Barrack.png");
 	this->BindSprite(spr);
 }
 
@@ -28,7 +28,7 @@ Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_timeToBuild = 15;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Barrack_gray.png");
+	Sprite* spr = Sprite::createWithSpriteFrameName("Barrack.png");
 	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);

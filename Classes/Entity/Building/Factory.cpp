@@ -11,7 +11,7 @@ Factory::Factory()
 	_timeToBuild = 15;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Building/Factory.png");
+	Sprite* spr = Sprite::createWithSpriteFrameName("Factory.png");
 	this->BindSprite(spr);
 }
 
@@ -28,7 +28,7 @@ Factory::Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_timeToBuild = 15;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Factory_gray.png");
+	Sprite* spr = Sprite::createWithSpriteFrameName("Factory.png");
 	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);

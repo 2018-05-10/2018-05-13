@@ -11,7 +11,7 @@ Base::Base()
 	_timeToBuild = 10;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Building/Base.png");
+	Sprite* spr = Sprite::createWithSpriteFrameName("Base.png");
 	this->BindSprite(spr);
 }
 
@@ -29,7 +29,7 @@ Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 	_timeToBuild = 10;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Base_gray.png");
+	Sprite* spr = Sprite::createWithSpriteFrameName("Base.png");
 	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);
