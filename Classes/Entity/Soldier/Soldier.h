@@ -18,10 +18,6 @@ public:
 	int _numInTypeVec;         //在自己同类当中的序号
 	int GetMineralCost()const;
 
-	virtual cocos2d::Animate* AnimateDie();
-	virtual cocos2d::Animate* AnimateMove(Point target);
-	virtual cocos2d::Animate* AnimateAttack(Point target);
-
 	Point _targetPoint=Point(-1,-1);
 	std::deque<Point> _path;
 

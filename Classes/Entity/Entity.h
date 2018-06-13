@@ -25,7 +25,7 @@ public:
 private:
 	int _player;       //属于哪一方
 protected:
-	Sprite * _sprite;
+	Sprite * _sprite = NULL;
 	int _totalHP;
 	int _currentHP;
 	char* _whatAmI;     //类名

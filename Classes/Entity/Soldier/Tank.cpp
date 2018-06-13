@@ -15,8 +15,7 @@ Tank::Tank()
 
 	_toward = Point(1, 0);
 
-	Sprite* spr = Sprite::create("Tank.png");
-	spr->setScale(2.0);
+	Sprite* spr = Sprite::createWithSpriteFrameName("Tank_move_(1,0).png");
 	this->BindSprite(spr);
 } 
 
@@ -47,19 +46,19 @@ bool Tank::init()
 
 void Tank::UpdateSprite()
 {
-	Sprite* temp = Sprite::create(StringUtils::format("Tank_move_(%d,%d)", _toward.x, _toward.y));
-	Sprite* spr = this->GetSprite();
-	spr->setTexture(temp->getTexture());
-	spr->setTextureRect(temp->getTextureRect());
+	this->GetSprite()->removeFromParent();
+    Sprite* spr = Sprite::createWithSpriteFrameName(StringUtils::format("Tank_move_(%d,%d)", _toward.x, _toward.y));
+	this->BindSprite(spr);
 }
 
-cocos2d::Animate* Tank::AnimateDie()
+cocos2d::Animate* Tank::AnimateDie(SpriteFrameCache* frameCache)
 {
+
 	Vector<SpriteFrame*> frameVec;
 	SpriteFrame* frame;
 	for (int i = 1; i < 4; i++)
 	{
-		frame = SpriteFrame::create(StringUtils::format("Tank_die_(%d,%d)_%d.png", _toward.x, _toward.y, i), Rect(0, 0, 97, 97));
+		frame = frameCache->getSpriteFrameByName(StringUtils::format("Tank_die_(%d,%d)_%d.png", _toward.x, _toward.y, i));
 		frameVec.pushBack(frame);
 	}
 
@@ -72,7 +71,7 @@ cocos2d::Animate* Tank::AnimateDie()
 	return action;
 }
 
-cocos2d::Animate* Tank::AnimateMove(Point target)
+cocos2d::Animate* Tank::AnimateMove(Point target, SpriteFrameCache* frameCache)
 {
 	Point p = this->getPosition();
 	target.subtract(p);
@@ -122,7 +121,7 @@ cocos2d::Animate* Tank::AnimateMove(Point target)
 	SpriteFrame* frame;
 	for (int i = 1; i < 3; i++)
 	{
-		frame = SpriteFrame::create(StringUtils::format("Tank_move_(%d,%d).png", x, y, i), Rect(0, 0, 97, 97));
+		frame = frameCache->getSpriteFrameByName(StringUtils::format("Tank_move_(%d,%d).png", x, y, i));
 		frameVec.pushBack(frame);
 	}
 
@@ -135,7 +134,7 @@ cocos2d::Animate* Tank::AnimateMove(Point target)
 	return action;
 }
 
-cocos2d::Animate* Tank::AnimateAttack(Point target)
+cocos2d::Animate* Tank::AnimateAttack(Point target, SpriteFrameCache* frameCache)
 {
 	Point p = this->getPosition();
 	target.subtract(p);
@@ -185,7 +184,7 @@ cocos2d::Animate* Tank::AnimateAttack(Point target)
 	SpriteFrame* frame;
 	for (int i = 1; i < 3; i++)
 	{
-		frame = SpriteFrame::create(StringUtils::format("Tank_attack_(%d,%d)_%d.png", x, y, i), Rect(0, 0, 97, 97));
+		frame = frameCache->getSpriteFrameByName(StringUtils::format("Tank_attack_(%d,%d)_%d.png", x, y, i));
 		frameVec.pushBack(frame);
 	}
 

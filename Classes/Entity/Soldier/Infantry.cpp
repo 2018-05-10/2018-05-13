@@ -15,7 +15,7 @@ Infantry::Infantry()
 
 	_toward = Point(1, 0);
 
-	Sprite* spr = Sprite::create("Infantry.png");
+	Sprite* spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,0).png");
 	this->BindSprite(spr);
 }
 
@@ -31,6 +31,9 @@ Infantry::Infantry(Mineral *m, SoldierManager* p)
 
 	_toward = Point(1, 0);
 
+	Sprite* spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,0)_1.png");
+	this->BindSprite(spr);
+
 	_pSoldierManager = p;
 	m->Cost(_mineralCost);
 }
@@ -44,19 +47,19 @@ bool Infantry::init()
 
 void Infantry::UpdateSprite()
 {
-	Sprite* temp = Sprite::create(StringUtils::format("Infantry_stand_(%d,%d)", _toward.x, _toward.y));
-	Sprite* spr = this->GetSprite();
-	spr->setTexture(temp->getTexture());
-	spr->setTextureRect(temp->getTextureRect());
+	this->GetSprite()->removeFromParent();
+	Sprite* spr = Sprite::createWithSpriteFrameName(StringUtils::format("Infantry_stand_(%d,%d).png", _toward.x, _toward.y));
+	this->BindSprite(spr);
 }
 
-cocos2d::Animate* Infantry::AnimateDie()
+cocos2d::Animate* Infantry::AnimateDie(SpriteFrameCache* frameCache)
 {
+
 	Vector<SpriteFrame*> frameVec;
 	SpriteFrame* frame = NULL;
 	for (int i = 1; i < 3; i++)
 	{
-		frame = SpriteFrame::create(StringUtils::format("Infantry_die_(%d,%d)_%d.png", _toward.x, _toward.y, i), Rect(0, 0, 65, 65));
+		frame = frameCache->getSpriteFrameByName(StringUtils::format("Infantry_die_(%d,%d)_%d.png", _toward.x, _toward.y, i));
 		frameVec.pushBack(frame);
 	}
 
@@ -69,7 +72,7 @@ cocos2d::Animate* Infantry::AnimateDie()
 	return action;
 }
 
-cocos2d::Animate* Infantry::AnimateMove(Point target)
+cocos2d::Animate* Infantry::AnimateMove(Point target, SpriteFrameCache* frameCache)
 {
 	Point p = this->getPosition();
 	target.subtract(p);
@@ -119,7 +122,7 @@ cocos2d::Animate* Infantry::AnimateMove(Point target)
 	SpriteFrame* frame;
 	for (int i = 1; i < 3; i++)
 	{
-		frame = SpriteFrame::create(StringUtils::format("Infantry_move_(%d,%d)_%d.png", x, y, i), Rect(0, 0, 65, 65));
+		frame = frameCache->getSpriteFrameByName(StringUtils::format("Infantry_move_(%d,%d)_%d.png", x, y, i));
 		frameVec.pushBack(frame);
 	}
 
@@ -132,7 +135,7 @@ cocos2d::Animate* Infantry::AnimateMove(Point target)
 	return action;
 }
 
-cocos2d::Animate* Infantry::AnimateAttack(Point target)
+cocos2d::Animate* Infantry::AnimateAttack(Point target, SpriteFrameCache* frameCache)
 {
 	Point p = this->getPosition();
 	target.subtract(p);
@@ -178,11 +181,12 @@ cocos2d::Animate* Infantry::AnimateAttack(Point target)
 	_toward.x = x;
 	_toward.y = y;
 
+
 	Vector<SpriteFrame*> frameVec;
 	SpriteFrame* frame;
-	frame = SpriteFrame::create(StringUtils::format("Infantry_attack_(%d,%d).png", x, y), Rect(0, 0, 65, 65));
+	frame = frameCache->getSpriteFrameByName(StringUtils::format("Infantry_attack_(%d,%d).png", x, y));
 	frameVec.pushBack(frame);
-	frame = SpriteFrame::create(StringUtils::format("Infantry_stand_(%d,%d).png", x, y), Rect(0, 0, 65, 65));
+	frame = frameCache->getSpriteFrameByName(StringUtils::format("Infantry_stand_(%d,%d).png", x, y));
 	frameVec.pushBack(frame);
 
 	Animation* animation = Animation::createWithSpriteFrames(frameVec);

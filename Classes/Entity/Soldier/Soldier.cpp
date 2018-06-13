@@ -44,18 +44,3 @@ int Soldier::GetMineralCost()const
 {
 	return _mineralCost;
 }
-
-cocos2d::Animate* Soldier::AnimateDie()
-{
-
-}
-
-cocos2d::Animate* Soldier::AnimateMove(Point target)
-{
-
-}
-
-cocos2d::Animate* Soldier::AnimateAttack(Point target)
-{
-
-}

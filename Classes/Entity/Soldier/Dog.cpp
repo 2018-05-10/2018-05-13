@@ -15,7 +15,7 @@ Dog::Dog()
 
 	_toward = Point(1, 0);
 
-	Sprite* spr = Sprite::create("Dog.png");
+	Sprite* spr = Sprite::createWithSpriteFrameName("Dog_move_(1,0)_1.png");
 	this->BindSprite(spr);
 }
 
@@ -31,6 +31,9 @@ Dog::Dog(Mineral* m ,SoldierManager* p)
 
 	_toward = Point(1, 0);
 
+	Sprite* spr = Sprite::createWithSpriteFrameName("Dog_move_(1,0)_1.png");
+	this->BindSprite(spr);
+
 	_pSoldierManager = p;
 	m->Cost(_mineralCost);
 }
@@ -44,18 +47,18 @@ bool Dog::init()
 
 void Dog::UpdateSprite()
 {
-	Sprite* temp = Sprite::create(StringUtils::format("Dog_move_(%d,%d)_1", _toward.x, _toward.y));
-	Sprite* spr = this->GetSprite;
-	spr->setTexture(temp->getTexture());
-	spr->setTextureRect(temp->getTextureRect);
+	this->GetSprite()->removeFromParent();
+	Sprite* spr = Sprite::createWithSpriteFrameName(StringUtils::format("Dog_move_(%d,%d)_1.png",_toward.x,_toward.y));
+	this->BindSprite(spr);
 }
 
-cocos2d::Animate* Dog::AnimateDie()
+cocos2d::Animate* Dog::AnimateDie(SpriteFrameCache* frameCache)
 {
+	
 	Vector<SpriteFrame*> frameVec;
-	SpriteFrame* frame = SpriteFrame::create(StringUtils::format("Dog_move_(%d,%d)_2.png", _toward.x, _toward.y), Rect(0, 0, 65, 65));
+	SpriteFrame* frame = frameCache->getSpriteFrameByName(StringUtils::format("Dog_move_(%d,%d)_2.png", _toward.x, _toward.y));
 	frameVec.pushBack(frame);
-	frame = SpriteFrame::create(StringUtils::format("Dog_die_(%d,%d).png", _toward.x, _toward.y), Rect(0, 0, 65, 65));
+	frame = frameCache->getSpriteFrameByName(StringUtils::format("Dog_die_(%d,%d).png", _toward.x, _toward.y));
 	frameVec.pushBack(frame);
 
 	Animation* animation = Animation::createWithSpriteFrames(frameVec);
@@ -67,7 +70,7 @@ cocos2d::Animate* Dog::AnimateDie()
 	return action;
 }
 
-cocos2d::Animate* Dog::AnimateMove(Point target) 
+cocos2d::Animate* Dog::AnimateMove(Point target, SpriteFrameCache* frameCache)
 {
 	Point p = this->getPosition();
 	target.subtract(p);
@@ -113,11 +116,12 @@ cocos2d::Animate* Dog::AnimateMove(Point target)
 	_toward.x = x;
 	_toward.y = y;
 
+
 	Vector<SpriteFrame*> frameVec;
 	SpriteFrame* frame;
 	for (int i = 1; i < 3; i++)
 	{
-		frame = SpriteFrame::create(StringUtils::format("Dog_move_(%d,%d)_%d.png", x, y, i) , Rect(0, 0, 65, 65));
+		frame = frameCache->getSpriteFrameByName(StringUtils::format("Dog_move_(%d,%d)_%d.png", x, y, i));
 		frameVec.pushBack(frame);
 	}
 
@@ -130,7 +134,7 @@ cocos2d::Animate* Dog::AnimateMove(Point target)
 	return action;
 }
 
-cocos2d::Animate* Dog::AnimateAttack(Point target) 
+cocos2d::Animate* Dog::AnimateAttack(Point target, SpriteFrameCache* frameCache)
 {
 	Point p = this->getPosition();
 	target.subtract(p);
@@ -176,11 +180,12 @@ cocos2d::Animate* Dog::AnimateAttack(Point target)
 	_toward.x = x;
 	_toward.y = y;
 
+
 	Vector<SpriteFrame*> frameVec;
 	SpriteFrame* frame;
 	for (int i = 2; i > 0; i--)
 	{
-		frame = SpriteFrame::create(StringUtils::format("Dog_move_(%d,%d)_%d.png", x, y, i), Rect(0, 0, 65, 65));
+		frame = frameCache->getSpriteFrameByName(StringUtils::format("Dog_move_(%d,%d)_%d.png", x, y, i));
 		frameVec.pushBack(frame);
 	}
 

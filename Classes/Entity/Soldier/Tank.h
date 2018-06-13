@@ -14,9 +14,9 @@ public:
 
 	void UpdateSprite();
 
-	cocos2d::Animate* AnimateDie();
-	cocos2d::Animate* AnimateMove(Point target);
-	cocos2d::Animate* AnimateAttack(Point target);
+	cocos2d::Animate* AnimateDie(SpriteFrameCache* frameCache);
+	cocos2d::Animate* AnimateMove(Point target, SpriteFrameCache* frameCache);
+	cocos2d::Animate* AnimateAttack(Point target, SpriteFrameCache* frameCache);
 
 	CREATE_FUNC(Tank);
 private:
