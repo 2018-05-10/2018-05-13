@@ -49,10 +49,10 @@ int Building::GetBuildingID()
 
 void Building::BuildingUpdate(float dt)
 {
-	if (_buildingTimeUI != nullptr&&!_player)
+	if (_hpUI != nullptr&&!_player)
 	{
 		this->unscheduleUpdate();
-		auto timrBar = Helper::seekWidgetByName(_buildingTimeUI, "buildingTimeBar");
+		auto timrBar = Helper::seekWidgetByName(_hpUI, "buildingTimeBar");
 		timrBar->removeFromParent();
 	}
 	if (_player)
@@ -100,6 +100,6 @@ void Building::BuildingUpdate(float dt)
 
 void Building::update(float dt)
 {
-	auto timeBar = static_cast<LoadingBar*>(Helper::seekWidgetByName(_buildingTimeUI, "buildingTimeBar"));
+	auto timeBar = static_cast<LoadingBar*>(Helper::seekWidgetByName(_hpUI, "buildingTimeBar"));
 	timeBar->setPercent(timeBar->getPercent()+100.0f/(static_cast<float>(_timeToBuild)*60));
 }

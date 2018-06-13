@@ -45,31 +45,31 @@ void  MenuLayer::CreateContructionLayer()
 	menuLayer->setContentSize(Size(480, 900));
 	auto contentSize = menuLayer->getContentSize();
 
-	auto base =Sprite::create("Building/Base.png");
+	auto base = Sprite::createWithSpriteFrameName("Base.png");
 	base->setPosition(Point(contentSize.width / 2, contentSize.height  *3/8));
 	base->setContentSize(Size(0.6*base->getContentSize().width, 0.6*base->getContentSize().height));
 	menuLayer->addChild(base);
 	_buildings.push_back(base);
 	
-	auto barrack= Sprite::create("Building/Barrack.png");
+	auto barrack= Sprite::createWithSpriteFrameName("Barrack.png");
 	barrack->setPosition(contentSize.width *3/4, contentSize.height  /2);
 	barrack->setContentSize(Size(0.6*barrack->getContentSize().width, 0.6*barrack->getContentSize().height));
 	menuLayer->addChild(barrack);
 	_buildings.push_back(barrack);
 
-	auto mine = Sprite::create("Building/Mine.png");
+	auto mine = Sprite::createWithSpriteFrameName("Mine.png");
 	mine->setPosition(contentSize.width * 1 / 4, contentSize.height /4);
 	mine->setContentSize(Size(0.6*mine->getContentSize().width, 0.6*mine->getContentSize().height));
 	menuLayer->addChild(mine);
 	_buildings.push_back(mine);
 
-	auto powerStation = Sprite::create("Building/powerStation.png");
+	auto powerStation = Sprite::createWithSpriteFrameName("PowerStation.png");
 	powerStation->setPosition(contentSize.width * 3 / 4, contentSize.height / 4);
 	powerStation->setContentSize(Size(0.6*powerStation->getContentSize().width, 0.6*powerStation->getContentSize().height));
 	menuLayer->addChild(powerStation);
 	_buildings.push_back(powerStation);
 
-	auto factory = Sprite::create("Building/Factory.png");
+	auto factory = Sprite::createWithSpriteFrameName("Factory.png");
 	factory->setPosition(contentSize.width / 4, contentSize.height / 2);
 	factory->setContentSize(Size(0.6*factory->getContentSize().width, 0.6*factory->getContentSize().height));
 	menuLayer->addChild(factory);
@@ -91,6 +91,37 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 	auto soldier = Button::create("soldier.png");
 	soldier->setScale(0.5);
 	soldier->setPosition(Size(contentSize.width / 4, contentSize.height / 2));
+
+	soldier->addTouchEventListener([&, buildingID](Ref*, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::BEGAN:
+			break;
+		case Widget::TouchEventType::MOVED:
+			break;
+		case Widget::TouchEventType::ENDED:
+
+			if (GetSoldierManager()->CheckSoldierResource("Infantry"))
+			{
+				Building* building = static_cast<Building*>(GetMap()->getChildByTag(buildingID));
+				auto pos = building->getPosition();
+				auto tilePos = GetMapManager()->ChangeToTiledPos(pos);
+				auto infantry = GetSoldierManager()->CreateSoldier("Infantry", 0);
+				GetMap()->addChild(infantry, 150);
+				auto landPos = GetMapManager()->BFS(pos);
+				infantry->setPosition(landPos);
+				infantry->schedule(schedule_selector(Soldier::SearchEnemyUpdate), infantry->GetAttackInterval());
+				GetSoldierManager()->SetSoldierController(infantry);
+				GetMapManager()->SetSoldier(landPos);
+				break;
+			}
+			else
+			{
+				log("not enough mineral");
+			}
+		}
+	});
 	
 	menuLayer->addChild(soldier);
 	_layer->addChild(menuLayer,1,1);
@@ -105,7 +136,7 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 	auto contentSize = menuLayer->getContentSize();
 
 	auto tank = Button::create("tankpicture.png");
-	tank->setScale(3.0);
+	tank->setScale(0.5);
 	tank->setPosition(Size(contentSize.width / 4, contentSize.height / 2));
 
 
@@ -128,7 +159,7 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 				GetMap()->addChild(tank1, 150);
 				auto landPos = GetMapManager()->BFS(pos);
 				tank1->setPosition(landPos);
-				tank1->schedule(schedule_selector(Soldier::SearchEnemyUpdate), 0.5f);
+				tank1->schedule(schedule_selector(Soldier::SearchEnemyUpdate), tank1->GetAttackInterval());
 				GetSoldierManager()->SetSoldierController(tank1);
 				GetMapManager()->SetSoldier(landPos);
 				break;
@@ -173,7 +204,7 @@ void MenuLayer::SetBaseConstructionController()
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
-			_target = Sprite::create("Building/Base.png");
+			_target = Sprite::createWithSpriteFrameName("Base.png");
 			_target->setOpacity(100);
 			GetMap()->addChild(_target, 1);
 			auto worldPos = Point(_buildings[0]->getPosition().x + visibleSize.width*0.7, _buildings[0]->getPosition().y)-GetMap()->getPosition();
@@ -203,7 +234,7 @@ void MenuLayer::SetBaseConstructionController()
 		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(), 0) && GetBuildingManager()->BuildingResourceCheck(0))
 	{
 		_target->removeFromParent();
-		auto building = GetBuildingManager()->CreateBuilding("Base",0);
+		auto building = GetBuildingManager()->CreateBuilding("Base");
 		auto setPos =GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 		log("%f %f", setPos.x, setPos.y);
 		GetMap()->addChild(building, 1, building->GetBuildingID());
@@ -237,7 +268,7 @@ void MenuLayer::SetBarrackConstructionController()
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
 			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target = Sprite::create("Building/Barrack.png");
+			_target = Sprite::createWithSpriteFrameName("Barrack.png");
 			_target->setOpacity(100);
 			GetMap()->addChild(_target, 1);
 			auto worldPos = Point(_buildings[1]->getPosition().x + visibleSize.width*0.7, _buildings[1]->getPosition().y)-GetMap()->getPosition();
@@ -269,7 +300,7 @@ void MenuLayer::SetBarrackConstructionController()
 		{
 
 			_target->removeFromParent();
-			auto building = GetBuildingManager()->CreateBuilding("Barrack",0);
+			auto building = GetBuildingManager()->CreateBuilding("Barrack");
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			log("%f %f", setPos.x, setPos.y);
 			GetMap()->addChild(building, 2, building->GetBuildingID());
@@ -305,7 +336,7 @@ void MenuLayer::SetMineConstructionController()
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
 			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target = Sprite::create("Building/Mine.png");
+			_target = Sprite::createWithSpriteFrameName("Mine.png");
 			_target->setOpacity(100);
 			GetMap()->addChild(_target, 3);
 			auto worldPos = Point(_buildings[2]->getPosition().x + visibleSize.width*0.7, _buildings[2]->getPosition().y)
@@ -338,7 +369,7 @@ void MenuLayer::SetMineConstructionController()
 		{
 
 			_target->removeFromParent();
-			auto building = GetBuildingManager()->CreateBuilding("Mine",0);
+			auto building = GetBuildingManager()->CreateBuilding("Mine");
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			log("%f %f", setPos.x, setPos.y);
 			GetMap()->addChild(building,3, building->GetBuildingID());
@@ -373,7 +404,7 @@ void MenuLayer::SetPowerStationController()
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
 			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target =Sprite::create("Building/PowerStation.png");
+			_target =Sprite::createWithSpriteFrameName("PowerStation.png");
 			
 			_target->setOpacity(100);
 			GetMap()->addChild(_target, 4);
@@ -407,7 +438,7 @@ void MenuLayer::SetPowerStationController()
 		{
 
 			_target->removeFromParent();
-			auto building = GetBuildingManager()->CreateBuilding("PowerStation",0);
+			auto building = GetBuildingManager()->CreateBuilding("PowerStation");
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			log("%f %f", setPos.x, setPos.y);
 			GetMap()->addChild(building, 4, building->GetBuildingID());
@@ -442,7 +473,7 @@ void MenuLayer::SetFactoryController()
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
 			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target = Sprite::create("Building/Factory.png");
+			_target = Sprite::createWithSpriteFrameName("Factory.png");
 			_target->setOpacity(100);
 			GetMap()->addChild(_target, 5);
 			auto worldPos = Point(_buildings[4]->getPosition().x + visibleSize.width*0.7, _buildings[4]->getPosition().y)-GetMap()->getPosition();
@@ -474,7 +505,7 @@ void MenuLayer::SetFactoryController()
 		{
 
 			_target->removeFromParent();
-			auto building = GetBuildingManager()->CreateBuilding("Factory",0);
+			auto building = GetBuildingManager()->CreateBuilding("Factory");
 			auto setPos = GetMapManager()->ChangeToTiledPos(originPos - GetMap()->getPosition());
 			log("%f %f", setPos.x, setPos.y);
 			GetMap()->addChild(building, 5,building->GetBuildingID());

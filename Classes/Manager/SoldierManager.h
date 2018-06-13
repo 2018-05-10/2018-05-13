@@ -33,7 +33,7 @@ public:
 	void Move(Soldier*);
 
 	//======存储被选中士兵的vector
-	static cocos2d::Vector<Soldier*> _beChoosed;
+	static std::vector<Soldier*> _beChoosed;
 
 	cocos2d::TMXTiledMap* GetMap();
 	BuildingManager* GetBuildingManager();
@@ -46,24 +46,25 @@ private:
 	
 	cocos2d::Point _getTouchBeganPos;
 	cocos2d::Point _getTouchEndedPos;
-	static  cocos2d::Vector<Soldier*> _enemySoldierVec;
+	static  std::vector<Soldier*> _enemySoldierVec;
 
 	cocos2d::Sprite* _selectBox;
 	
 
 	//===========by lym===============
 private:
-	static cocos2d::Vector<Soldier*> _soldierVec;
-	static cocos2d::Vector<Soldier*> _dogVec;
-	static cocos2d::Vector<Soldier*> _infantryVec;
-	static cocos2d::Vector<Soldier*> _tankVec;
-	static cocos2d::Vector<Soldier*> _enemySoldier;
+	static std::vector<Soldier*> _soldierVec;
+	static std::vector<Soldier*> _dogVec;
+	static std::vector<Soldier*> _infantryVec;
+	static std::vector<Soldier*> _tankVec;
+	static std::vector<Soldier*> _enemySoldier;
 	Mineral* _pMineral;
 	int _player;
 
 	BuildingManager* _pPairManager;
 public:
 	Soldier *CreateSoldier(char* SoldierTypeName,int player);
+	Soldier *CreateEnemySoldier(char* SoldierTypeName, int player);
 
 	void BindMineral(Mineral* m);
 	void DestroySoldier(Soldier* S);

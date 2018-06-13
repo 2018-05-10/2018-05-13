@@ -11,9 +11,6 @@ Dog::Dog()
 	_mineralCost = 10;
 	_attackInterval = 0.8;
 
-
-	Sprite* spr = Sprite::create("Dog.png");
-	this->BindSprite(spr);
 }
 
 Dog::Dog(Mineral* m ,SoldierManager* p,int player)

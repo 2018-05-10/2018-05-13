@@ -12,8 +12,6 @@ PowerStation::PowerStation()
 	_player = 1;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Building/PowerStation.png");
-	this->BindSprite(spr);
 }
 
 PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player)

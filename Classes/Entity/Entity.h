@@ -1,5 +1,7 @@
 #pragma once
 #include "cocos2d.h"
+#include"ui/CocosGUI.h"
+#include"cocostudio/CocoStudio.h"
 USING_NS_CC;
 
 //Entities
@@ -30,4 +32,5 @@ protected:
 	int _currentHP;
 	char* _whatAmI;     //类名
 	int _player;       //属于哪一方
+	cocos2d::ui::Widget* _hpUI;
 };

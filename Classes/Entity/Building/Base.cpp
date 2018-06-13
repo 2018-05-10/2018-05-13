@@ -13,9 +13,6 @@ Base::Base(BuildingManager* pManagerItBelongsTo)
 	_pManager = pManagerItBelongsTo;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Building/Base.png");
-	this->BindSprite(spr);
-	this->autorelease();
 }
 
 Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo,int player)

@@ -53,7 +53,7 @@ void SoldierManager::SetSelectBoxController()
 			if ((pos.x - _getTouchBeganPos.x)*(pos.x - _getTouchEndedPos.x) < 0
 				&& (pos.y - _getTouchBeganPos.y)*(pos.y - _getTouchEndedPos.y) < 0)
 			{
-				_beChoosed.pushBack(soldier);
+				_beChoosed.push_back(soldier);
 				soldier->GetSprite()->setColor(Color3B::GREEN);
 			}
 		}
@@ -78,7 +78,7 @@ void SoldierManager::SetSoldierController(Soldier* soldier)
 		if (target1->getBoundingBox().containsPoint(pos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
 		{
 			_beChoosed.clear();
-			_beChoosed.pushBack(target1);
+			_beChoosed.push_back(target1);
 			target1->GetSprite()->setColor(Color3B::GREEN);
 			return true;
 		}
@@ -95,25 +95,25 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
 	if (SoldierNameType == "Dog")
 	{
 		S = new Dog(_pMineral, this,player);
-		_dogVec.pushBack(S);
+		_dogVec.push_back(S);
 		S->_numInTypeVec = _dogVec.size() - 1;
-		spr = Sprite::create("Dog.png");
+		spr = Sprite::createWithSpriteFrameName("Dog_move_(1,0).png");
 		S->BindSprite(spr);
 	}
 	else if (SoldierNameType == "Infantry")
 	{
 		S = new Infantry(_pMineral, this,player);
-		_infantryVec.pushBack(S);
+		_infantryVec.push_back(S);
 		S->_numInTypeVec = _infantryVec.size() - 1;
-		spr = Sprite::create("Infantry.png");
+		spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,0).png");
 		S->BindSprite(spr);
 	}
 	else if (SoldierNameType == "Tank")
 	{
 		S = new Tank(_pMineral, this,player);
-		_tankVec.pushBack(S);
+		_tankVec.push_back(S);
 		S->_numInTypeVec = _tankVec.size() - 1;
-		spr = Sprite::create("Tank.png");
+		spr = Sprite::createWithSpriteFrameName("Tank_move_(1,0).png");
 		S->BindSprite(spr);
 	}
 	else
@@ -123,7 +123,7 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
 
 	if (!player)
 	{
-		_soldierVec.pushBack(S);
+		_soldierVec.push_back(S);
 		S->_numInVec = _soldierVec.size() - 1;
 	}
 	return S;
@@ -220,6 +220,10 @@ bool SoldierManager::CheckSoldierResource(char* type)
 	{
 		mineralCost = 50;
 	}
+	else if (type == "Infantry")
+	{
+		mineralCost = 20;
+	}
 	if (GetMineral()->GetCurrentVal() -mineralCost >= 0)
 	{
 		return true;
@@ -300,6 +304,7 @@ bool SoldierManager::CheckPos(Point point)
 
 void SoldierManager::Move(Soldier* soldier)
 {
+	soldier->GetSprite()->stopAllActions();
 	if (soldier != nullptr)
 	{
 
@@ -327,21 +332,21 @@ void SoldierManager::Move(Soldier* soldier)
 		auto nextPos =GetMapManager()->ChangeToCocosPos(soldier->_path.front());
 
 		auto moveTo = MoveTo::create(1.0f/static_cast<float>(soldier->GetSpeed()), nextPos);
-
 		auto func = [&,soldier]()
 		{
 			Move(soldier);
 		};
 		auto callFunc = CallFunc::create(func);
+		soldier->GetSprite()->runAction(soldier->AnimateMove(nextPos));
 		auto actions = Sequence::create(moveTo, callFunc,NULL);
 		soldier->runAction(actions);
 
 	}
 }
 
-Vector<Soldier*> SoldierManager::_enemySoldierVec;
-Vector<Soldier*> SoldierManager::_soldierVec;
-Vector<Soldier*> SoldierManager::_infantryVec;
-Vector<Soldier*> SoldierManager::_tankVec;
-Vector<Soldier*> SoldierManager::_dogVec;
-Vector<Soldier*> SoldierManager::_beChoosed;
+std::vector<Soldier*> SoldierManager::_enemySoldierVec;
+std::vector<Soldier*> SoldierManager::_soldierVec;
+std::vector<Soldier*> SoldierManager::_infantryVec;
+std::vector<Soldier*> SoldierManager::_tankVec;
+std::vector<Soldier*> SoldierManager::_dogVec;
+std::vector<Soldier*> SoldierManager::_beChoosed;

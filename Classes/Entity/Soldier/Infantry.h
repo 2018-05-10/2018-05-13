@@ -13,6 +13,12 @@ public:
 	~Infantry();
 	bool init();
 
+	void UpdateSprite();
+
+	cocos2d::Animate* AnimateDie();
+	cocos2d::Animate* AnimateMove(Point target);
+	cocos2d::Animate* AnimateAttack(Point target);
+
 	CREATE_FUNC(Infantry);
 private:
 

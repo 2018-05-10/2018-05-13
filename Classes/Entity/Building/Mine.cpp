@@ -12,8 +12,6 @@ Mine::Mine()
 	_player = 1;
 	++buildingsID;
 
-	Sprite* spr = Sprite::create("Building/Mine.png");
-	this->BindSprite(spr);
 }
 
 Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo,int player)

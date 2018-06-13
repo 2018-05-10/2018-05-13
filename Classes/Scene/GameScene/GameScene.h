@@ -44,6 +44,8 @@ public:
 	Mineral* GetMineral();
 	Power* GetPower();
 
+	static cocos2d::SpriteFrameCache* _frameCache;
+
 private:
 	
 	cocos2d::TMXTiledMap* _map;

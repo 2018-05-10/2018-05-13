@@ -46,7 +46,7 @@ void BuildingManager::SetBarrackController(Building* building)
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		auto target1 = static_cast<Building*>(event->getCurrentTarget());
-		if (target1->getBoundingBox().containsPoint(pos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
+		if (target1->getBoundingBox().containsPoint(pos - GetMap()->getPosition()))
 		{
 			if (!building->IsWorking())
 			{
@@ -113,44 +113,44 @@ void BuildingManager::SetFactoryController(Building* building)
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, building);
 }
 
-Building* BuildingManager::CreateBuilding(char* BuildingTypeName,int player)
+Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 {
 	Building* B = NULL;
 	Sprite* spr = NULL;
 	if (BuildingTypeName == "Base")
 	{
-		B = new Base(_pPower, _pMineral, this,player);
-		spr = Sprite::create("Building/Base.png");
+		B = new Base(_pPower, _pMineral, this,0);
+		spr = Sprite::createWithSpriteFrameName("Base.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 
 	}
 	else if (BuildingTypeName == "Barrack")
 	{
-		B = new Barrack(_pPower, _pMineral, this, player);
-		spr = Sprite::create("Building/Barrack.png");
+		B = new Barrack(_pPower, _pMineral, this, 0);
+		spr = Sprite::createWithSpriteFrameName("Barrack.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	}
 	else if (BuildingTypeName == "Mine")
 	{
-		B = new Mine(_pPower, _pMineral, this, player);
-		spr = Sprite::create("Building/Mine.png");
+		B = new Mine(_pPower, _pMineral, this,0);
+		spr = Sprite::createWithSpriteFrameName("Mine.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 
 	}
 	else if (BuildingTypeName == "PowerStation")
 	{
-		B = new PowerStation(_pPower, _pMineral, this, player);
-		spr = Sprite::create( "Building/PowerStation.png");
+		B = new PowerStation(_pPower, _pMineral, this,0);
+		spr = Sprite::createWithSpriteFrameName( "PowerStation.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	}
 	else if (BuildingTypeName == "Factory")
 	{
-		B = new Factory(_pPower, _pMineral, this, player);
-		spr = Sprite::create("Building/Factory.png");
+		B = new Factory(_pPower, _pMineral, this, 0);
+		spr = Sprite::createWithSpriteFrameName("Factory.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	
@@ -159,8 +159,8 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName,int player)
 	{
 		return NULL;
 	}
-	B->_buildingTimeUI = GUIReader::getInstance()->widgetFromJsonFile("UI/NewUi_1.ExportJson");
-	B->addChild(B->_buildingTimeUI);
+	B->_hpUI = GUIReader::getInstance()->widgetFromJsonFile("UI/NewUi_1.ExportJson");
+	B->addChild(B->_hpUI);
 	B->scheduleUpdate();
 	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	_buildingVec.push_back(B);
@@ -299,14 +299,14 @@ void BuildingManager::DestroyBuilding(Building* B)
     B->removeFromParent();
 }
 
-Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName, int player)
+Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
 {
 	Building* B = NULL;
 	Sprite* spr = NULL;
 	if (BuildingTypeName == "Base")
 	{
 		B = new Base(this);
-		spr = Sprite::create("Building/Base.png");
+		spr = Sprite::createWithSpriteFrameName("Base.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 
@@ -314,14 +314,14 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName, int playe
 	else if (BuildingTypeName == "Barrack")
 	{
 		B = new Barrack();
-		spr = Sprite::create("Building/Barrack.png");
+		spr = Sprite::createWithSpriteFrameName("Barrack.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	}
 	else if (BuildingTypeName == "Mine")
 	{
 		B = new Mine();
-		spr = Sprite::create("Building/Mine.png");
+		spr = Sprite::createWithSpriteFrameName("Mine.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 
@@ -329,14 +329,14 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName, int playe
 	else if (BuildingTypeName == "PowerStation")
 	{
 		B = new PowerStation();
-		spr = Sprite::create("Building/PowerStation.png");
+		spr = Sprite::createWithSpriteFrameName("PowerStation.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	}
 	else if (BuildingTypeName == "Factory")
 	{
 		B = new Factory();
-		spr = Sprite::create("Building/Factory.png");
+		spr = Sprite::createWithSpriteFrameName("Factory.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 
@@ -345,6 +345,8 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName, int playe
 	{
 		return NULL;
 	}
+	B->_hpUI = GUIReader::getInstance()->widgetFromJsonFile("UI/EnemyUi_1.ExportJson");
+	B->addChild(B->_hpUI);
 	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	_enemyBuildingVec.push_back(B);
 	B->_numInVec = _enemyBuildingVec.size() - 1;
