@@ -2,7 +2,7 @@
 #include"Resource/Mineral.h"
 #include"Scene/GameScene/GameScene.h"
 #include"Manager/MapManager.h"
-Infantry::Infantry()
+Infantry::Infantry(int player)
 {
 	_whatAmI = "Infantry";
 	_totalHP = 150;
@@ -11,11 +11,12 @@ Infantry::Infantry()
 	_speed = 1;
 	_mineralCost = 20;
 	_attackInterval = 0.3;
-
+	_attackDistance = 49;
+	_player = player;
 
 }
 
-Infantry::Infantry(Mineral *m, SoldierManager* p,int player)
+Infantry::Infantry(Mineral *m,int player)
 {
 	_whatAmI = "Infantry";
 	_totalHP = 150;
@@ -24,10 +25,9 @@ Infantry::Infantry(Mineral *m, SoldierManager* p,int player)
 	_speed = 1;
 	_mineralCost = 20;
 	_attackInterval = 0.3;
-	_attackDistance = 64;
+	_attackDistance = 49;
 	_player = player;
 
-	_pSoldierManager = p;
 	m->Cost(_mineralCost);
 }
 
@@ -61,8 +61,7 @@ cocos2d::Animate* Infantry::AnimateDie()
 cocos2d::Animate* Infantry::AnimateMove(Point target)
 {
 
-	target = static_cast<GameScene*>(this->getParent()->getParent())->GetMapManager()->ChangeToTiledPos(target);
-	Point p = static_cast<GameScene*>(this->getParent()->getParent())->GetMapManager()->ChangeToTiledPos(this->getPosition());
+	Point p =this->getPosition();
 	target.subtract(p);
 	int x = 0; int y = 0;
 	float angle = target.getAngle();
@@ -125,8 +124,7 @@ cocos2d::Animate* Infantry::AnimateMove(Point target)
 
 cocos2d::Animate* Infantry::AnimateAttack(Point target)
 {
-	target = static_cast<GameScene*>(this->getParent()->getParent())->GetMapManager()->ChangeToTiledPos(target);
-	Point p = static_cast<GameScene*>(this->getParent()->getParent())->GetMapManager()->ChangeToTiledPos(this->getPosition());
+	Point p = this->getPosition();
 	target.subtract(p);
 	int x = 0; int y = 0;
 	float angle = target.getAngle();

@@ -14,11 +14,11 @@ Mine::Mine()
 
 }
 
-Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
+Mine::Mine(Power* p,Mineral* m,int player)
 {
 	_whatAmI = "Mine";
 	_pPower = p;
-	_pManager = pManagerItBelongsTo;
+
 
 	_totalHP = 2000;
 	_currentHP = 2000;
@@ -36,7 +36,10 @@ Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
 
 Mine::~Mine() 
 {
-	_pPower->Free(_powerCost);
+	if (!_player)
+	{
+		_pPower->Free(_powerCost);
+	}
 }
 
 int Mine::GetMineralCost()

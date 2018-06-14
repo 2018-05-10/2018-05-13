@@ -25,41 +25,37 @@ public:
 	CREATE_FUNC(GameScene);
 
 	//======获取地图========
-	cocos2d::TMXTiledMap* GetMap();
+	static cocos2d::TMXTiledMap* GetMap();
 
 	//======获取建筑管理器========
-	BuildingManager* GetBuildingManager()const;
-	BuildingManager* GetEnemyBuildingManager()const;
+	static BuildingManager* GetBuildingManager();
 
 	//=========获取士兵管理器======
-	SoldierManager* GetSoldierManager()const;
+	static SoldierManager* GetSoldierManager();
 
 	//=========获取游戏内的菜单======
-	MenuLayer* GetMenuLayer()const;
+	static MenuLayer* GetMenuLayer();
 
 	//========获取地图管理器========
-	MapManager* GetMapManager()const;
+	static MapManager* GetMapManager();
 
 	//===========获取资源类=======
-	Mineral* GetMineral();
-	Power* GetPower();
+	static Mineral* GetMineral();
+	static Power* GetPower();
 
 	static cocos2d::SpriteFrameCache* _frameCache;
 
 private:
 	
-	cocos2d::TMXTiledMap* _map;
-	MapManager* _mapManager;
-	MenuLayer* _menuLayer;
-	BuildingManager* _buildingManager;
-	BuildingManager* _enemyBuildingManager;
-	SoldierManager* _soldierManager;
+	static cocos2d::TMXTiledMap* _map;
+	static MapManager* _mapManager;
+	static MenuLayer* _menuLayer;
+	static BuildingManager* _buildingManager;
+	static SoldierManager* _soldierManager;
 
-	Mineral* _mineral;
-	Power* _power;
-	Mineral* _enemyMineral;
-	Power* _enemyPower;
+	static Mineral* _mineral;
+	static Power* _power;
 
-	ResourceManager* _resourceManager;
+	static ResourceManager* _resourceManager;
 	
 };

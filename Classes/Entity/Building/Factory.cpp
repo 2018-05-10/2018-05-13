@@ -18,11 +18,11 @@ Factory::Factory()
 	
 }
 
-Factory::Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
+Factory::Factory(Power* p, Mineral* m,int player)
 {
 	_whatAmI = "Factory";
 	_pPower = p;
-	_pManager = pManagerItBelongsTo;
+
 
 	_totalHP = 2000;
 	_currentHP = 2000;
@@ -40,7 +40,10 @@ Factory::Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int 
 
 Factory::~Factory()
 {
-	/*_pPower->Free(_powerCost);*/
+	if (!_player)
+	{
+		_pPower->Free(_powerCost);
+	}
 }
 
 bool Factory::init()

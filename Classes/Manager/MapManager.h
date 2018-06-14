@@ -24,8 +24,8 @@ public:
 	void ControllerUpdate(float dt);
 
 	//==========tiledmap坐标与cocos坐标互相转换============
-	cocos2d::Vec2 ChangeToTiledPos(cocos2d::Point);
-	cocos2d::Vec2 ChangeToCocosPos(cocos2d::Vec2);
+	static cocos2d::Vec2 ChangeToTiledPos(cocos2d::Point);
+	static cocos2d::Vec2 ChangeToCocosPos(cocos2d::Vec2);
 
 	//========对建筑建造位置的检查==========
 	bool BuildingPositionCheck(cocos2d::Point,int);
@@ -54,8 +54,8 @@ public:
 	Power* GetPower();
 
 	//用于存储信息
-	std::vector<std::vector<int>> _mapVec;
-	std::vector<std::vector<int>>_objectVec;
+	static std::vector<std::vector<int>> _mapVec;
+	static std::vector<std::vector<int>>_objectVec;
 
 private:
 

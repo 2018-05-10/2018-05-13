@@ -7,7 +7,7 @@ class Mine :public Building
 {
 public:
 	Mine();
-	Mine(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player);
+	Mine(Power* p, Mineral* m,int player);
 	~Mine();
 	int GetMineralCost();
 	int GetPowerCost();

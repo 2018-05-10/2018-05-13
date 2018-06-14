@@ -7,8 +7,8 @@ class Mineral;
 class Tank :public Soldier
 {
 public:
-	Tank();
-	Tank(Mineral* m, SoldierManager* p,int player);
+	Tank(int player);
+	Tank(Mineral* m,int player);
 	~Tank();
 	bool init();
 
@@ -18,7 +18,7 @@ public:
 	virtual cocos2d::Animate* AnimateMove(Point target);
 	virtual cocos2d::Animate* AnimateAttack(Point target);
 
-	CREATE_FUNC(Tank);
+
 private:
 
 };

@@ -7,7 +7,7 @@ class Barrack :public Building
 {
 public:
 	Barrack();
-	Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player);       //传入的三个变量分别是为了修改相应的电力，矿产，以及确定该对象在哪个管理类的管理之下
+	Barrack(Power* p, Mineral* m,int player);       //传入的三个变量分别是为了修改相应的电力，矿产，以及确定该对象在哪个管理类的管理之下
 	~Barrack();
 	bool init();
 	int GetPowerCost();     //所消耗的电力

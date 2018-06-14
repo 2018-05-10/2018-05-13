@@ -8,8 +8,8 @@ class SoldierManager;
 class Infantry :public Soldier
 {
 public:
-	Infantry();
-	Infantry(Mineral *m, SoldierManager* p,int player);
+	Infantry(int player);
+	Infantry(Mineral *m, int player);
 	~Infantry();
 	bool init();
 
@@ -19,7 +19,6 @@ public:
 	cocos2d::Animate* AnimateMove(Point target);
 	cocos2d::Animate* AnimateAttack(Point target);
 
-	CREATE_FUNC(Infantry);
 private:
 
 };

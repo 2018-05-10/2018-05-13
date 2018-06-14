@@ -119,7 +119,7 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 	Sprite* spr = NULL;
 	if (BuildingTypeName == "Base")
 	{
-		B = new Base(_pPower, _pMineral, this,0);
+		B = new Base(_pPower, _pMineral,0);
 		spr = Sprite::createWithSpriteFrameName("Base.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
@@ -127,14 +127,14 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 	}
 	else if (BuildingTypeName == "Barrack")
 	{
-		B = new Barrack(_pPower, _pMineral, this, 0);
+		B = new Barrack(_pPower, _pMineral, 0);
 		spr = Sprite::createWithSpriteFrameName("Barrack.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	}
 	else if (BuildingTypeName == "Mine")
 	{
-		B = new Mine(_pPower, _pMineral, this,0);
+		B = new Mine(_pPower, _pMineral,0);
 		spr = Sprite::createWithSpriteFrameName("Mine.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
@@ -142,14 +142,14 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 	}
 	else if (BuildingTypeName == "PowerStation")
 	{
-		B = new PowerStation(_pPower, _pMineral, this,0);
+		B = new PowerStation(_pPower, _pMineral,0);
 		spr = Sprite::createWithSpriteFrameName( "PowerStation.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	}
 	else if (BuildingTypeName == "Factory")
 	{
-		B = new Factory(_pPower, _pMineral, this, 0);
+		B = new Factory(_pPower, _pMineral, 0);
 		spr = Sprite::createWithSpriteFrameName("Factory.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
@@ -199,27 +199,27 @@ void BuildingManager::UpdateMineralPerSecond()
 
 TMXTiledMap* BuildingManager::GetMap()
 {
-	return 	static_cast<GameScene*>(this->getParent())->GetMap();
+	return 	GameScene::GetMap();
 }
 SoldierManager*  BuildingManager::GetSoldierManager()
 {
-	return  static_cast<GameScene*>(this->getParent())->GetSoldierManager();
+	return  	GameScene::GetSoldierManager();
 }
 MapManager* BuildingManager::GetMapManager()
 {
-	return static_cast<GameScene*>(this->getParent())->GetMapManager();
+	return 	GameScene::GetMapManager();
 }
 Mineral* BuildingManager::GetMineral()
 {
-	return  static_cast<GameScene*>(this->getParent())->GetMineral();
+	return  	GameScene::GetMineral();
 }
 Power* BuildingManager::GetPower()
 {
-	return  static_cast<GameScene*>(this->getParent())->GetPower();
+	return  	GameScene::GetPower();
 }
 MenuLayer* BuildingManager::GetMenuLayer()
 {
-	return  static_cast<GameScene*>(this->getParent())->GetMenuLayer();
+	return 	GameScene::GetMenuLayer();
 }
 
 int BuildingManager::GetMineralPerSecond()const
@@ -305,7 +305,7 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
 	Sprite* spr = NULL;
 	if (BuildingTypeName == "Base")
 	{
-		B = new Base(this);
+		B = new Base();
 		spr = Sprite::createWithSpriteFrameName("Base.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
@@ -356,3 +356,5 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
 std::vector<Building*> BuildingManager::_buildingVec;
 std::vector<Building*> BuildingManager::_enemyBuildingVec;
 int BuildingManager::_mineralPerSecond = 0;
+Power* BuildingManager::_pPower;
+Mineral* BuildingManager::_pMineral;

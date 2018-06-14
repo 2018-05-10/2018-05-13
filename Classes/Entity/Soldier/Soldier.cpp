@@ -2,6 +2,7 @@
 #include"Manager/SoldierManager.h"
 #include"Scene/GameScene/GameScene.h"
 #include"Manager/BuildingManager.h"
+#include"Manager/SoldierManager.h"
 #include"Manager/MapManager.h"
 
 Soldier::Soldier() {}
@@ -26,8 +27,6 @@ void Soldier::Attack(Entity* target)
 		{
 			UpdateSprite();
 		};
-		auto callFunc = CallFunc::create(func);
-		auto action = Sequence::create(AnimateAttack(this->getPosition()), callFunc,NULL);
 		this->GetSprite()->runAction(AnimateAttack(this->getPosition()));
 
 		target->Hit(_attack);
@@ -50,7 +49,7 @@ bool Soldier::init()
 
 void Soldier::Die()     
 {
-	_pSoldierManager->DestroySoldier(this);
+	GameScene::GetSoldierManager()->DestroySoldier(this);
 }
 
 int Soldier::GetMineralCost()const
@@ -68,13 +67,27 @@ void Soldier::SearchEnemyUpdate(float dt)
 
 	int leastDir =1000000;
 	Entity* target=nullptr;
-	for (auto building : static_cast<GameScene*>(this->getParent()->getParent())->GetBuildingManager()->_enemyBuildingVec)
+	for (auto soldier : SoldierManager::_enemySoldier)
+	{
+		if (soldier != nullptr)
+		{
+			auto targetPos = MapManager::ChangeToTiledPos(soldier->getPosition());
+			auto soldierPos = MapManager::ChangeToTiledPos(this->getPosition());
+			Point deltaPos = targetPos - soldierPos;
+			if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) <leastDir)
+			{
+				target =soldier;
+				leastDir = pow(deltaPos.x, 2) + pow(deltaPos.y, 2);
+			}
+		}
+	}
+	for (auto building :BuildingManager::_enemyBuildingVec)
 	{
 
 		if (building != nullptr)
 		{
-			auto targetPos = static_cast<GameScene*>(this->getParent()->getParent())->GetMapManager()->ChangeToTiledPos(building->getPosition()); 
-			auto soldierPos= static_cast<GameScene*>(this->getParent()->getParent())->GetMapManager()->ChangeToTiledPos(this->getPosition());
+			auto targetPos = MapManager::ChangeToTiledPos(building->getPosition()); 
+			auto soldierPos= MapManager::ChangeToTiledPos(this->getPosition());
 			Point deltaPos = targetPos - soldierPos;
 			if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) <leastDir)
 			{

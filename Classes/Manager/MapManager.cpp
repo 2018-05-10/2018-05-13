@@ -351,8 +351,8 @@ void MapManager::RemoveBuilding(Building* building, char* name)
 
 Vec2 MapManager::ChangeToTiledPos(Point pos)
 {
-	auto mapSize = GetMap()->getMapSize();
-	auto tileSize = GetMap()->getTileSize()*0.78125;
+	auto mapSize = GameScene::GetMap()->getMapSize();
+	auto tileSize = GameScene::GetMap()->getTileSize()*0.78125;
 	float halfMapWidth = mapSize.width * 0.5f;
 	float mapHeight = mapSize.height;
 	float tileWidth = tileSize.width;
@@ -389,8 +389,8 @@ Vec2 MapManager::ChangeToTiledPos(Point pos)
 
 Vec2 MapManager::ChangeToCocosPos(Vec2 pos)
 {
-	auto mapSize = GetMap()->getMapSize();
-	auto tileSize = GetMap()->getTileSize()*0.78125;
+	auto mapSize = GameScene::GetMap()->getMapSize();
+	auto tileSize = GameScene::GetMap()->getTileSize()*0.78125;
 	int x =tileSize.width*(mapSize.width+pos.x-pos.y)/2;
 	int y =tileSize.height*mapSize.height- tileSize.height*(pos.x+pos.y)/2 ;
 	return Vec2(x, y);
@@ -541,7 +541,6 @@ void MapManager::SetSoldier(Point pos)
 {
 	auto origin = this->ChangeToTiledPos(pos);
 	_objectVec[origin.x][origin.y] = 2;
-	log("%f %f", origin.x, origin.y);
 }
 
 void MapManager:: SoldierDoMove(Point pos1, Point pos2)
@@ -552,21 +551,24 @@ void MapManager:: SoldierDoMove(Point pos1, Point pos2)
 
 TMXTiledMap* MapManager::GetMap()
 {
-	return 	static_cast<GameScene*>(this->getParent())->GetMap();
+	return 	GameScene::GetMap();
 }
 BuildingManager*  MapManager::GetBuildingManager()
 {
-	return  static_cast<GameScene*>(this->getParent())->GetBuildingManager();
+	return  	GameScene::GetBuildingManager();
 }
 SoldierManager* MapManager::GetSoldierManager()
 {
-	return static_cast<GameScene*>(this->getParent())->GetSoldierManager();
+	return 	GameScene::GetSoldierManager();
 }
 Mineral* MapManager::GetMineral()
 {
-	return  static_cast<GameScene*>(this->getParent())->GetMineral();
+	return  	GameScene::GetMineral();
 }
 Power* MapManager::GetPower()
 {
-	return  static_cast<GameScene*>(this->getParent())->GetPower();
+	return  	GameScene::GetPower();
 }
+
+std::vector<std::vector<int>> MapManager::_mapVec;
+std::vector<std::vector<int>> MapManager::_objectVec;

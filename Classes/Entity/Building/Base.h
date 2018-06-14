@@ -6,8 +6,8 @@
 class Base :public Building
 {
 public:
-	Base(BuildingManager* pManagerItBelongsTo);
-	Base(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player);
+	Base();
+	Base(Power* p, Mineral* m,int player);
 	~Base();
 	bool init();
 	int GetPowerCost();

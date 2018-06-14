@@ -2,7 +2,7 @@
 #include "Resource/Mineral.h"
 #include"Scene/GameScene/GameScene.h"
 #include"Manager/MapManager.h"
-Tank::Tank()
+Tank::Tank(int player)
 {
 	_whatAmI = "Tank";
 	_totalHP = 300;
@@ -11,11 +11,13 @@ Tank::Tank()
 	_speed = 3;
 	_mineralCost = 50;
 	_attackInterval = 1.0;
+	_player = player;
+	_attackDistance = 64;
 	_toward = Point(1, 0);
 
 } 
 
-Tank::Tank(Mineral* m, SoldierManager* p,int player)
+Tank::Tank(Mineral* m,int player)
 {
 	_whatAmI = "Tank";
 	_totalHP = 300;
@@ -28,7 +30,7 @@ Tank::Tank(Mineral* m, SoldierManager* p,int player)
 	_player = player;
 	_toward = Point(1, 0);
 
-	_pSoldierManager = p;
+
 	m->Cost(_mineralCost);
 }
 
@@ -63,9 +65,7 @@ cocos2d::Animate* Tank::AnimateDie()
 
 cocos2d::Animate* Tank::AnimateMove(Point target)
 {
-
-	target = static_cast<GameScene*>(this->getParent()->getParent())->GetMapManager()->ChangeToTiledPos(target);
-	Point p = static_cast<GameScene*>(this->getParent()->getParent())->GetMapManager()->ChangeToTiledPos(this->getPosition());
+	Point p =this->getPosition();
 	target.subtract(p);
 	int x = 0; int y = 0;
 	float angle = target.getAngle();
@@ -128,8 +128,7 @@ cocos2d::Animate* Tank::AnimateMove(Point target)
 
 cocos2d::Animate* Tank::AnimateAttack(Point target)
 {
-	target = static_cast<GameScene*>(this->getParent()->getParent())->GetMapManager()->ChangeToTiledPos(target);
-	Point p = static_cast<GameScene*>(this->getParent()->getParent())->GetMapManager()->ChangeToTiledPos(this->getPosition());
+	Point p = this->getPosition();
 	target.subtract(p);
 	int x = 0; int y = 0;
 	float angle = target.getAngle();
@@ -180,6 +179,8 @@ cocos2d::Animate* Tank::AnimateAttack(Point target)
 		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Tank_attack_(%d,%d)_%d.png", x, y, i));
 		frameVec.pushBack(frame);
 	}
+	frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Tank_move_(%d,%d).png", x, y));
+	frameVec.pushBack(frame);
 
 	Animation* animation = Animation::createWithSpriteFrames(frameVec);
 	animation->setLoops(1);

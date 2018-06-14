@@ -15,11 +15,11 @@ Barrack::Barrack()
 
 }
 
-Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
+Barrack::Barrack(Power* p, Mineral* m,int player)
 {
 	_whatAmI = "Barrack";
 	_pPower = p;
-	_pManager = pManagerItBelongsTo;
+
 
 	_totalHP = 2000;
 	_currentHP = 2000;
@@ -38,7 +38,10 @@ Barrack::Barrack(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int 
 
 Barrack::~Barrack()
 {
-	/*_pPower->Free(_powerCost);*/
+	if (!_player)
+	{
+		_pPower->Free(_powerCost);
+	}
 }
 
 bool Barrack::init()

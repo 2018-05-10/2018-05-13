@@ -1,6 +1,6 @@
 #include "Base.h"
 
-Base::Base(BuildingManager* pManagerItBelongsTo)
+Base::Base()
 {
 	_whatAmI = "Base";
 
@@ -10,17 +10,17 @@ Base::Base(BuildingManager* pManagerItBelongsTo)
 	_mineralCost = 0;
 	_timeToBuild = 10;
 	_player = 1; 
-	_pManager = pManagerItBelongsTo;
+
 	++buildingsID;
 
 }
 
-Base::Base(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
+Base::Base(Power* p,Mineral* m,int player)
 {
 	_whatAmI = "Base";
 	_pPower = p;
 	_pMineral = m;
-	_pManager = pManagerItBelongsTo;
+
 
 	_totalHP = 5000;
 	_currentHP = 5000;

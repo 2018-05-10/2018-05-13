@@ -12,7 +12,7 @@ class Factory :public Building
 	friend class MenuLayr;
 public:
 	Factory();
-	Factory(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player);
+	Factory(Power* p, Mineral* m,int player);
 	~Factory();
 	bool init();
 	int GetPowerCost();

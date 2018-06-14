@@ -14,11 +14,10 @@ PowerStation::PowerStation()
 
 }
 
-PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo,int player)
+PowerStation::PowerStation(Power* p, Mineral* m,int player)
 {
 	_whatAmI = "PowerStation";
 	_pPower = p;
-	_pManager = pManagerItBelongsTo;
 
 	_totalHP = 2000;
 	_currentHP = 2000;
@@ -37,7 +36,10 @@ PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelo
 
 PowerStation::~PowerStation() 
 {
-	_pPower->Reduce(_powerProduce);
+	if (!_player)
+	{
+		_pPower->Reduce(_powerProduce);
+	}
 }
 
 bool PowerStation::init()

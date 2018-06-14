@@ -31,10 +31,8 @@ bool Building::init()
 void Building::Die()
 {
 
-	auto map = this->getParent();
-	GameScene* scene = static_cast<GameScene*>(map->getParent());
-	scene->GetMapManager()->RemoveBuilding(this, _whatAmI);
-	_pManager->DestroyBuilding(this);
+	GameScene::GetMapManager()->RemoveBuilding(this, _whatAmI);
+	GameScene::GetBuildingManager()->DestroyBuilding(this);
 }
 
 

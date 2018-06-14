@@ -21,6 +21,7 @@ public:
 
 	//======为士兵设置目的地=========
 	void SetTargetController();
+	void SetEnemyTargetController();
 	bool CheckSoldierResource(char*);
 
 	//=====简单寻路算法=====
@@ -52,19 +53,20 @@ private:
 	
 
 	//===========by lym===============
-private:
+public:
 	static std::vector<Soldier*> _soldierVec;
 	static std::vector<Soldier*> _dogVec;
 	static std::vector<Soldier*> _infantryVec;
 	static std::vector<Soldier*> _tankVec;
 	static std::vector<Soldier*> _enemySoldier;
-	Mineral* _pMineral;
+private:
+	static Mineral* _pMineral;
 	int _player;
 
 	BuildingManager* _pPairManager;
 public:
-	Soldier *CreateSoldier(char* SoldierTypeName,int player);
-	Soldier *CreateEnemySoldier(char* SoldierTypeName, int player);
+	static Soldier *CreateSoldier(char* SoldierTypeName,int player);
+	static Soldier *CreateEnemySoldier(char* SoldierTypeName, int player);
 
 	void BindMineral(Mineral* m);
 	void DestroySoldier(Soldier* S);

@@ -48,12 +48,8 @@ bool GameScene::init()
 
 	_power = Power::create();
 	_mineral = Mineral::create();
-	_enemyPower = Power::create();
-	_enemyMineral= Mineral::create();
 	this->addChild(_power, 1);
 	this->addChild(_mineral, 1);
-	this->addChild(_enemyPower, 1);
-	this->addChild(_enemyMineral, 1);
 	_buildingManager->BindMineral(_mineral);
 	_buildingManager->BindPower(_power);
 	_soldierManager->BindMineral(_mineral);
@@ -99,19 +95,19 @@ TMXTiledMap* GameScene::GetMap()
 {
 	return _map;
 }
-BuildingManager*  GameScene::GetBuildingManager()const
+BuildingManager*  GameScene::GetBuildingManager()
 {
 	return _buildingManager;
 }
-MenuLayer* GameScene::GetMenuLayer() const
+MenuLayer* GameScene::GetMenuLayer()
 {
 	return _menuLayer;
 }
-MapManager* GameScene::GetMapManager() const
+MapManager* GameScene::GetMapManager()
 {
 	return _mapManager;
 }
-SoldierManager* GameScene::GetSoldierManager()const
+SoldierManager* GameScene::GetSoldierManager()
 {
 	return _soldierManager;
 }
@@ -123,8 +119,14 @@ Power* GameScene::GetPower()
 {
 	return _power;
 }
-BuildingManager* GameScene::GetEnemyBuildingManager()const
-{
-	return  _enemyBuildingManager;
-}
+
+
 SpriteFrameCache* GameScene::_frameCache = SpriteFrameCache::getInstance();
+TMXTiledMap* GameScene::_map;
+MapManager* GameScene::_mapManager;
+MenuLayer* GameScene::_menuLayer;
+BuildingManager* GameScene::_buildingManager;
+SoldierManager* GameScene::_soldierManager;
+Mineral* GameScene::_mineral;
+Power* GameScene::_power;
+ResourceManager* GameScene::_resourceManager;

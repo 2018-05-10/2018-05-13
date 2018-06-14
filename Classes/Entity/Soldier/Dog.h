@@ -7,11 +7,17 @@ class Mineral;
 class Dog :public Soldier
 {
 public:
-	Dog();
-	Dog(Mineral* m, SoldierManager* p,int player);
+	Dog(int player);
+	Dog(Mineral* m,int player);
 	~Dog();
 	bool init();
 
-	CREATE_FUNC(Dog);
+	void UpdateSprite();
+
+	virtual cocos2d::Animate* AnimateDie();
+	virtual cocos2d::Animate* AnimateMove(Point target);
+	virtual cocos2d::Animate* AnimateAttack(Point target);
+
+
 private:
 };
