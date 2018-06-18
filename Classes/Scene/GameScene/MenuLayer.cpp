@@ -88,8 +88,8 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 	menuLayer->setContentSize(Size(480, 900));
 	auto contentSize = menuLayer->getContentSize();
 
-	auto soldier = Button::create("soldier.png");
-	soldier->setScale(0.5);
+	auto soldier = Button::create("soldierpicture.png");
+	soldier->setScale(0.4);
 	soldier->setPosition(Size(contentSize.width / 4, contentSize.height / 2));
 
 	soldier->addTouchEventListener([&, buildingID](Ref*, Widget::TouchEventType type)
@@ -126,8 +126,8 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 	
 	menuLayer->addChild(soldier);
 
-	auto dog = Button::create("soldier.png");
-	dog->setScale(0.5);
+	auto dog = Button::create("dogpicture.png");
+	dog->setScale(0.3);
 	dog->setPosition(Size(contentSize.width *3/ 4, contentSize.height / 2));
 
 	dog->addTouchEventListener([&, buildingID](Ref*, Widget::TouchEventType type)
@@ -259,7 +259,7 @@ void MenuLayer::SetBaseConstructionController()
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		_target->setPosition(originPos -GetMap()->getPosition());
-		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),0)&&GetBuildingManager()->BuildingResourceCheck(0))
+		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),0)&&GetBuildingManager()->BuildingResourceCheck(0))
 		{
 			_target->setColor(Color3B::GREEN);
 		}
@@ -271,7 +271,7 @@ void MenuLayer::SetBaseConstructionController()
 	listener->onTouchEnded = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(), 0) && GetBuildingManager()->BuildingResourceCheck(0))
+		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(), 0) && GetBuildingManager()->BuildingResourceCheck(0))
 	{
 		_target->removeFromParent();
 		auto building = BuildingManager::CreateBuilding("Base");
@@ -280,7 +280,7 @@ void MenuLayer::SetBaseConstructionController()
 		GetMap()->addChild(building, setPos.x+setPos.y, building->GetBuildingID());
 		setPos = MapManager::ChangeToCocosPos(setPos);
 		building->setPosition(setPos);
-		GetMapManager()->SetBuilding(setPos,0);
+		MapManager::SetBuilding(setPos,0);
 		GetBuildingManager()->SetBaseController(building);
 
 	
@@ -323,7 +323,7 @@ void MenuLayer::SetBarrackConstructionController()
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		_target->setPosition(originPos -GetMap()->getPosition());
-		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),2) && GetBuildingManager()->BuildingResourceCheck(2))
+		if( MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),2) && GetBuildingManager()->BuildingResourceCheck(2))
 		{
 			_target->setColor(Color3B::GREEN);
 		}
@@ -336,7 +336,7 @@ void MenuLayer::SetBarrackConstructionController()
 	listener->onTouchEnded = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),2) && GetBuildingManager()->BuildingResourceCheck(2))
+		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),2) && GetBuildingManager()->BuildingResourceCheck(2))
 		{
 
 			_target->removeFromParent();
@@ -347,7 +347,7 @@ void MenuLayer::SetBarrackConstructionController()
 			setPos = MapManager::ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
-			GetMapManager()->SetBuilding(setPos, 2);
+			MapManager::SetBuilding(setPos, 2);
 			GetBuildingManager()->SetBarrackController(building);
 
 		
@@ -392,7 +392,7 @@ void MenuLayer::SetMineConstructionController()
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		_target->setPosition(originPos -GetMap()->getPosition());
-		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),3) && GetBuildingManager()->BuildingResourceCheck(3))
+		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),3) && GetBuildingManager()->BuildingResourceCheck(3))
 		{
 			_target->setColor(Color3B::GREEN);
 		}
@@ -405,7 +405,7 @@ void MenuLayer::SetMineConstructionController()
 	listener->onTouchEnded = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),3) && GetBuildingManager()->BuildingResourceCheck(3))
+		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),3) && GetBuildingManager()->BuildingResourceCheck(3))
 		{
 
 			_target->removeFromParent();
@@ -416,7 +416,7 @@ void MenuLayer::SetMineConstructionController()
 			setPos = MapManager::ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
-			GetMapManager()->SetBuilding(setPos,3);
+			MapManager::SetBuilding(setPos,3);
 			GetBuildingManager()->SetProducerController(building);
 
 		}
@@ -461,7 +461,7 @@ void MenuLayer::SetPowerStationController()
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		_target->setPosition(originPos -GetMap()->getPosition());
-		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),4) && GetBuildingManager()->BuildingResourceCheck(4))
+		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),4) && GetBuildingManager()->BuildingResourceCheck(4))
 		{
 			_target->setColor(Color3B::GREEN);
 		}
@@ -474,7 +474,7 @@ void MenuLayer::SetPowerStationController()
 	listener->onTouchEnded = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),4) && GetBuildingManager()->BuildingResourceCheck(4))
+		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),4) && GetBuildingManager()->BuildingResourceCheck(4))
 		{
 
 			_target->removeFromParent();
@@ -485,7 +485,7 @@ void MenuLayer::SetPowerStationController()
 			setPos = MapManager::ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
-			GetMapManager()->SetBuilding(setPos,4);
+			MapManager::SetBuilding(setPos,4);
 			GetBuildingManager()->SetProducerController(building);
 
 			
@@ -528,7 +528,7 @@ void MenuLayer::SetFactoryController()
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
 		_target->setPosition(originPos -GetMap()->getPosition());
-		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),1) && GetBuildingManager()->BuildingResourceCheck(1))
+		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),1) && GetBuildingManager()->BuildingResourceCheck(1))
 		{
 			_target->setColor(Color3B::GREEN);
 		}
@@ -541,7 +541,7 @@ void MenuLayer::SetFactoryController()
 	listener->onTouchEnded = [&](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (GetMapManager()->BuildingPositionCheck(originPos -GetMap()->getPosition(),1) && GetBuildingManager()->BuildingResourceCheck(1))
+		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),1) && GetBuildingManager()->BuildingResourceCheck(1))
 		{
 
 			_target->removeFromParent();
@@ -552,7 +552,7 @@ void MenuLayer::SetFactoryController()
 			setPos = MapManager::ChangeToCocosPos(setPos);
 			building->setPosition(setPos);
 
-			GetMapManager()->SetBuilding(setPos,1);
+			MapManager::SetBuilding(setPos,1);
 			GetBuildingManager()->SetFactoryController(building);
 
 			

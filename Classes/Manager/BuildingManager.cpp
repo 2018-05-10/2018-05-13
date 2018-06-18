@@ -159,8 +159,16 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 	{
 		return NULL;
 	}
-	B->_hpUI = GUIReader::getInstance()->widgetFromJsonFile("UI/NewUi_1.ExportJson");
-	B->addChild(B->_hpUI);
+	B->autorelease();
+	B->_hpBar = Sprite::createWithSpriteFrameName("GreenBar.png");
+	B->addChild(B->_hpBar);
+	B->_hpBar->setContentSize(Size(200, 5));
+	B->_hpBar->setPosition(130, 220);
+	B->_timeBar= Sprite::createWithSpriteFrameName("BlueBar.png");
+	B->addChild(B->_timeBar);
+	B->_timeBar->setContentSize(Size(200, 5));
+	B->_timeBar->setPosition(130, 240);
+	B->_timeBar->setScaleX(0);
 	B->scheduleUpdate();
 	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	_buildingVec.push_back(B);
@@ -297,6 +305,7 @@ void BuildingManager::DestroyBuilding(Building* B)
 		_enemyBuildingVec[B->_numInVec] = nullptr;
 	}
     B->removeFromParent();
+	
 }
 
 Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
@@ -345,8 +354,11 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
 	{
 		return NULL;
 	}
-	B->_hpUI = GUIReader::getInstance()->widgetFromJsonFile("UI/EnemyUi_1.ExportJson");
-	B->addChild(B->_hpUI);
+	B->autorelease();
+	B->_hpBar = Sprite::createWithSpriteFrameName("RedBar.png");
+	B->addChild(B->_hpBar);
+	B->_hpBar->setContentSize(Size(200, 5));
+	B->_hpBar->setPosition(130, 220);
 	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	_enemyBuildingVec.push_back(B);
 	B->_numInVec = _enemyBuildingVec.size() - 1;

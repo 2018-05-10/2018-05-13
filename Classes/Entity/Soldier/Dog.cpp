@@ -27,6 +27,7 @@ Dog::Dog(Mineral* m ,int player)
 	_attackInterval = 0.8;
 	_attackDistance = 25;
 	_player = player;
+	_target = NULL;
 
 	m->Cost(_mineralCost);
 }
@@ -69,7 +70,7 @@ cocos2d::Animate* Dog::AnimateMove(Point target)
 	target.subtract(p);
 	int x = 0; int y = 0;
 	float angle = target.getAngle();
-	if (0 < angle < 0.5)
+	if (0 < angle&&angle < 0.5)
 	{
 		x = 1; y = 0;
 	}
@@ -133,7 +134,7 @@ cocos2d::Animate* Dog::AnimateAttack(Point target)
 	target.subtract(p);
 	int x = 0; int y = 0;
 	float angle = target.getAngle();
-	if (0 < angle < 0.5)
+	if (0 < angle&&angle < 0.5)
 	{
 		x = 1; y = 0;
 	}

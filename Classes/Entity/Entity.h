@@ -32,5 +32,5 @@ protected:
 	int _currentHP;
 	char* _whatAmI;     //类名
 	int _player;       //属于哪一方
-	cocos2d::ui::Widget* _hpUI;
+	cocos2d::Sprite* _hpBar;
 };

@@ -29,7 +29,7 @@ Tank::Tank(Mineral* m,int player)
 	_attackDistance = 64;
 	_player = player;
 	_toward = Point(1, 0);
-
+	_target = NULL;
 
 	m->Cost(_mineralCost);
 }
@@ -132,7 +132,7 @@ cocos2d::Animate* Tank::AnimateAttack(Point target)
 	target.subtract(p);
 	int x = 0; int y = 0;
 	float angle = target.getAngle();
-	if (0 < angle < 0.5)
+	if (0 < angle&&angle < 0.5)
 	{
 		x = 1; y = 0;
 	}
@@ -193,8 +193,8 @@ cocos2d::Animate* Tank::AnimateAttack(Point target)
 
 void Tank::UpdateSprite()
 {
-	this->GetSprite()->removeFromParent();
-	Sprite* spr = Sprite::createWithSpriteFrameName(StringUtils::format("Tank_move_(%d,%d)",
+
+	Sprite* spr = Sprite::createWithSpriteFrameName(StringUtils::format("Tank_move_(%d,%d).png",
 		static_cast<int>(_toward.x), static_cast<int>(_toward.y)));
 	this->BindSprite(spr);
 }

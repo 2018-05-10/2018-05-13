@@ -28,7 +28,7 @@ bool GameScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin= Director::getInstance()->getVisibleOrigin();
 
-	_frameCache->addSpriteFramesWithFile("Entity/Entity.plist", "Entity/Entity.png");
+	_frameCache->addSpriteFramesWithFile("material.plist", "material.png");
 
 	_map = TMXTiledMap::create("map.tmx");
 	this->addChild(_map,0);
@@ -68,24 +68,34 @@ bool GameScene::init()
 
 	_mineral->schedule(schedule_selector(ResourceManager::UpdateMineral), 1.0f);
 
-	auto base = _buildingManager->CreateBuilding("Base");
+	auto base =BuildingManager::CreateBuilding("Base");
 	_map->addChild(base,0);
 	base->setPosition(2000,1000);
 	GetMapManager()->SetBuilding(Point(2000,1000),0);
 	base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0);
 	_buildingManager->SetBaseController(base);
 
-	auto enemyBase = _buildingManager->CreateEnemyBuilding("Base");
+	auto enemyBase = BuildingManager::CreateEnemyBuilding("Base");
 	_map->addChild(enemyBase, 0);
 	enemyBase->setPosition(1600, 1000);
 	GetMapManager()->SetBuilding(Point(1600, 1000), 0);
 	enemyBase->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0);
+	GetSoldierManager()->SetEnemyTargetController(enemyBase);
 
-	auto enemyFactory = _buildingManager->CreateEnemyBuilding("Factory");
+	auto enemyFactory =BuildingManager::CreateEnemyBuilding("Factory");
 	_map->addChild(enemyFactory, 0);
 	enemyFactory->setPosition(1600, 800);
 	GetMapManager()->SetBuilding(Point(1600, 800), 1);
 	enemyFactory->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0);
+	GetSoldierManager()->SetEnemyTargetController(enemyFactory);
+
+	auto enemyTank = SoldierManager::CreateEnemySoldier("Tank",1);
+	_map->addChild(enemyTank, 150);
+	enemyTank->setPosition(1600, 900);
+	GetSoldierManager()->SetEnemyTargetController(enemyTank);
+	
+	
+
 
 
 	return true;

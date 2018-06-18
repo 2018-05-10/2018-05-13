@@ -45,7 +45,7 @@ protected:
 
 	int _mineralProducePerSecond = 5;    //每秒能产生的矿物数量，仅在Mine中有用，为方便管理写在Building里
 
-	
+	cocos2d::Sprite* _timeBar;
 
 	
 };

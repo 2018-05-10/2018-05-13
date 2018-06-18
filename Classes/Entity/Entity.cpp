@@ -40,7 +40,7 @@ void Entity::Hit(int attack)
 
 	_currentHP -= attack;
 	float percent = static_cast<float>(_currentHP) / static_cast<float>(_totalHP);
-	static_cast<LoadingBar*>(Helper::seekWidgetByName(_hpUI, "HPBar"))->setPercent(percent*100);
+	_hpBar->setScaleX(percent);
 	if (_currentHP < 0)
 	{
 		_currentHP = 0;

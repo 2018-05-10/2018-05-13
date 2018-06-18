@@ -30,6 +30,9 @@ public:
 	Point _targetPoint=Point(-1,-1);
 	std::deque<Point> _path;
 
+	Entity* GetTarget();
+	Entity *_target;
+
 protected:
 	int _attack;
 	int _speed;
@@ -37,6 +40,7 @@ protected:
 	float _attackInterval;
 	int _attackDistance;
 	Point _toward;
+
 
 	SoldierManager* _pSoldierManager;
 };

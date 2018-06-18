@@ -28,16 +28,16 @@ public:
 	static cocos2d::Vec2 ChangeToCocosPos(cocos2d::Vec2);
 
 	//========对建筑建造位置的检查==========
-	bool BuildingPositionCheck(cocos2d::Point,int);
+	static bool BuildingPositionCheck(cocos2d::Point,int);
 
 	//=======获取tledmap中的瓦片信息，将其存入一个二维vector数组中======
 	void GetTiledInformation();
 
 	//=========建筑与士兵建造时，更新地图vector上的信息，建筑占的点设为0，士兵设为2=======
-	void SetBuilding(cocos2d::Point,int);
-	void RemoveBuilding(Building*,char*);
+	static void SetBuilding(cocos2d::Point,int);
+	static void RemoveBuilding(Building*,char*);
 	void SetSoldier(cocos2d::Point);
-	void SoldierDoMove(cocos2d::Point, cocos2d::Point);
+	static void SoldierDoMove(cocos2d::Point, cocos2d::Point);
 
 	//=========测试时使用的函数========
 	void SetTestListener();
@@ -45,6 +45,10 @@ public:
 	//=======BFS宽度搜索，用于寻找出兵点与多个士兵的目的地=========
 	cocos2d::Point BFS(cocos2d::Point);
 	void TargetPosBFS(cocos2d::Point);
+
+	//======检测该点是否可通行======
+	static bool CheckPos(cocos2d::Point);
+	static bool CheckTargetPos(cocos2d::Point);
 
 	//=====获取父节点中的其他子节点的信息======
 	cocos2d::TMXTiledMap* GetMap();

@@ -27,6 +27,7 @@ Infantry::Infantry(Mineral *m,int player)
 	_attackInterval = 0.3;
 	_attackDistance = 49;
 	_player = player;
+	_target = NULL;
 
 	m->Cost(_mineralCost);
 }
@@ -44,7 +45,7 @@ cocos2d::Animate* Infantry::AnimateDie()
 	SpriteFrame* frame;
 	for (int i = 1; i < 4; i++)
 	{
-		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Tank_die_(%d,%d)_%d.png",
+		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Infantry_die_(%d,%d)_%d.png",
 			static_cast<int>(_toward.x), static_cast<int>(_toward.y), i));
 		frameVec.pushBack(frame);
 	}
@@ -124,11 +125,11 @@ cocos2d::Animate* Infantry::AnimateMove(Point target)
 
 cocos2d::Animate* Infantry::AnimateAttack(Point target)
 {
-	Point p = this->getPosition();
+ 	Point p = this->getPosition();
 	target.subtract(p);
 	int x = 0; int y = 0;
 	float angle = target.getAngle();
-	if (0 < angle < 0.5)
+	if (0 < angle&&angle < 0.5)
 	{
 		x = 1; y = 0;
 	}

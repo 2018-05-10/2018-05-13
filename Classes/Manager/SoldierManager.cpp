@@ -5,7 +5,10 @@
 #include"Entity/Soldier/Tank.h"
 #include"Manager/MapManager.h"
 
+
 USING_NS_CC;
+using namespace ui;
+using namespace cocostudio;
 
 bool SoldierManager::init()
 {
@@ -120,12 +123,14 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
 	{
 		return NULL;
 	}
+	S->autorelease();
+	S->_hpBar = Sprite::createWithSpriteFrameName("GreenBar.png");
+	S->addChild(S->_hpBar);
+	S->_hpBar->setContentSize(Size(40, 5));
+	S->_hpBar->setPosition(35, 60);
+	_soldierVec.push_back(S);
+	S->_numInVec = _soldierVec.size() - 1;
 
-	if (!player)
-	{
-		_soldierVec.push_back(S);
-		S->_numInVec = _soldierVec.size() - 1;
-	}
 	return S;
 }
 
@@ -146,7 +151,7 @@ void SoldierManager::SetTargetController()
 			{
 				return;
 			}
-			if (!CheckPos(mapPoint))
+			if (!MapManager::CheckTargetPos(mapPoint))
 			{
 				return;
 			}
@@ -154,12 +159,11 @@ void SoldierManager::SetTargetController()
 			GetMapManager()->TargetPosBFS(_getClickPosition - mapPos);
 			for (auto soldier : _beChoosed)
 			{
-			
 				soldier->stopAllActions();
 				soldier->_path.clear();
 				Square(soldier);
 				Move(soldier);
-			
+
 			}
 
 			
@@ -177,14 +181,21 @@ void SoldierManager::ClearAll()
 		S = _soldierVec.at(i);
 		if (S != NULL)
 		{
-			delete S;
+			S->removeFromParent();
 		}
 	}
 }
 
 void SoldierManager::DestroySoldier(Soldier* S)
 {
-
+	if (S->_player)
+	{
+		_enemySoldier[S->_numInVec] = nullptr;
+	}
+	else
+	{
+		_soldierVec[S->_numInVec] = nullptr;
+	}
 	S->removeFromParent();
 }
 
@@ -256,7 +267,6 @@ void SoldierManager::Square(Soldier* soldier)
 	{
 		tileStart.x += direction;
 		soldier->_path.push_back(tileStart);
-		
 	}
 
 	direction = 0;
@@ -297,14 +307,7 @@ Power* SoldierManager::GetPower()
 	return GameScene::GetPower();
 }
 
-bool SoldierManager::CheckPos(Point point)
-{
-	if (GetMapManager()->_mapVec[point.x][point.y] == 0|| GetMapManager()->_objectVec[point.x][point.y] == 0)
-	{
-		return false;
-	}
-	return true;
-}
+
 
 void SoldierManager::Move(Soldier* soldier)
 {
@@ -323,14 +326,14 @@ void SoldierManager::Move(Soldier* soldier)
 			soldier->_targetPoint = Point(-1, -1);
 			return;
 		}
-		if (!CheckPos(soldier->_path[1]))
+		if (!MapManager::CheckPos(soldier->_path[1]))
 		{
 			
 			soldier->_targetPoint = Point(-1, -1);
 			return;
 		}
 
-		GetMapManager()->SoldierDoMove(soldier->_path[0], soldier->_path[1]);
+		MapManager::SoldierDoMove(soldier->_path[0], soldier->_path[1]);
 		soldier->_path.pop_front();
 	
 		auto nextPos =GetMapManager()->ChangeToCocosPos(soldier->_path.front());
@@ -374,18 +377,42 @@ Soldier *SoldierManager::CreateEnemySoldier(char* SoldierNameType, int player)
 	{
 		return NULL;
 	}
+	S->autorelease();
+	S->_hpBar = Sprite::createWithSpriteFrameName("RedBar.png");
+	S->addChild(S->_hpBar);
+	S->_hpBar->setContentSize(Size(40, 5));
+	S->_hpBar->setPosition(35, 60);
+	_enemySoldier.push_back(S);
+	S->_numInVec = _enemySoldier.size() - 1;
 
-	if (!player)
-	{
-		_soldierVec.push_back(S);
-		S->_numInVec = _soldierVec.size() - 1;
-	}
 	return S;
 }
 
-void SoldierManager::SetEnemyTargetController()
+void SoldierManager::SetEnemyTargetController(Entity* enemy)
 {
+	auto listener = EventListenerMouse::create();
 
+
+	listener->onMouseDown = [&,enemy](Event *event)
+	{
+		if (static_cast<int>(static_cast<EventMouse*>(event)->getMouseButton()) == 1)
+		{
+			auto visibleSize = Director::getInstance()->getVisibleSize();
+			Point pos;
+			pos.x = static_cast<EventMouse*>(event)->getCursorX();
+			pos.y = static_cast<EventMouse*>(event)->getCursorY();
+			auto target1 = static_cast<Soldier*>(event->getCurrentTarget());
+
+			if (target1->getBoundingBox().containsPoint(pos - GetMap()->getPosition()))
+			{
+				for (auto soldier : _beChoosed)
+				{
+					soldier->_target = enemy;
+				}
+			}
+		}
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, enemy);
 }
 
 std::vector<Soldier*> SoldierManager::_enemySoldier;

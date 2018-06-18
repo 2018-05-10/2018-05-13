@@ -537,6 +537,23 @@ void MapManager::TargetPosBFS(Point start)
 	}
 }
 
+bool MapManager::CheckPos(Point point)
+{
+	if (_mapVec[point.x][point.y] == 0 ||_objectVec[point.x][point.y] == 0)
+	{
+		return false;
+	}
+	return true;
+}
+bool MapManager::CheckTargetPos(Point point)
+{
+	if (_mapVec[point.x][point.y] == 0)
+	{
+		return false;
+	}
+	return true;
+}
+
 void MapManager::SetSoldier(Point pos)
 {
 	auto origin = this->ChangeToTiledPos(pos);

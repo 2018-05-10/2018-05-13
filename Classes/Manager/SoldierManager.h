@@ -1,6 +1,7 @@
 #pragma once
 #include"cocos2d.h"
 #include"Entity/Soldier/Soldier.h"
+#include<list>
 
 class BuildingManager;
 class Mineral;
@@ -21,14 +22,13 @@ public:
 
 	//======为士兵设置目的地=========
 	void SetTargetController();
-	void SetEnemyTargetController();
+	void SetEnemyTargetController(Entity*);
 	bool CheckSoldierResource(char*);
 
 	//=====简单寻路算法=====
 	void Square(Soldier*);
 
-	//======检测该点是否可通行======
-	bool CheckPos(Point);
+	
 
 	//=======士兵移动函数==========
 	void Move(Soldier*);

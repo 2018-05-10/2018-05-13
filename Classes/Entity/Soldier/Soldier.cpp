@@ -23,11 +23,14 @@ void Soldier::Attack(Entity* target)
 	if (this->GetPlayer() != target->GetPlayer())
 	{
 		this->GetSprite()->stopAllActions();
-		auto func = [&]
+		this->stopAllActions();
+		auto func = [=]()
 		{
-			UpdateSprite();
+			GameScene::GetSoldierManager()->Move(this);
 		};
-		this->GetSprite()->runAction(AnimateAttack(this->getPosition()));
+		auto callFunc = CallFunc::create(func);
+	
+		this->GetSprite()->runAction(AnimateAttack(target->getPosition()));
 
 		target->Hit(_attack);
 	}
@@ -49,7 +52,22 @@ bool Soldier::init()
 
 void Soldier::Die()     
 {
-	GameScene::GetSoldierManager()->DestroySoldier(this);
+	if (_player)
+	{
+		for (auto soldier : SoldierManager::_soldierVec)
+		{
+			if (soldier->_target == this)
+			{
+				soldier->_target = nullptr;
+			}
+		}
+	}
+	auto func = [&, this]()
+	{
+		GameScene::GetSoldierManager()->DestroySoldier(this);
+	};
+	auto callFunc = CallFunc::create(func);
+	this->GetSprite()->runAction(Sequence::create(AnimateDie(),callFunc, NULL));
 }
 
 int Soldier::GetMineralCost()const
@@ -67,6 +85,18 @@ void Soldier::SearchEnemyUpdate(float dt)
 
 	int leastDir =1000000;
 	Entity* target=nullptr;
+
+	if (this->_target)
+	{
+		auto targetPos = MapManager::ChangeToTiledPos(_target->getPosition());
+		auto soldierPos = MapManager::ChangeToTiledPos(this->getPosition());
+		Point deltaPos = targetPos - soldierPos;
+		if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) < this->_attackDistance)
+		{
+			this->Attack(this->_target);
+			return;
+		}
+	}
 	for (auto soldier : SoldierManager::_enemySoldier)
 	{
 		if (soldier != nullptr)
@@ -81,6 +111,12 @@ void Soldier::SearchEnemyUpdate(float dt)
 			}
 		}
 	}
+	if (leastDir <= _attackDistance)
+	{
+		this->Attack(target);
+		return;
+	}
+	leastDir = 1000000;
 	for (auto building :BuildingManager::_enemyBuildingVec)
 	{
 
@@ -117,6 +153,11 @@ cocos2d::Animate* Soldier::AnimateDie()
 cocos2d::Animate* Soldier::AnimateAttack(Point target)
 {
 	return nullptr;
+}
+
+Entity* Soldier::GetTarget()
+{
+	return _target;
 }
 
 void Soldier::UpdateSprite()

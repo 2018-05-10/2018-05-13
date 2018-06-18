@@ -1,6 +1,7 @@
 #include "Building.h"
 #include"Manager/BuildingManager.h"
 #include"Scene/GameScene/GameScene.h"
+#include"Manager\SoldierManager.h"
 #include"Manager/MapManager.h"
 #include"PowerStation.h"
 
@@ -31,7 +32,17 @@ bool Building::init()
 void Building::Die()
 {
 
-	GameScene::GetMapManager()->RemoveBuilding(this, _whatAmI);
+	MapManager::RemoveBuilding(this, _whatAmI);
+	if (_player)
+	{
+		for (auto soldier : SoldierManager::_soldierVec)
+		{
+			if (soldier->_target == this)
+			{
+				soldier->_target = nullptr;
+			}
+		}
+	}
 	GameScene::GetBuildingManager()->DestroyBuilding(this);
 }
 
@@ -47,13 +58,12 @@ int Building::GetBuildingID()
 
 void Building::BuildingUpdate(float dt)
 {
-	if (_hpUI != nullptr&&!_player)
+	if (_timeBar && !_player)
 	{
 		this->unscheduleUpdate();
-		auto timrBar = Helper::seekWidgetByName(_hpUI, "buildingTimeBar");
-		timrBar->removeFromParent();
-	}
-	if (_player)
+		_timeBar->removeFromParent();
+
+	}	if (_player)
 	{
 		GetSprite()->setColor(Color3B(255, 255, 255));
 		return;
@@ -98,6 +108,9 @@ void Building::BuildingUpdate(float dt)
 
 void Building::update(float dt)
 {
-	auto timeBar = static_cast<LoadingBar*>(Helper::seekWidgetByName(_hpUI, "buildingTimeBar"));
-	timeBar->setPercent(timeBar->getPercent()+100.0f/(static_cast<float>(_timeToBuild)*60));
+	if (_timeBar)
+	{
+		
+		_timeBar->setScaleX(_timeBar->getScaleX() + 0.017/static_cast<float>(_timeToBuild));
+	}
 }
