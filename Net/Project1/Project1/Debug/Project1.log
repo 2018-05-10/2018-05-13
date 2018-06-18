@@ -1,0 +1,8 @@
+﻿  Client.cpp
+e:\final\net\project1\project1\client.cpp(155): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+e:\final\net\project1\project1\client.cpp(158): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+  Server.cpp
+  源.cpp
+  正在生成代码...
+e:\final\net\project1\project1\client.cpp(140): warning C4172: 返回局部变量或临时变量的地址: _str
+  Project1.vcxproj -> E:\final\Net\Project1\Debug\Project1.exe
