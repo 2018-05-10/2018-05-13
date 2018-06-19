@@ -72,7 +72,7 @@ cocos2d::Animate* Dog::AnimateDie(SpriteFrameCache* frameCache)
 
 cocos2d::Animate* Dog::AnimateMove(Point target, SpriteFrameCache* frameCache)
 {
-	Point p = this->getPosition();
+	Point p = MapManager::ChangeToTiledPos(this->getPosition());
 	target.subtract(p);
 	int x = 0; int y = 0;
 	float angle = target.getAngle();
