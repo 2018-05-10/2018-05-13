@@ -8,18 +8,17 @@ class SoldierManager;
 class Infantry :public Soldier
 {
 public:
-	Infantry();
-	Infantry(Mineral *m, SoldierManager* p);
+	Infantry(int player);
+	Infantry(Mineral *m, int player);
 	~Infantry();
 	bool init();
 
 	void UpdateSprite();
 
-	cocos2d::Animate* AnimateDie(SpriteFrameCache* frameCache);
-	cocos2d::Animate* AnimateMove(Point target, SpriteFrameCache* frameCache);
-	cocos2d::Animate* AnimateAttack(Point target, SpriteFrameCache* frameCache);
+	cocos2d::Animate* AnimateDie();
+	cocos2d::Animate* AnimateMove(Point target);
+	cocos2d::Animate* AnimateAttack(Point target);
 
-	CREATE_FUNC(Infantry);
 private:
 
 };

@@ -7,18 +7,18 @@ class Mineral;
 class Tank :public Soldier
 {
 public:
-	Tank();
-	Tank(Mineral* m, SoldierManager* p);
+	Tank(int player);
+	Tank(Mineral* m,int player);
 	~Tank();
 	bool init();
 
 	void UpdateSprite();
 
-	cocos2d::Animate* AnimateDie(SpriteFrameCache* frameCache);
-	cocos2d::Animate* AnimateMove(Point target, SpriteFrameCache* frameCache);
-	cocos2d::Animate* AnimateAttack(Point target, SpriteFrameCache* frameCache);
+	virtual cocos2d::Animate* AnimateDie();
+	virtual cocos2d::Animate* AnimateMove(Point target);
+	virtual cocos2d::Animate* AnimateAttack(Point target);
 
-	CREATE_FUNC(Tank);
+
 private:
 
 };
