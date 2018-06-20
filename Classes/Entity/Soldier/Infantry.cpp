@@ -29,7 +29,7 @@ Infantry::Infantry(Mineral *m,int player)
 	_player = player;
 	_target = NULL;
 
-	m->Cost(_mineralCost);
+
 }
 
 Infantry::~Infantry() {}

@@ -2,6 +2,10 @@
 #include "Building.h"
 #include "Resource/Mineral.h"
 #include"Resource/Power.h"
+#include"Manager\MapManager.h"
+#include"Manager\SoldierManager.h"
+#include"Scene\GameScene\GameScene.h"
+#include"Scene\GameScene\MenuLayer.h"
 
 Factory::Factory()
 {
@@ -59,4 +63,31 @@ int Factory::GetPowerCost()
 int Factory::GetMineralCost()
 {
 	return _mineralCost;
+}
+
+void Factory::FactoryUpdate(float dt)
+{
+	if (_buildingList.empty())
+	{
+		return;
+	}
+	if (_buildingList.front() == "Tank")
+	{
+		auto pos =this->getPosition();
+		auto tilePos = MapManager::ChangeToTiledPos(pos);
+		auto tank = SoldierManager::CreateSoldier("Tank", 0);
+		GameScene::GetMap()->addChild(tank, 150 + tilePos.x + tilePos.y);
+		auto landPos = GameScene::GetMapManager()->BFS(pos);
+		tank->setPosition(landPos);
+		tank->schedule(schedule_selector(Soldier::SearchEnemyUpdate), tank->GetAttackInterval());
+		GameScene::GetSoldierManager()->SetSoldierController(tank);
+		GameScene::GetMapManager()->SetSoldier(landPos);
+		_buildingList.pop();
+		if (GameScene::GetMenuLayer()->_buildingListUI!=nullptr)
+		{
+			auto lab = static_cast<Text*>(Helper::seekWidgetByName(GameScene::GetMenuLayer()->_buildingListUI, "Number"));
+			lab->setText(Value(this->_buildingList.size()).asString());
+		}
+		
+	}
 }

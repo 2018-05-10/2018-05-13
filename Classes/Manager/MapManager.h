@@ -7,6 +7,7 @@ class BuildingManager;
 class SoldierManager;
 class Power;
 class Mineral;
+class Soldier;
 
 class MapManager :public cocos2d::Node
 {
@@ -36,6 +37,7 @@ public:
 	//=========建筑与士兵建造时，更新地图vector上的信息，建筑占的点设为0，士兵设为2=======
 	static void SetBuilding(cocos2d::Point,int);
 	static void RemoveBuilding(Building*,char*);
+	static void RemoveSoldier(Soldier*);
 	void SetSoldier(cocos2d::Point);
 	static void SoldierDoMove(cocos2d::Point, cocos2d::Point);
 

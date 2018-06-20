@@ -131,6 +131,7 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 		spr = Sprite::createWithSpriteFrameName("Barrack.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
+		B->schedule(schedule_selector(Barrack::BarrackUpdate), 5);
 	}
 	else if (BuildingTypeName == "Mine")
 	{
@@ -153,7 +154,7 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 		spr = Sprite::createWithSpriteFrameName("Factory.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
-	
+		B->schedule(schedule_selector(Factory::FactoryUpdate), 10);
 	}
 	else
 	{
@@ -164,11 +165,13 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 	B->addChild(B->_hpBar);
 	B->_hpBar->setContentSize(Size(200, 5));
 	B->_hpBar->setPosition(130, 220);
+	B->_hpBar->setGlobalZOrder(9);
 	B->_timeBar= Sprite::createWithSpriteFrameName("BlueBar.png");
 	B->addChild(B->_timeBar);
 	B->_timeBar->setContentSize(Size(200, 5));
 	B->_timeBar->setPosition(130, 240);
 	B->_timeBar->setScaleX(0);
+	B->_timeBar->setGlobalZOrder(9);
 	B->scheduleUpdate();
 	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	_buildingVec.push_back(B);
@@ -359,6 +362,7 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
 	B->addChild(B->_hpBar);
 	B->_hpBar->setContentSize(Size(200, 5));
 	B->_hpBar->setPosition(130, 220);
+	B->_hpBar->setGlobalZOrder(9);
 	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
 	_enemyBuildingVec.push_back(B);
 	B->_numInVec = _enemyBuildingVec.size() - 1;

@@ -12,6 +12,7 @@
 #include"Manager/BuildingManager.h"
 #include"Manager/SoldierManager.h"
 #include"Manager/MapManager.h"
+#include"Tool/FlowWord.h"
 
 USING_NS_CC;
 using namespace extension;
@@ -27,7 +28,7 @@ bool MenuLayer::init()
 	_layer=CreateLayer();
 
 	this->addChild(_layer);
-	this->schedule(schedule_selector(MenuLayer::update), 1.0f);
+	this->schedule(schedule_selector(MenuLayer::update), 0.2f);
 	
 	return true;
 }
@@ -44,6 +45,8 @@ void  MenuLayer::CreateContructionLayer()
 	this->ClearLayer();
 	menuLayer->setContentSize(Size(480, 900));
 	auto contentSize = menuLayer->getContentSize();
+
+	
 
 	auto base = Sprite::createWithSpriteFrameName("Base.png");
 	base->setPosition(Point(contentSize.width / 2, contentSize.height  *3/8));
@@ -88,6 +91,9 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 	menuLayer->setContentSize(Size(480, 900));
 	auto contentSize = menuLayer->getContentSize();
 
+	_buildingListUI = GUIReader::getInstance()->widgetFromJsonFile("UI/BuildingListUi_1.ExportJson");
+	menuLayer->addChild(_buildingListUI);
+
 	auto soldier = Button::create("soldierpicture.png");
 	soldier->setScale(0.4);
 	soldier->setPosition(Size(contentSize.width / 4, contentSize.height / 2));
@@ -104,21 +110,18 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 
 			if (GetSoldierManager()->CheckSoldierResource("Infantry"))
 			{
-				Building* building = static_cast<Building*>(GetMap()->getChildByTag(buildingID));
-				auto pos = building->getPosition();
-				auto tilePos = MapManager::ChangeToTiledPos(pos);
-				auto infantry = SoldierManager::CreateSoldier("Infantry", 0);
-				GetMap()->addChild(infantry, 150 + tilePos.x + tilePos.y);
-				auto landPos = GetMapManager()->BFS(pos);
-				infantry->setPosition(landPos);
-				infantry->schedule(schedule_selector(Soldier::SearchEnemyUpdate), infantry->GetAttackInterval());
-				GetSoldierManager()->SetSoldierController(infantry);
-				GetMapManager()->SetSoldier(landPos);
+				auto building = static_cast<Barrack*>(GetMap()->getChildByTag(buildingID));
+				building->_buildingList.push("Infantry");
+				GetMineral()->Cost(20);
+				auto lab = static_cast<Text*>(Helper::seekWidgetByName(_buildingListUI, "Number"));
+				lab->setText(Value(building->_buildingList.size()).asString());
 				break;
 			}
 			else
 			{
-				log("not enough mineral");
+				auto flowWord = FlowWord::create();
+				this->getParent()->addChild(flowWord);
+				flowWord->showWord("not enough resource", Point(900, 700),0.5,2);
 				break;
 			}
 		}
@@ -142,21 +145,18 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 
 			if (GetSoldierManager()->CheckSoldierResource("Dog"))
 			{
-				Building* building = static_cast<Building*>(GetMap()->getChildByTag(buildingID));
-				auto pos = building->getPosition();
-				auto tilePos = MapManager::ChangeToTiledPos(pos);
-				auto dog = SoldierManager::CreateSoldier("Dog", 0);
-				GetMap()->addChild(dog, 150+tilePos.x+tilePos.y);
-				auto landPos = GetMapManager()->BFS(pos);
-				dog->setPosition(landPos);
-				dog->schedule(schedule_selector(Soldier::SearchEnemyUpdate), dog->GetAttackInterval());
-				GetSoldierManager()->SetSoldierController(dog);
-				GetMapManager()->SetSoldier(landPos);
+				auto building = static_cast<Barrack*>(GetMap()->getChildByTag(buildingID));
+				building->_buildingList.push("Dog");
+				GetMineral()->Cost(10);
+				auto lab = static_cast<Text*>(Helper::seekWidgetByName(_buildingListUI, "Number"));
+				lab->setText(Value(building->_buildingList.size()).asString());
 				break;
 			}
 			else
 			{
-				log("not enough mineral");
+				auto flowWord = FlowWord::create();
+				this->getParent()->addChild(flowWord);
+				flowWord->showWord("not enough resource", Point(900, 700),0.5,2);
 				break;
 			}
 		}
@@ -170,10 +170,15 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 
 void MenuLayer::CreateFactoryLayer(int buildingID)
 {
+
+	
 	auto menuLayer = Layer::create();
 	this->ClearLayer();
 	menuLayer->setContentSize(Size(480, 900));
 	auto contentSize = menuLayer->getContentSize();
+
+	_buildingListUI = GUIReader::getInstance()->widgetFromJsonFile("UI/BuildingListUi_1.ExportJson");
+	menuLayer->addChild(_buildingListUI);
 
 	auto tank = Button::create("tankpicture.png");
 	tank->setScale(0.3);
@@ -192,26 +197,25 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 
 			if (GetSoldierManager()->CheckSoldierResource("Tank"))
 			{
-				Building* building = static_cast<Building*>(GetMap()->getChildByTag(buildingID));
-				auto pos = building->getPosition();
-				auto tilePos = MapManager::ChangeToTiledPos(pos);
-				auto tank = SoldierManager::CreateSoldier("Tank",0);
-				GetMap()->addChild(tank, 150 + tilePos.x + tilePos.y);
-				auto landPos = GetMapManager()->BFS(pos);
-				tank->setPosition(landPos);
-				tank->schedule(schedule_selector(Soldier::SearchEnemyUpdate), tank->GetAttackInterval());
-				GetSoldierManager()->SetSoldierController(tank);
-				GetMapManager()->SetSoldier(landPos);
+				auto building = static_cast<Factory*>(GetMap()->getChildByTag(buildingID));
+				building->_buildingList.push("Tank");
+				GetMineral()->Cost(50);
+				auto lab=static_cast<Text*>(Helper::seekWidgetByName(_buildingListUI, "Number"));
+				lab->setText(Value(building->_buildingList.size()).asString());
 				break;
 			}
 			else
 			{
-				log("not enough mineral");
+				auto flowWord = FlowWord::create();
+				this->getParent()->addChild(flowWord);
+				flowWord->showWord("not enough resource", Point(900, 700), 0.5, 2);
 			}
 		}
 	});
 
 	menuLayer->addChild(tank);
+
+
 	
 	_layer->addChild(menuLayer,1,1);
 }
@@ -229,6 +233,7 @@ void MenuLayer::ClearLayer()
 {
 	_buildings.clear();
 	_layer->removeChildByTag(1);
+	_buildingListUI = nullptr;
 }
 
 void MenuLayer::SetBaseConstructionController()
@@ -288,6 +293,9 @@ void MenuLayer::SetBaseConstructionController()
 		else
 	{
 		_target->removeFromParent();
+		auto flowWord = FlowWord::create();
+		this->getParent()->addChild(flowWord);
+		flowWord->showWord("Can't build",Point(900, 700), 0.5, 2);
 	}
 		_buildings[0]->setColor(Color3B(255, 255, 255));
 	};
@@ -356,6 +364,9 @@ void MenuLayer::SetBarrackConstructionController()
 		else
 		{
 			_target->removeFromParent();
+			auto flowWord = FlowWord::create();
+			this->getParent()->addChild(flowWord);
+			flowWord->showWord("Can't build", Point(900, 700), 0.5, 2);
 		}
 		_buildings[1]->setColor(Color3B(255, 255, 255));
 	};
@@ -423,6 +434,9 @@ void MenuLayer::SetMineConstructionController()
 		else
 		{
 			_target->removeFromParent();
+			auto flowWord = FlowWord::create();
+			this->getParent()->addChild(flowWord);
+			flowWord->showWord("Can't build", Point(900, 700), 0.5, 2);
 
 		}
 		_buildings[2]->setColor(Color3B(255, 255, 255));
@@ -493,6 +507,9 @@ void MenuLayer::SetPowerStationController()
 		else
 		{
 			_target->removeFromParent();
+			auto flowWord = FlowWord::create();
+			this->getParent()->addChild(flowWord);
+			flowWord->showWord("Can't build", Point(900, 700), 0.5, 2);
 		}
 		_buildings[3]->setColor(Color3B(255, 255, 255));
 	};
@@ -560,6 +577,9 @@ void MenuLayer::SetFactoryController()
 		else
 		{
 			_target->removeFromParent();
+			auto flowWord = FlowWord::create();
+			this->getParent()->addChild(flowWord);
+			flowWord->showWord("Can't build", Point(900, 700), 0.5, 2);
 		}
 		_buildings[4]->setColor(Color3B(255, 255, 255));
 	};

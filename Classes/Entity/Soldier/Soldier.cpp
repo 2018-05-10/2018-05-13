@@ -23,7 +23,7 @@ void Soldier::Attack(Entity* target)
 	if (this->GetPlayer() != target->GetPlayer())
 	{
 		this->GetSprite()->stopAllActions();
-		this->stopAllActions();
+
 		auto func = [=]()
 		{
 			GameScene::GetSoldierManager()->Move(this);
@@ -52,6 +52,7 @@ bool Soldier::init()
 
 void Soldier::Die()     
 {
+	MapManager::RemoveSoldier(this);
 	if (_player)
 	{
 		for (auto soldier : SoldierManager::_soldierVec)

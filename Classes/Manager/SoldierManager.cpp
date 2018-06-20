@@ -4,6 +4,7 @@
 #include"Entity/Soldier/Dog.h"
 #include"Entity/Soldier/Tank.h"
 #include"Manager/MapManager.h"
+#include"Scene\GameScene\MenuLayer.h"
 
 
 USING_NS_CC;
@@ -116,7 +117,7 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
 		S = new Tank(_pMineral,player);
 		_tankVec.push_back(S);
 		S->_numInTypeVec = _tankVec.size() - 1;
-		spr = Sprite::createWithSpriteFrameName("Tank_move_(1,0).png");
+		spr = Sprite::createWithSpriteFrameName("Tank_move_(1,1).png");
 		S->BindSprite(spr);
 	}
 	else
@@ -128,8 +129,10 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
 	S->addChild(S->_hpBar);
 	S->_hpBar->setContentSize(Size(40, 5));
 	S->_hpBar->setPosition(35, 60);
+	S->_hpBar->setGlobalZOrder(9);
 	_soldierVec.push_back(S);
 	S->_numInVec = _soldierVec.size() - 1;
+
 
 	return S;
 }

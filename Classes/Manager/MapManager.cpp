@@ -349,6 +349,13 @@ void MapManager::RemoveBuilding(Building* building, char* name)
 	}
 }
 
+void MapManager::RemoveSoldier(Soldier* soldier)
+{
+	auto pos = soldier->getPosition();
+	auto originPos = ChangeToTiledPos(pos);
+	_objectVec[originPos.x][originPos.y] = 1;
+}
+
 Vec2 MapManager::ChangeToTiledPos(Point pos)
 {
 	auto mapSize = GameScene::GetMap()->getMapSize();

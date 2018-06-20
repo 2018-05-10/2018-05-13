@@ -18,6 +18,8 @@ class Power;
 
 class MenuLayer :public cocos2d::Layer
 {
+	friend class Factory;
+	friend class Barrack;
 public:
 
 	virtual bool init();
@@ -68,4 +70,5 @@ private:
 	cocos2d::Layer* _layer;
 	bool _musicOn = true;
 	Widget* _resourceUI;
+	Widget* _buildingListUI;
 };

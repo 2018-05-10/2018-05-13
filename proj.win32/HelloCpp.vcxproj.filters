@@ -34,6 +34,12 @@
     <Filter Include="src\Entity\Soldier">
       <UniqueIdentifier>{8fbb6231-f574-4a44-9f67-d3859411471d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Net">
+      <UniqueIdentifier>{b8b08dc1-09ed-4640-a0e8-1a26b4eae266}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Tool">
+      <UniqueIdentifier>{234ac16f-fa11-4a56-b440-4e1441a3dbb0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -105,6 +111,15 @@
     <ClCompile Include="..\Classes\Manager\ResourceManager.cpp">
       <Filter>src\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Net\Client.cpp">
+      <Filter>src\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Net\Server.cpp">
+      <Filter>src\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Tool\FlowWord.cpp">
+      <Filter>src\Tool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -175,6 +190,18 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Manager\ResourceManager.h">
       <Filter>src\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Net\API.h">
+      <Filter>src\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Net\Client.h">
+      <Filter>src\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Net\Server.h">
+      <Filter>src\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Tool\FlowWord.h">
+      <Filter>src\Tool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

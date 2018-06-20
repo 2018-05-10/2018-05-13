@@ -164,12 +164,15 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Manager\MapManager.cpp" />
     <ClCompile Include="..\Classes\Manager\ResourceManager.cpp" />
     <ClCompile Include="..\Classes\Manager\SoldierManager.cpp" />
+    <ClCompile Include="..\Classes\Net\Client.cpp" />
+    <ClCompile Include="..\Classes\Net\Server.cpp" />
     <ClCompile Include="..\Classes\Resource\Mineral.cpp" />
     <ClCompile Include="..\Classes\Resource\Power.cpp" />
     <ClCompile Include="..\Classes\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="..\Classes\Scene\GameScene\MenuLayer.cpp" />
     <ClCompile Include="..\Classes\Scene\MenuScene.cpp" />
     <ClCompile Include="..\Classes\Scene\SettingScene.cpp" />
+    <ClCompile Include="..\Classes\Tool\FlowWord.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -189,12 +192,16 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Manager\MapManager.h" />
     <ClInclude Include="..\Classes\Manager\ResourceManager.h" />
     <ClInclude Include="..\Classes\Manager\SoldierManager.h" />
+    <ClInclude Include="..\Classes\Net\API.h" />
+    <ClInclude Include="..\Classes\Net\Client.h" />
+    <ClInclude Include="..\Classes\Net\Server.h" />
     <ClInclude Include="..\Classes\Resource\Mineral.h" />
     <ClInclude Include="..\Classes\Resource\Power.h" />
     <ClInclude Include="..\Classes\Scene\GameScene\GameScene.h" />
     <ClInclude Include="..\Classes\Scene\GameScene\MenuLayer.h" />
     <ClInclude Include="..\Classes\Scene\MenuScene.h" />
     <ClInclude Include="..\Classes\Scene\SettingScene.h" />
+    <ClInclude Include="..\Classes\Tool\FlowWord.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,7 @@
 #include"Manager/MapManager.h"
 #include"MenuLayer.h"
 #include"Manager/SoldierManager.h"
-#include"NameSpace.h"
+
 USING_NS_CC;
 
 Scene* GameScene::createScene()
@@ -92,12 +92,9 @@ bool GameScene::init()
 	auto enemyTank = SoldierManager::CreateEnemySoldier("Tank",1);
 	_map->addChild(enemyTank, 150);
 	enemyTank->setPosition(1600, 900);
+	GetMapManager()->SetSoldier(Point(1600, 900));
 	GetSoldierManager()->SetEnemyTargetController(enemyTank);
 	
-	
-
-
-
 	return true;
 }
 

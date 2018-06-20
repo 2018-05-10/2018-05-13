@@ -9,7 +9,7 @@ class Soldier;
 
 class Factory :public Building
 {
-	friend class MenuLayr;
+	friend class MenuLayer;
 public:
 	Factory();
 	Factory(Power* p, Mineral* m,int player);
@@ -17,8 +17,9 @@ public:
 	bool init();
 	int GetPowerCost();
 	int GetMineralCost();
+	void FactoryUpdate(float dt);
 
 	CREATE_FUNC(Factory);
 private:
-	std::queue<Soldier*> _buildingQueue;
+	std::queue<char*> _buildingList;
 };
