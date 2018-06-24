@@ -6,6 +6,7 @@
 #include"Manager\SoldierManager.h"
 #include"Scene\GameScene\GameScene.h"
 #include"Scene\GameScene\MenuLayer.h"
+#include"Entity\Soldier\Soldier.h"
 
 Factory::Factory()
 {
@@ -17,6 +18,7 @@ Factory::Factory()
 	_mineralCost = 100;
 	_timeToBuild = 1;
 	_player = 1;
+	_buildingID = buildingsID;
 	++buildingsID;
 
 	

@@ -14,7 +14,9 @@ Tank::Tank(int player)
 	_player = player;
 	_attackDistance = 64;
 	_toward = Point(1, 0);
-
+	_target = NULL;
+	_soldierID = soldiersID;
+	--soldiersID;
 } 
 
 Tank::Tank(Mineral* m,int player)
@@ -30,6 +32,8 @@ Tank::Tank(Mineral* m,int player)
 	_player = player;
 	_toward = Point(1, 0);
 	_target = NULL;
+	_soldierID = soldiersID;
+	--soldiersID;
 }
 
 Tank::~Tank() 
@@ -69,66 +73,45 @@ cocos2d::Animate* Tank::AnimateMove(Point target)
 	auto dir = target - p;
 	int x, y;
 
-	if (dir.x==1&&dir.y==0)
-
+	if (dir.x == 1 && dir.y == 0)
 	{
-		x = 1;
-		y = -1;
+		x = 1;y = -1;
 	}
-
 	else if (dir.x == 1 && dir.y == 1)
-
 	{
 		x = 0; y = -1;
 	}
-
-	else if (dir.x == 0&& dir.y ==1 )
-
+	else if (dir.x == 0 && dir.y == 1)
 	{
 		x = -1; y = -1;
 	}
-
 	else if (dir.x == -1 && dir.y == 1)
-
 	{
-		x = -1; y = 0;
+		x= -1; y = 0;
 	}
-	
 	else if (dir.x == -1 && dir.y == 0)
-
 	{
 		x = -1; y = 1;
 	}
-
 	else if (dir.x == -1 && dir.y == -1)
-
 	{
 		x = 0; y = 1;
 	}
-
 	else if (dir.x == 0 && dir.y == -1)
-
 	{
 		x = 1; y = 1;
 	}
-
 	else if (dir.x == 1 && dir.y == -1)
-
 	{
 		x = 1; y = 0;
 	}
-
 	else
-
 	{
 		x = 1; y = 1;
 	}
 
-
-
 	_toward.x = x;
 	_toward.y = y;
-
 
 	Vector<SpriteFrame*> frameVec;
 	SpriteFrame* frame;
@@ -158,40 +141,83 @@ cocos2d::Animate* Tank::AnimateAttack(Point target)
 	int x = 0; int y = 0;
 	float angle = target.getAngle();
 	if (0 < angle&&angle < 0.5)
+
 	{
+
 		x = 1; y = 0;
+
 	}
+
 	else if (0.5 < angle&&angle < 1.07)
+
 	{
+
 		x = 1; y = 1;
+
 	}
+
 	else if (1.07 < angle&&angle < 2.07)
+
 	{
+
 		x = 0; y = 1;
+
 	}
+
 	else if (2.07 < angle&&angle < 2.64)
+
 	{
+
 		x = -1; y = 1;
+
 	}
-	else if (2.64 < angle&&angle < 3.64)
+
+	else if (2.64 < angle&&angle < 3.1415926)
+
 	{
+
 		x = -1; y = 0;
+
 	}
-	else if (3.64 < angle&&angle < 4.21)
+
+	else if (-0.5 < angle&&angle < 0)
+
 	{
-		x = -1; y = -1;
-	}
-	else if (4.12 < angle&&angle < 5.21)
-	{
-		x = 0; y = -1;
-	}
-	else if (5.21 < angle&&angle < 5.78)
-	{
-		x = 1; y = -1;
-	}
-	else
-	{
+
 		x = 1; y = 0;
+
+	}
+
+	else if (-1.07 < angle&&angle < -0.5)
+
+	{
+
+		x = 1; y = -1;
+
+	}
+
+	else if (-2.07 < angle&&angle < -1.07)
+
+	{
+
+		x = 0; y = -1;
+
+	}
+
+	else if (-2.64 < angle&&angle < -2.07)
+
+	{
+
+		x = -1; y = -1;
+
+	}
+
+	else
+
+	{
+
+		x = -1; y = 0;
+
 	}
 
 	_toward.x = x;

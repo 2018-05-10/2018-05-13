@@ -4,10 +4,12 @@
 #include"SimpleAudioEngine.h"
 #include"extensions/cocos-ext.h"
 #include"ui/CocosGUI.h"
-
+#include"NetScene.h"
+#include"LoginScene.h"
 USING_NS_CC;
 using namespace extension;
 using namespace ui;
+
 
 Scene* MenuScene::createScene()
 {
@@ -38,11 +40,12 @@ bool MenuScene::init()
 		switch (type)
 		{
 		case Widget::TouchEventType::BEGAN:
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
 			break;
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-			auto transition = TransitionFade::create(0.5,GameScene::createScene());
+			auto transition = TransitionFade::create(0.5,LoginScene::createScene());
 			Director::getInstance()->replaceScene(transition);
 			break;
 		}
@@ -55,12 +58,14 @@ bool MenuScene::init()
 		switch (type)
 		{
 		case Widget::TouchEventType::BEGAN:
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
 			break;
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
 			auto transition = TransitionFade::create(0.5, SettingScene::createScene());
 			Director::getInstance()->pushScene(transition);
+			log("succeed");
 			break;
 		}
 	});
@@ -73,6 +78,7 @@ bool MenuScene::init()
 		switch (type)
 		{
 		case Widget::TouchEventType::BEGAN:
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
 			break;
 		case Widget::TouchEventType::MOVED:
 			break;

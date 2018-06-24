@@ -93,6 +93,8 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 
 	_buildingListUI = GUIReader::getInstance()->widgetFromJsonFile("UI/BuildingListUi_1.ExportJson");
 	menuLayer->addChild(_buildingListUI);
+	auto lab = static_cast<Text*>(Helper::seekWidgetByName(_buildingListUI, "Number"));
+	lab->setText(Value(static_cast<Barrack*>(GetMap()->getChildByTag(buildingID))->_buildingList.size()).asString());
 
 	auto soldier = Button::create("soldierpicture.png");
 	soldier->setScale(0.4);
@@ -179,6 +181,8 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 
 	_buildingListUI = GUIReader::getInstance()->widgetFromJsonFile("UI/BuildingListUi_1.ExportJson");
 	menuLayer->addChild(_buildingListUI);
+	auto lab = static_cast<Text*>(Helper::seekWidgetByName(_buildingListUI, "Number"));
+	lab->setText(Value(static_cast<Barrack*>(GetMap()->getChildByTag(buildingID))->_buildingList.size()).asString()); 
 
 	auto tank = Button::create("tankpicture.png");
 	tank->setScale(0.3);
@@ -564,7 +568,7 @@ void MenuLayer::SetFactoryController()
 			_target->removeFromParent();
 			auto building = BuildingManager::CreateBuilding("Factory");
 			auto setPos = MapManager::ChangeToTiledPos(originPos - GetMap()->getPosition());
-			log("%f %f", setPos.x, setPos.y);
+			log("OK");
 			GetMap()->addChild(building, setPos.x + setPos.y,building->GetBuildingID());
 			setPos = MapManager::ChangeToCocosPos(setPos);
 			building->setPosition(setPos);

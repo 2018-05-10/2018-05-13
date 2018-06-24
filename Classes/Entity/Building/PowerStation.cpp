@@ -10,6 +10,7 @@ PowerStation::PowerStation()
 	_mineralCost = 100;
 	_timeToBuild = 15;
 	_player = 1;
+	_buildingID = buildingsID;
 	++buildingsID;
 
 }

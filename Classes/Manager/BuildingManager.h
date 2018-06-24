@@ -10,6 +10,7 @@ class MenuLayer;
 
 class BuildingManager :public cocos2d::Node
 {
+	
 public:
 	CREATE_FUNC(BuildingManager);
 	
@@ -36,12 +37,13 @@ public:
 	static void UpdateMineralPerSecond();              //建筑或摧毁矿场时更新产矿总速度  =======进行了一些改动 by cyy========
 	void BindPower(Power* p);               //绑定一个电力类对象，即改manager下的所有对象都影响这个电力类对象
 	void BindMineral(Mineral* m);  //绑定一个矿产类对象
-	void DestroyBuilding(Building* B);
+	static void DestroyBuilding(Building* B);
 
 	static Building* CreateBuilding(char* BuildingTypeName);          //创建一个建筑对象并绑定其精灵，参数是建筑名字的字符串，例如“Mine”等等
 	static Building* CreateEnemyBuilding(char* BuildingTypeName);
 	static std::vector<Building*>  _buildingVec;
 	static std::vector<Building*> _enemyBuildingVec;
+
 	static int _mineralPerSecond;
 private:
 

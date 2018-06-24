@@ -1,6 +1,7 @@
 #include"GameScene.h"
 #include"MenuLayer.h"
 #include"Entity/Building/Base.h"
+#include"Entity\Soldier\Soldier.h"
 #include"Manager/ResourceManager.h"
 #include"Manager/BuildingManager.h"
 #include"Manager/MapManager.h"
@@ -27,8 +28,6 @@ bool GameScene::init()
 	}
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin= Director::getInstance()->getVisibleOrigin();
-
-	_frameCache->addSpriteFramesWithFile("material.plist", "material.png");
 
 	_map = TMXTiledMap::create("map.tmx");
 	this->addChild(_map,0);
@@ -75,25 +74,19 @@ bool GameScene::init()
 	base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0);
 	_buildingManager->SetBaseController(base);
 
-	auto enemyBase = BuildingManager::CreateEnemyBuilding("Base");
-	_map->addChild(enemyBase, 0);
-	enemyBase->setPosition(1600, 1000);
-	GetMapManager()->SetBuilding(Point(1600, 1000), 0);
-	enemyBase->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0);
-	GetSoldierManager()->SetEnemyTargetController(enemyBase);
 
-	auto enemyFactory =BuildingManager::CreateEnemyBuilding("Factory");
-	_map->addChild(enemyFactory, 0);
-	enemyFactory->setPosition(1600, 800);
-	GetMapManager()->SetBuilding(Point(1600, 800), 1);
-	enemyFactory->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0);
-	GetSoldierManager()->SetEnemyTargetController(enemyFactory);
 
-	auto enemyTank = SoldierManager::CreateEnemySoldier("Tank",1);
-	_map->addChild(enemyTank, 150);
-	enemyTank->setPosition(1600, 900);
-	GetMapManager()->SetSoldier(Point(1600, 900));
-	GetSoldierManager()->SetEnemyTargetController(enemyTank);
+	for (auto i = 0; i < 5; ++i)
+	{
+		auto enemyTank = SoldierManager::CreateEnemySoldier("Tank", 1);
+		_map->addChild(enemyTank, 150);
+		enemyTank->setPosition(1600+i*50, 900);
+		GetMapManager()->SetSoldier(Point(1600+i * 50, 900));
+		GetSoldierManager()->SetEnemyTargetController(enemyTank);
+		enemyTank->schedule(schedule_selector(Soldier::EnemySearchEnemyUpdate), enemyTank->_attackInterval);
+		
+	}
+
 	
 	return true;
 }

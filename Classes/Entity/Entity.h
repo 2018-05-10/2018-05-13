@@ -33,4 +33,5 @@ protected:
 	char* _whatAmI;     //类名
 	int _player;       //属于哪一方
 	cocos2d::Sprite* _hpBar;
+	bool _isDead=false;
 };

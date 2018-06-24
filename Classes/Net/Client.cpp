@@ -1,26 +1,26 @@
-#include "Client.h"
+﻿#include "Client.h"
 
-Client::Client()
+Client::Client()//不用关心
 {
 	WSADATA _data;
 	WSAStartup(MAKEWORD(2, 2), &_data);
 	_clientSocket = 0;
 }
 
-Client::Client(SOCKET _socket)
+Client::Client(SOCKET _socket)//不用关心
 {
 	WSADATA _data;
 	WSAStartup(MAKEWORD(2, 2), &_data);
 	_clientSocket = _socket;
 }
 
-Client::~Client()
+Client::~Client()//不用关心
 {
 	closesocket(_clientSocket);
-	units.clear();
+	_units.clear();
 }
 
-bool Client::Create()
+bool Client::Create()//不用关心
 {
 	_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_clientSocket == INVALID_SOCKET)
@@ -30,38 +30,37 @@ bool Client::Create()
 	return true;
 }
 
-bool Client::Connect(unsigned short _port)
+bool Client::ConnectForHolder(unsigned short _port)//不用关心
 {
 	char* _ip = GetIp();
 	sockaddr_in _addr;
 	_addr.sin_family = AF_INET;
-	_addr.sin_addr.S_un.S_addr = inet_addr(_ip);
 	_addr.sin_port = htons(_port);
-
-	int _retryTimes = 0;
-	int _judge = -1;
-	for (1;_judge == -1 && _retryTimes <= 10; _retryTimes++)
-	{
-		_judge = connect(_clientSocket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr));
-		Sleep(50);
-	}
-	
-	if (_judge == -1)
-	{
-		return false;
-	}
+	_addr.sin_addr.S_un.S_addr = inet_addr(_ip);
+	connect(_clientSocket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr));
 	return true;
 }
 
-bool Client::IsConnected() const
+bool Client::ConnectForJoiner(unsigned short _port)//不用关心
 {
-	return _clientSocket == 0 ? false : true;
+	char* _ip = RecvBroadcast();
+	sockaddr_in _addr;
+	_addr.sin_family = AF_INET;
+	_addr.sin_port = htons(_port);
+	_addr.sin_addr.S_un.S_addr = inet_addr(_ip);
+	connect(_clientSocket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr));
+	return true;
 }
 
-char* Client::GetIp() const
+bool Client::IsConnected() const//不用关心
+{
+	return _clientSocket != 0 ? true : false;
+}
+
+char* Client::GetIp() const//不用关心
 {
 	WSADATA _data;
-	int _judge = WSAStartup(MAKEWORD(2, 0), &_data);
+	int _judge = WSAStartup(MAKEWORD(2, 2), &_data);
 	if (_judge != 0)
 	{
 		return false;
@@ -86,26 +85,28 @@ char* Client::GetIp() const
 	return _ip;
 }
 
-int Client::Send(char* _buffer, int _len) const
+int Client::Send(char* _buffer, int _len) const//不用关心
 {
 	return (send(_clientSocket, _buffer, _len, 0));
 }
 
-int Client::Recv(char* _buffer, int _len) const
+int Client::Recv(char* _buffer, int _len) const//不用关心
 {
 	return (recv(_clientSocket, _buffer, _len, 0));
 }
 
-bool Client::SendData(float _p1, float _p2, int _p3, int _p4, int _p5) const
+bool Client::SendData(float _p1, float _p2, int _p3, int _p4, int _p5, int _p6) const//在单位的属性有改变时均需调用此函数来发送新的属性值
 {
-	char* _str = new char[42];
+	char* _str = new char[100];
 	int _judge = 0;
-	_str = ChangeTo(_p1, _p2, _p3, _p4, _p5);
-	_str[40] = 'd';
-	_str[41] = '\0';
+	_str = ChangeTo(_p1, _p2, _p3, _p4, _p5, _p6);
+	_str[96] = 'd';
+	_str[97] = 'd';
+	_str[98] = 'd';
+	_str[99] = '\0';
 	if (_str[0] != '\0')
 	{
-		_judge = Send(_str, 41);
+		_judge = Send(_str, 100);
 	}
 	if (_judge <= 0)
 	{
@@ -114,39 +115,42 @@ bool Client::SendData(float _p1, float _p2, int _p3, int _p4, int _p5) const
 	return true;
 }
 
-bool Client::RecvData(float _p1, float _p2, int _p3, int _p4, int _p5)
+bool Client::RecvData(float &_p1, float &_p2, int &_p3, int &_p4, int &_p5, int &_p6)//游戏中接受数据，如果收到对话信息则输出到聊天层中
 {
 	char* _str = new char[1024];
 	int _judge = 0;
 	Recv(_str, 1024);
-	if (_str[strlen(_str) - 1] == 'm')
+	if (_str[strlen(_str) - 1] != 'd' || _str[strlen(_str) - 2] != 'd' || _str[strlen(_str) - 3] != 'd')//判断是不是对话信息
 	{
 		_str[strlen(_str) - 1] = '\0';
-		// ������Ի���
+		_str[strlen(_str) - 2] = '\0';
+		_str[strlen(_str) - 3] = '\0';
+		std::string _chat = _str;
+		_chatMsgRecv.push_back(_chat);//将对话信息输出
 		return true;
 	}
 	else
 	{
-		ChangeFrom(_str, _p1, _p2, _p3, _p4, _p5);
+		ChangeFrom(_str, _p1, _p2, _p3, _p4, _p5, _p6);
 		return true;
 	}
 }
 
-char* Client::ChangeTo(float _p1, float _p2, int _p3, int _p4, int _p5) const
+char* Client::ChangeTo(float _p1, float _p2, int _p3, int _p4, int _p5, int _p6) const//不用关心
 {
-	char _str[41] = { 0 };
-	sprintf_s(_str, "%-8f%-8f%-8d%-8d%-8d", _p1, _p2, _p3, _p4, _p5);
+	char _str[100] = { 0 };
+	sprintf_s(_str, "%-16f%-16f%-16d%-16d%-16d%-16d", _p1, _p2, _p3, _p4, _p5, _p6);
 	return _str;
 }
 
-void Client::ChangeFrom(char* _str,float &_p1, float &_p2, int &_p3, int&_p4, int &_p5) const
+void Client::ChangeFrom(char* _str, float &_p1, float &_p2, int &_p3, int &_p4, int &_p5, int &_p6) const//不用关心
 {
 	for (int i = 0; i < 5; i++)
 	{
-		char _s[8] = { 0 };
-		for (int j = 0; j < 8; j++)
+		char _s[16] = { 0 };
+		for (int j = 0; j < 16; j++)
 		{
-			_s[j] = _str[j + i * 8];
+			_s[j] = _str[j + i * 16];
 		}
 		switch (i)
 		{
@@ -165,51 +169,96 @@ void Client::ChangeFrom(char* _str,float &_p1, float &_p2, int &_p3, int&_p4, in
 		case 4:
 			_p5 = atoi(_s);
 			continue;
+		case 5:
+			_p6 = atoi(_s);
 		}
 	}
 }
 
-bool Client::SendMsg() const
+bool Client::SendMsg()//SendMsgMod所开的线程函数
 {
 	while (1)
 	{
+		Sleep(500);
+		std::vector<std::string>::iterator _it = _chatMsgSend.begin();
 		char _str[1024] = { 0 };
 		int _judge = 0;
-		std::cin >> _str;
-		if (_str[0] != '\0')
+		for (1; _it != _chatMsgSend.end(); _it++)
 		{
-			_str[strlen(_str) + 1] = '\0';
-			_str[strlen(_str)] = 'm';
-			_judge = Send(_str, 1024);
+			strcpy(_str, (*_it).c_str());
+			if (_str[0] != '\0')
+			{
+				_judge = Send(_str, 1024);
+			}
 		}
-		else
-		{
-			break;
-		}
-		if (_judge <= 0)
-		{
-			return false;
-		}
+		Sleep(10);
+		_chatMsgSend.clear();
 	}
 	return true;
 }
 
-bool Client::RecvToMap()
+
+bool Client::RecvMsg()///在房间中使用，RecvMsgMod所开的线程函数
+{
+	while (1)
+	{
+		char _str[1024] = { 0 };
+		Recv(_str, 1024);
+		if (_str[0] != '\0')
+		{
+			std::string _chat = _str;
+			_chatMsgRecv.push_back(_chat);//存在vector里了，输出之后清空vector
+			//std::cout << _str << std::endl;
+		}
+	}
+}
+
+bool Client::RecvToMap()//RecvInGame所开的线程函数，会将收到的数据信息同步到对应的map
 {
 	float _x;
 	float _y;
 	int _life;
 	int _goal;
 	int _id;
+	int _judge;
 	while (1)
 	{
-		RecvData(_x, _y, _life, _goal, _id);
-		units[_id]._x = _x;
-		units[_id]._y = _y;
-		units[_id]._life = _life;
-		units[_id]._goal = _goal;
-		units[_id]._id = _id;
-		units[_id]._judge = 1;
+		RecvData(_x, _y, _life, _goal, _id, _judge);
+		_units[_id]._x = _x;
+		_units[_id]._y = _y;
+		_units[_id]._life = _life;
+		_units[_id]._goal = _goal;
+		_units[_id]._id = _id;
+		_units[_id]._judge = _judge;
 	}
 	return true;
+}
+
+char* Client::RecvBroadcast()// 不用关心
+{
+	WSADATA _data;
+	WORD _v = MAKEWORD(2, 2);
+	WSAStartup(_v, &_data);
+	SOCKET _s = socket(AF_INET, SOCK_DGRAM, 0);
+
+	SOCKADDR_IN _addr, _sender;
+	int _senderSize = sizeof(_sender);
+	_addr.sin_family = AF_INET;
+	_addr.sin_port = htons(11114);
+	char* _ip = GetIp();
+
+	_addr.sin_addr.s_addr = inet_addr(_ip);
+	bind(_s, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr));
+	bool _optval = true;
+	setsockopt(_s, SOL_SOCKET, SO_BROADCAST, (char*)&_optval, sizeof(bool));
+	char* _opip = new char[1000];
+	while (1)
+	{
+		int _judge = recvfrom(_s, _opip, 1000, 0, reinterpret_cast<sockaddr*>(&_sender), &_senderSize);
+		if (_judge > 0)
+		{
+			return _opip;
+		}
+	}
+	return false;
 }

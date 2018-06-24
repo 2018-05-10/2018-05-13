@@ -40,16 +40,17 @@ void Entity::Hit(int attack)
 	}
 
 	_currentHP -= attack;
+	if (_currentHP < 0)
+	{
+		_currentHP = 0;
+	}
 	float percent = static_cast<float>(_currentHP) / static_cast<float>(_totalHP);
 	_hpBar->setScaleX(percent);
 	auto flowWord = FlowWord::create();
 	this->addChild(flowWord,1000);
 	flowWord->showWord(StringUtils::format("-%d", attack), this->getContentSize()/2,0.3,1.2);
-	if (_currentHP < 0)
-	{
-		_currentHP = 0;
-	}
-	if (_currentHP == 0)
+	
+	if (_currentHP == 0&&!_isDead)
 	{
 		Die();
 	}

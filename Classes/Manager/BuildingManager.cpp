@@ -6,7 +6,7 @@
 #include"Entity/Building/PowerStation.h"
 #include"Scene/GameScene/GameScene.h"
 #include"Scene/GameScene/MenuLayer.h"
-
+#include"Manager\SoldierManager.h"
 USING_NS_CC;
 
 void BuildingManager::SetBaseController(Building* building)
@@ -131,7 +131,7 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 		spr = Sprite::createWithSpriteFrameName("Barrack.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
-		B->schedule(schedule_selector(Barrack::BarrackUpdate), 5);
+		B->schedule(schedule_selector(Barrack::BarrackUpdate), 0.5); 
 	}
 	else if (BuildingTypeName == "Mine")
 	{
@@ -198,6 +198,10 @@ void BuildingManager::UpdateMineralPerSecond()
 	for (int i = 0; i < _buildingVec.size(); ++i)
 	{
 		p = _buildingVec.at(i);
+		if (!p)
+		{
+			continue;
+		}
 		if ((p->_whatAmI == "Mine") && (p->_isWorking))
 		{
 			val += p->_mineralProducePerSecond;
@@ -306,6 +310,30 @@ void BuildingManager::DestroyBuilding(Building* B)
 	if (B->_player)
 	{
 		_enemyBuildingVec[B->_numInVec] = nullptr;
+	}
+	else
+	{
+		_buildingVec[B->_numInVec] = nullptr;
+	}
+	if (B->_player)
+	{
+		for (auto soldier : SoldierManager::_soldierMap)
+		{
+			if (soldier.second->_target == B)
+			{
+				soldier.second->_target = nullptr;
+			}
+		}
+	}
+	else
+	{
+		for (auto soldier : SoldierManager::_enemySoldierMap)
+		{
+			if (soldier.second->_target == B)
+			{
+				soldier.second->_target = nullptr;
+			}
+		}
 	}
     B->removeFromParent();
 	

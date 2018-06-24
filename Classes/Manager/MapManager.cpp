@@ -2,6 +2,7 @@
 #include"Scene/GameScene/GameScene.h"
 #include"SoldierManager.h"
 #include"Entity/Building/Building.h"
+#include"Entity\Soldier\Soldier.h"
 #include<queue>
 #include<string>
 USING_NS_CC;
@@ -474,14 +475,14 @@ void MapManager::TargetPosBFS(Point start)
 	using namespace std;
 	Point tileStart =ChangeToTiledPos(start);
 
-	if (SoldierManager::_beChoosed.empty())
+	if (SoldierManager::_beChoosedMap.empty())
 	{
 		return;
 	}
 
-	for (auto soldier : SoldierManager::_beChoosed)
+	for (auto soldier : SoldierManager::_beChoosedMap)
 	{
-		_objectVec[ChangeToTiledPos(soldier->getPosition()).x][ChangeToTiledPos(soldier->getPosition()).y] = 1;
+		_objectVec[ChangeToTiledPos(soldier.second->getPosition()).x][ChangeToTiledPos(soldier.second->getPosition()).y] = 1;
 	}
 
 	if (tileStart.x < 0)
@@ -510,14 +511,15 @@ void MapManager::TargetPosBFS(Point start)
 	}
 	queue<Point> isSearched;
 	isSearched.push(tileStart);
-	int count = 0;
+	auto iter = SoldierManager::_beChoosedMap.begin();
 	while (!isSearched.empty())
 	{
 		if (_mapVec[isSearched.front().x][isSearched.front().y] != 0&& _objectVec[isSearched.front().x][isSearched.front().y] != 2
 			&& _objectVec[isSearched.front().x][isSearched.front().y] != 0)
 		{
-			SoldierManager::_beChoosed.at(count++)->_targetPoint =ChangeToCocosPos( isSearched.front());
-			if (count == SoldierManager::_beChoosed.size())
+			iter->second->_targetPoint =ChangeToCocosPos( isSearched.front());
+			++iter;
+			if (iter == SoldierManager::_beChoosedMap.end())
 			{
 				return;
 			}

@@ -10,6 +10,7 @@ Mine::Mine()
 	_powerCost = 25;
 	_timeToBuild = 15;
 	_player = 1;
+	_buildingID = buildingsID;
 	++buildingsID;
 
 }

@@ -6,6 +6,7 @@ USING_NS_CC;
 class Soldier :public Entity
 {
 	friend class SoldierManager;
+	friend class GameScene;
 public:
 	Soldier();
 	virtual ~Soldier();
@@ -26,6 +27,12 @@ public:
 	virtual cocos2d::Animate* AnimateAttack(Point target);
 
 	void SearchEnemyUpdate(float dt);
+	void EnemySearchEnemyUpdate(float dt);
+
+	int GetSoldierID();
+	static int soldiersID;
+	int _soldierID;
+
 
 	Point _targetPoint=Point(-1,-1);
 	std::deque<Point> _path;

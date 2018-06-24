@@ -10,7 +10,7 @@ Base::Base()
 	_mineralCost = 0;
 	_timeToBuild = 10;
 	_player = 1; 
-
+	_buildingID = buildingsID;
 	++buildingsID;
 
 }

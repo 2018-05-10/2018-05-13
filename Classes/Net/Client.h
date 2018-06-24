@@ -1,11 +1,16 @@
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
 
+#include <WinSock2.h>
+#include <Windows.h>
 #include <winsock.h>
 #include <iostream>
 #include <stdlib.h>
 #include <map>
-#pragma com ment(lib,"ws2_32.lib")
+#include <string>
+#include <vector>
+#include <list>
+#pragma comment(lib,"ws2_32.lib")
 
 typedef struct unit
 {
@@ -27,25 +32,31 @@ public:
 	~Client();
 
 	bool Create();
-	bool Connect(unsigned short);
+	bool ConnectForHolder(unsigned short);
+	bool ConnectForJoiner(unsigned short);
 	bool IsConnected() const;
 	char* GetIp() const;
 
 	int Send(char*, int) const; //¼ò»¯send
 	int Recv(char*, int) const; //¼ò»¯recv
 
-	bool SendData(float, float, int, int, int) const;
-	bool RecvData(float, float, int, int, int);
+	bool SendData(float, float, int, int, int, int) const;
+	bool RecvData(float&, float&, int&, int&, int&, int&);
 
-	char* ChangeTo(float, float, int, int, int) const;
-	void ChangeFrom(char*, float&, float&, int&, int&, int&) const; 
+	char* ChangeTo(float, float, int, int, int, int) const;
+	void ChangeFrom(char*, float&, float&, int&, int&, int&, int&) const; 
 
-	bool SendMsg() const;
+	bool SendMsg();
+	bool RecvMsg();
 
-	std::map<int, unit> units;
-
-	bool SendMap();
 	bool RecvToMap();
+
+	char* RecvBroadcast();;
+
+	std::map<int, unit> _units;
+
+	std::vector<std::string> _chatMsgRecv;
+	std::vector<std::string> _chatMsgSend;
 };
 
 

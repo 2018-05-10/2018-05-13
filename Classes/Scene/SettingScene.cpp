@@ -41,6 +41,7 @@ bool SettingScene::init()
 		switch (type)
 		{
 		case Widget::TouchEventType::BEGAN:
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
 			break;
 		case Widget::TouchEventType::MOVED:
 			break;

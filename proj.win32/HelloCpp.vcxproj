@@ -168,9 +168,14 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Net\Server.cpp" />
     <ClCompile Include="..\Classes\Resource\Mineral.cpp" />
     <ClCompile Include="..\Classes\Resource\Power.cpp" />
+    <ClCompile Include="..\Classes\Scene\ChatBox.cpp" />
     <ClCompile Include="..\Classes\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="..\Classes\Scene\GameScene\MenuLayer.cpp" />
+    <ClCompile Include="..\Classes\Scene\LoadingScene.cpp" />
+    <ClCompile Include="..\Classes\Scene\LoginScene.cpp" />
     <ClCompile Include="..\Classes\Scene\MenuScene.cpp" />
+    <ClCompile Include="..\Classes\Scene\NetScene.cpp" />
+    <ClCompile Include="..\Classes\Scene\RoomScene.cpp" />
     <ClCompile Include="..\Classes\Scene\SettingScene.cpp" />
     <ClCompile Include="..\Classes\Tool\FlowWord.cpp" />
     <ClCompile Include="main.cpp" />
@@ -184,6 +189,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Entity\Building\Mine.h" />
     <ClInclude Include="..\Classes\Entity\Building\PowerStation.h" />
     <ClInclude Include="..\Classes\Entity\Entity.h" />
+    <ClInclude Include="..\Classes\Entity\Player.h" />
     <ClInclude Include="..\Classes\Entity\Soldier\Dog.h" />
     <ClInclude Include="..\Classes\Entity\Soldier\Infantry.h" />
     <ClInclude Include="..\Classes\Entity\Soldier\Soldier.h" />
@@ -197,11 +203,19 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Net\Server.h" />
     <ClInclude Include="..\Classes\Resource\Mineral.h" />
     <ClInclude Include="..\Classes\Resource\Power.h" />
+    <ClInclude Include="..\Classes\Scene\ChatBox.h" />
     <ClInclude Include="..\Classes\Scene\GameScene\GameScene.h" />
     <ClInclude Include="..\Classes\Scene\GameScene\MenuLayer.h" />
+    <ClInclude Include="..\Classes\Scene\GameScene\ResultBox.h" />
+    <ClInclude Include="..\Classes\Scene\LoadingScene.h" />
+    <ClInclude Include="..\Classes\Scene\LoginScene.h" />
     <ClInclude Include="..\Classes\Scene\MenuScene.h" />
+    <ClInclude Include="..\Classes\Scene\NetScene.h" />
+    <ClInclude Include="..\Classes\Scene\RoomScene.h" />
     <ClInclude Include="..\Classes\Scene\SettingScene.h" />
     <ClInclude Include="..\Classes\Tool\FlowWord.h" />
+    <ClInclude Include="..\Classes\Tool\SearchRoad.cpp" />
+    <ClInclude Include="..\Classes\Tool\SearchRod.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

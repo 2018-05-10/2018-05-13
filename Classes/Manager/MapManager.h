@@ -74,5 +74,5 @@ private:
 	bool _key_S_isPressed = false;
 
 	//=======鼠标光标位置======
-	cocos2d::Point _mousePosition = cocos2d::Point(0, 0);
+	cocos2d::Point _mousePosition = cocos2d::Point(800, 450);
 };

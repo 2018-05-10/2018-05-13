@@ -1,12 +1,16 @@
 #pragma once
 #include"cocos2d.h"
-#include"Entity/Soldier/Soldier.h"
 #include<list>
+#include<queue>
 
 class BuildingManager;
 class Mineral;
 class MapManager;
 class Power;
+class Soldier;
+class Entity;
+
+
 
 class SoldierManager :public cocos2d::Node
 {
@@ -15,6 +19,7 @@ class SoldierManager :public cocos2d::Node
 public:
 	CREATE_FUNC(SoldierManager);
 	virtual bool init();
+	void update(float dt);
 
 	//======单击选择士兵与框选士兵======
 	void SetSelectBoxController();
@@ -27,6 +32,9 @@ public:
 
 	//=====简单寻路算法=====
 	void Square(Soldier*);
+	
+
+
 
 	
 
@@ -34,7 +42,7 @@ public:
 	void Move(Soldier*);
 
 	//======存储被选中士兵的vector
-	static std::vector<Soldier*> _beChoosed;
+	static std::unordered_map<int ,Soldier*> _beChoosedMap;
 
 	cocos2d::TMXTiledMap* GetMap();
 	BuildingManager* GetBuildingManager();
@@ -47,22 +55,22 @@ private:
 	
 	cocos2d::Point _getTouchBeganPos;
 	cocos2d::Point _getTouchEndedPos;
-	static  std::vector<Soldier*> _enemySoldierVec;
 
 	cocos2d::Sprite* _selectBox;
 	
 
 	//===========by lym===============
 public:
-	static std::vector<Soldier*> _soldierVec;
+	static std::unordered_map<int,Soldier*> _soldierMap;
 	static std::vector<Soldier*> _dogVec;
 	static std::vector<Soldier*> _infantryVec;
 	static std::vector<Soldier*> _tankVec;
-	static std::vector<Soldier*> _enemySoldier;
+	static std::unordered_map<int,Soldier*> _enemySoldierMap;
+	static std::queue<Soldier*> _searchList;
 private:
 	static Mineral* _pMineral;
 	int _player;
-
+	std::unordered_map<int,Soldier*>::iterator _iter;
 	BuildingManager* _pPairManager;
 public:
 	static Soldier *CreateSoldier(char* SoldierTypeName,int player);

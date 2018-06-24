@@ -4,6 +4,7 @@
 #include"Manager\SoldierManager.h"
 #include"Manager/MapManager.h"
 #include"PowerStation.h"
+#include"SimpleAudioEngine.h"
 
 Building::Building() 
 {
@@ -31,19 +32,15 @@ bool Building::init()
 
 void Building::Die()
 {
-
-	MapManager::RemoveBuilding(this, _whatAmI);
-	if (_player)
+	if (_isDead)
 	{
-		for (auto soldier : SoldierManager::_soldierVec)
-		{
-			if (soldier->_target == this)
-			{
-				soldier->_target = nullptr;
-			}
-		}
+		return;
 	}
-	GameScene::GetBuildingManager()->DestroyBuilding(this);
+	_isDead = true;
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/BoomSound.wav");
+	MapManager::RemoveBuilding(this, _whatAmI);
+	
+	BuildingManager::DestroyBuilding(this);
 }
 
 
@@ -92,6 +89,10 @@ void Building::BuildingUpdate(float dt)
 				for (int i = 0; i <BuildingManager::_buildingVec.size(); i++)
 				{
 					p = BuildingManager::_buildingVec.at(i);
+					if (p == nullptr)
+					{
+						continue;
+					}
 					if ((!p->_isWorking) && (p->_powerCost <= freePower))
 					{
 						freePower -= p->_powerCost;
@@ -107,10 +108,10 @@ void Building::BuildingUpdate(float dt)
 }
 
 void Building::update(float dt)
-{
+{ 
 	if (_timeBar)
 	{
 		
-		_timeBar->setScaleX(_timeBar->getScaleX() + 0.017/static_cast<float>(_timeToBuild));
+		_timeBar->setScaleX(_timeBar->getScaleX() + 0.016/static_cast<float>(_timeToBuild));
 	}
 }
