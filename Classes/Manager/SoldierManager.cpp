@@ -6,13 +6,13 @@
 #include"Manager/MapManager.h"
 #include"Scene\GameScene\MenuLayer.h"
 #include"Entity/Soldier/Soldier.h"
-#include"Tool\SearchRod.h"
+#include"Tool\SearchRoad.h"
 #include<algorithm>
 #include<utility>
 USING_NS_CC;
 using namespace ui;
 using namespace cocostudio;
-using namespace SearchRoad;
+
 
 
 bool SoldierManager::init()
@@ -23,79 +23,11 @@ bool SoldierManager::init()
 	}
 
 	
-	_selectBox = Sprite::create("selectbox.png");
-	this->addChild(_selectBox);
-	_selectBox->setOpacity(0);
-	_iter = _beChoosedMap.begin();
+
 	//this->schedule(schedule_selector(SoldierManager::update), 0.1f);
 	return true;
 }
 
-void SoldierManager::SetSelectBoxController()
-{
-	auto listener = EventListenerTouchOneByOne::create();
-
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
-	{
-		for (auto soldier : _beChoosedMap)
-		{
-			soldier.second->GetSprite()->setColor(Color3B(255, 255, 255));
-		}
-		_beChoosedMap.clear();
-		_selectBox->setOpacity(0);
-		_getTouchBeganPos= convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		return true;
-	};
-	listener->onTouchMoved = [&](Touch *touch, Event *event)
-	{
-		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_selectBox->setContentSize(Size(abs(originPos.x - _getTouchBeganPos.x), abs(originPos.y - _getTouchBeganPos.y)));
-		_selectBox->setPosition(originPos/2+ _getTouchBeganPos/2);
-		_selectBox->setOpacity(150);
-	};
-	listener->onTouchEnded = [&](Touch *touch, Event *event)
-	{
-		_getTouchEndedPos= convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		for (auto soldier : _soldierMap)
-		{
-			Point mapPos= GetMap()->getPosition();
-			Point pos = soldier.second->getPosition()+mapPos;
-			if ((pos.x - _getTouchBeganPos.x)*(pos.x - _getTouchEndedPos.x) < 0
-				&& (pos.y - _getTouchBeganPos.y)*(pos.y - _getTouchEndedPos.y) < 0)
-			{
-				_beChoosedMap.insert(soldier);
-				soldier.second->GetSprite()->setColor(Color3B::BLUE);
-			}
-		}
-		_selectBox->setOpacity(0);
-		
-	};
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-}
-
-void SoldierManager::SetSoldierController(Soldier* soldier)
-{
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->setSwallowTouches(true);
-
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
-	{
-		
-		auto visibleSize = Director::getInstance()->getVisibleSize();
-		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
-		auto target1 = static_cast<Soldier*>(event->getCurrentTarget());
-		
-		if (target1->getBoundingBox().containsPoint(pos -GetMap()->getPosition()))
-		{
-			_beChoosedMap.clear();
-			_beChoosedMap.insert(std::make_pair(target1->GetSoldierID(),target1));
-			target1->GetSprite()->setColor(Color3B::BLUE);
-			return true;
-		}
-		return false;
-	};
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, soldier);
-}
 
 
 Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
@@ -105,24 +37,18 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
 	if (SoldierNameType == "Dog")
 	{
 		S = new Dog(_pMineral,player);
-		_dogVec.push_back(S);
-		S->_numInTypeVec = _dogVec.size() - 1;
 		spr = Sprite::createWithSpriteFrameName("Dog_move_(1,0)_1.png");
 		S->BindSprite(spr);
 	}
 	else if (SoldierNameType == "Infantry")
 	{
 		S = new Infantry(_pMineral,player);
-		_infantryVec.push_back(S);
-		S->_numInTypeVec = _infantryVec.size() - 1;
 		spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,0).png");
 		S->BindSprite(spr);
 	}
 	else if (SoldierNameType == "Tank")
 	{
 		S = new Tank(_pMineral,player);
-		_tankVec.push_back(S);
-		S->_numInTypeVec = _tankVec.size() - 1;
 		spr = Sprite::createWithSpriteFrameName("Tank_move_(1,1).png");
 		S->BindSprite(spr);
 	}
@@ -141,44 +67,6 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
 
 
 	return S;
-}
-
-void SoldierManager::SetTargetController()
-{
-	auto listener = EventListenerMouse::create();
-	listener->onMouseDown = [&](Event* event)
-	{
-		if (static_cast<int>(static_cast<EventMouse*>(event)->getMouseButton()) == 1)
-		{
-			Point _getClickPosition;
-			_getClickPosition.x = static_cast<EventMouse*>(event)->getCursorX();
-			_getClickPosition.y = static_cast<EventMouse*>(event)->getCursorY();
-
-			auto mapPos = GetMap()->getPosition();
-			auto mapPoint = GetMapManager()->ChangeToTiledPos(_getClickPosition - mapPos);
-			if (mapPoint.x < 0 || mapPoint.x>74 || mapPoint.y < 0 || mapPoint.y>74)
-			{
-				return;
-			}
-			if (!MapManager::CheckTargetPos(mapPoint))
-			{
-				return;
-			}
-			
-			GetMapManager()->TargetPosBFS(_getClickPosition - mapPos);
-			for (auto soldier : _beChoosedMap)
-			{
-				auto tileStart = MapManager::ChangeToTiledPos(soldier.second->getPosition());
-				auto tileEnd = MapManager::ChangeToTiledPos(soldier.second->_targetPoint);
-				soldier.second->stopAllActions();
-				soldier.second->_path.clear();
-				startSearch(tileStart, tileEnd, soldier.second);
-				Move(soldier.second);
-			}
-			
-		}
-	};
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener,this);
 }
 
 
@@ -275,46 +163,6 @@ bool SoldierManager::CheckSoldierResource(char* type)
 		return true;
 	}
 	return false;
-}
-
-
-
-void SoldierManager::Square(Soldier* soldier)
-{
-	auto tileStart = GetMapManager()->ChangeToTiledPos(soldier->getPosition());
-	auto tileEnd= GetMapManager()->ChangeToTiledPos(soldier->_targetPoint);
-
-	int direction=0;
-	soldier->_path.push_back(tileStart);
-	if (tileStart.x < tileEnd.x)
-	{
-		direction = 1;
-	}
-	else
-	{
-		direction = -1;
-	}
-	while (tileStart.x!= tileEnd.x)
-	{
-		tileStart.x += direction;
-		soldier->_path.push_back(tileStart);
-	}
-
-	direction = 0;
-	if (tileStart.y <tileEnd.y)
-	{
-		direction = 1;
-	}
-	else
-	{
-		direction = -1;
-	}
-	while (tileStart.y!= tileEnd.y)
-	{
-		tileStart.y += direction;
-		soldier->_path.push_back(tileStart);
-	}
-
 }
 
 TMXTiledMap* SoldierManager::GetMap()
@@ -425,72 +273,32 @@ Soldier *SoldierManager::CreateEnemySoldier(char* SoldierNameType, int player)
 	return S;
 }
 
-void SoldierManager::SetEnemyTargetController(Entity* enemy)
-{
-	auto listener = EventListenerMouse::create();
 
-
-	listener->onMouseDown = [&,enemy](Event *event)
-	{
-		if (static_cast<int>(static_cast<EventMouse*>(event)->getMouseButton()) == 1)
-		{
-			auto visibleSize = Director::getInstance()->getVisibleSize();
-			Point pos;
-			pos.x = static_cast<EventMouse*>(event)->getCursorX();
-			pos.y = static_cast<EventMouse*>(event)->getCursorY();
-			auto target1 = static_cast<Soldier*>(event->getCurrentTarget());
-
-			if (target1->getBoundingBox().containsPoint(pos - GetMap()->getPosition()))
-			{
-				for (auto soldier : _beChoosedMap)
-				{
-					soldier.second->_target = enemy;
-				}
-			}
-		}
-	};
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, enemy);
-}
 
 
 void SoldierManager::update(float dt)
 {
-	if (_searchList.empty())
-	{
-		return;
-	}
-	while ((_searchList.front()) == nullptr)
-	{
-		_searchList.pop();
-	}
-	auto tileStart =MapManager::ChangeToTiledPos((_searchList.front())->getPosition());
-	auto tileEnd = MapManager::ChangeToTiledPos((_searchList.front())->_targetPoint);
-	(_searchList.front())->stopAllActions();
-	(_searchList.front())->_path.clear();
-	startSearch(tileStart, tileEnd, (_searchList.front()));
-	Move(_searchList.front());
-	_searchList.pop();
 }
 
-int SearchRoad::countH(JieDian* sJieDian, JieDian* eJieDian)
+int SearchRoad::countH(SearchRoad::Node* sNode, SearchRoad::Node* eNode)
 {
-	int w = abs(sJieDian->x - eJieDian->x);
-	int h = abs(sJieDian->y - eJieDian->y);
+	int w = abs(sNode->x - eNode->x);
+	int h = abs(sNode->y - eNode->y);
 	int cost = std::min(w, h)*xieyi + abs(w - h)*pingyi;//曼哈顿公式简化
 	return cost;
 }
 
-void SearchRoad::countFGH(JieDian* sJieDian, JieDian* eJieDian, int cost)
+void SearchRoad::countFGH(SearchRoad::Node* sNode, SearchRoad::Node* eNode, int cost)
 {
-	int h = countH(sJieDian, eJieDian);
-	int g = sJieDian->parent->g + cost;
+	int h = countH(sNode, eNode);
+	int g = sNode->parent->g + cost;
 	int f = h + g;
-	sJieDian->f = f;//使起始节点的参数值刷新
-	sJieDian->h = h;
-	sJieDian->g = g;
+	sNode->f = f;//使起始节点的参数值刷新
+	sNode->h = h;
+	sNode->g = g;
 }
 
-int SearchRoad::Contains(std::vector<JieDian*>& v, int x, int y)
+int SearchRoad::Contains(std::vector<SearchRoad::Node*>& v, int x, int y)
 {
 	for (auto it = v.begin(); it != v.end(); ++it)
 	{
@@ -502,21 +310,21 @@ int SearchRoad::Contains(std::vector<JieDian*>& v, int x, int y)
 	return -1;
 
 }
-void SearchRoad::releaseJieDian(JieDian* n, Soldier* soldier)
+void SearchRoad::releaseNode(SearchRoad::Node* n, Soldier* soldier)
 {
 	if (n->parent != NULL)
 	{
-		releaseJieDian(n->parent, soldier);
+		releaseNode(n->parent, soldier);
 		auto point = Point(n->x, n->y);
 		soldier->_path.push_back(point);
 	}
 	delete n;
 }
-bool compare(SearchRoad::JieDian* n1, SearchRoad::JieDian* n2)
+bool compare(SearchRoad::Node* n1, SearchRoad::Node* n2)
 {
 	return (n1->f) < (n2->f);
 }
-void SearchRoad::checkMove(int x, int y, JieDian* parent, JieDian* end, int cost)
+void SearchRoad::checkMove(int x, int y, SearchRoad::Node* parent, SearchRoad::Node* end, int cost)
 {
 	if (MapManager::_mapVec[x][y] == 0 || MapManager::_objectVec[x][y] == 0)
 	{
@@ -530,24 +338,24 @@ void SearchRoad::checkMove(int x, int y, JieDian* parent, JieDian* end, int cost
 	if ((index = Contains(openList, x, y)) != -1)
 	{
 		//是否存在更小的G值  
-		JieDian* sJieDian = openList[index];
-		if (parent->g + cost < sJieDian->g)
+		SearchRoad::Node* sNode = openList[index];
+		if (parent->g + cost < sNode->g)
 		{
-			sJieDian->g = parent->g + cost;
-			sJieDian->f = sJieDian->g + sJieDian->h;
+			sNode->g = parent->g + cost;
+			sNode->f = sNode->g + sNode->h;
 		}
 	}
 	else
 	{
-		JieDian* n = new JieDian(x, y, parent);
+		SearchRoad::Node* n = new SearchRoad::Node(x, y, parent);
 		countFGH(n, end, cost);
 		openList.push_back(n);
 	}
 }
 int SearchRoad::startSearch(Point startp, Point endp, Soldier* soldier)
 {
-	JieDian* start = new JieDian(startp.x, startp.y);
-	JieDian* end = new JieDian(endp.x, endp.y);
+	SearchRoad::Node* start = new SearchRoad::Node(startp.x, startp.y);
+	SearchRoad::Node* end = new SearchRoad::Node(endp.x, endp.y);
 	if (start->x <= 0 || start->y <= 0 || start->x > row || start->y > col || end->x <= 0 || end->y <= 0 || end->x > row || end->y > col)
 	{
 		return -1;
@@ -561,7 +369,7 @@ int SearchRoad::startSearch(Point startp, Point endp, Soldier* soldier)
 	start->f = start->h + start->g;
 	//查找算法  
 	openList.push_back(start);
-	JieDian* root = NULL;
+	SearchRoad::Node* root = NULL;
 	int find = 0;
 	while (!openList.empty())
 	{
@@ -608,7 +416,7 @@ int SearchRoad::startSearch(Point startp, Point endp, Soldier* soldier)
 		openList.erase(openList.begin());
 		std::sort(openList.begin(), openList.end(), compare);
 	}
-	releaseJieDian(root, soldier);
+	releaseNode(root, soldier);
 	openList.clear();
 	closeList.clear();
 	return find;
@@ -616,9 +424,5 @@ int SearchRoad::startSearch(Point startp, Point endp, Soldier* soldier)
 
 std::unordered_map<int,Soldier*> SoldierManager::_enemySoldierMap;
 std::unordered_map<int,Soldier*> SoldierManager::_soldierMap;
-std::vector<Soldier*> SoldierManager::_infantryVec;
-std::vector<Soldier*> SoldierManager::_tankVec;
-std::vector<Soldier*> SoldierManager::_dogVec;
 std::unordered_map<int,Soldier*> SoldierManager::_beChoosedMap;
-std::queue<Soldier*>SoldierManager::_searchList;
 Mineral* SoldierManager::_pMineral;

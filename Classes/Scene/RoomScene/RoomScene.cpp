@@ -1,10 +1,10 @@
 #include"RoomScene.h"
 #include"ChatBox.h"
-#include"ui\CocosGUI.h"
-#include"Entity\Player.h"
+#include"ui/CocosGUI.h"
+#include"Entity/Player.h"
 #include"SimpleAudioEngine.h"
-#include"GameScene\GameScene.h"
-
+#include"Scene/GameScene/GameScene.h"
+#include"Setting.h"
 USING_NS_CC;
 using namespace ui;
 
@@ -36,39 +36,45 @@ bool RoomScene::init()
 	SendMsgMod(Player::getInstance()->client);
 	RecvMsgMod(Player::getInstance()->client);
 
-	auto startButton = CreateButton("Start");
-	this->addChild(startButton);
-	startButton->addTouchEventListener([&,startButton](Ref*, Widget::TouchEventType type)
+	if (Player::getInstance()->isMaster)
 	{
-		switch (type)
+		auto startButton = CreateButton("Start");
+		startButton->setTitleFontSize(Setting::Font::Size::normal);
+		this->addChild(startButton);
+		startButton->addTouchEventListener([&, startButton](Ref*, Widget::TouchEventType type)
 		{
-		case Widget::TouchEventType::BEGAN:
-			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
-			break;
-		case Widget::TouchEventType::MOVED:
-			break;
-		case Widget::TouchEventType::ENDED:
-			if (!Player::getInstance()->isMaster)
+			switch (type)
 			{
-				return;
+			case Widget::TouchEventType::BEGAN:
+				CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
+				break;
+			case Widget::TouchEventType::MOVED:
+				break;
+			case Widget::TouchEventType::ENDED:
+				if (Player::getInstance()->serve->IsConnected())
+				{
+					auto transition = TransitionFade::create(0.5, GameScene::createScene());
+					Director::getInstance()->replaceScene(transition);
+				}
+				break;
 			}
-			if (Player::getInstance()->serve->IsConnected())
-			{
-				auto transition = TransitionFade::create(0.5, GameScene::createScene());
-				Director::getInstance()->replaceScene(transition);
-			}
-			break;
-		}
-	});
-
+		});
+	}
+	else
+	{
+		auto readyButton = CreateButton("Ready");
+		readyButton->setTitleFontSize(Setting::Font::Size::normal);
+		this->addChild(readyButton);
+	}
 
 	auto layer = LayerColor::create(Color4B::WHITE);
 	layer->setOpacity(150);
-	layer->setContentSize(Size(visibleSize.width/4, visibleSize.height));
+	layer->setContentSize(Size(visibleSize.width/6, visibleSize.height));
 	this->addChild(layer);
 	auto chatBox = ChatBox::create();
 	chatBox->setPosition(visibleSize.width * 0.08f, visibleSize.height * 0.15f);
 	layer->addChild(chatBox);
+	this->scheduleUpdate();
 	return true;
 }
 
@@ -97,4 +103,14 @@ Button* RoomScene::CreateButton(std::string title)
 	button->setPosition(Vec2(visibleOrigin.x + visibleSize.width / 2, visibleOrigin.x + visibleSize.height / 6));
 
 	return button;
+}
+
+ void RoomScene::update(float dt)
+{
+	 log("%d", Player::getInstance()->client->_step);
+	 if (Player::getInstance()->client->_step == 2)
+	 {
+		 auto transition = TransitionFade::create(0.5, GameScene::createScene());
+		 Director::getInstance()->replaceScene(transition);
+	 }
 }

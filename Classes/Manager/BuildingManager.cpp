@@ -9,115 +9,20 @@
 #include"Manager\SoldierManager.h"
 USING_NS_CC;
 
-void BuildingManager::SetBaseController(Building* building)
-{
-	auto listener = EventListenerTouchOneByOne::create();
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
 
-	listener->onTouchBegan = [&,building](Touch *touch, Event *event)
-	{
-		
-		auto visibleSize = Director::getInstance()->getVisibleSize();
-		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
-		auto target1 = static_cast<Sprite*>(event->getCurrentTarget());
-		if (target1->getBoundingBox().containsPoint(pos-static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
-		{
-			if (!building->IsWorking())
-			{
-				GetMenuLayer()->CreateMainLayer();
-			}
-			else
-			{
-				GetMenuLayer()->CreateContructionLayer();
-			}
-			return true;
-		}
-		return false;
-	};
-
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, building);
-}
-
-void BuildingManager::SetBarrackController(Building* building)
-{
-	auto listener = EventListenerTouchOneByOne::create();
-
-	listener->onTouchBegan = [&, building](Touch *touch, Event *event)
-	{
-		auto visibleSize = Director::getInstance()->getVisibleSize();
-		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
-		auto target1 = static_cast<Building*>(event->getCurrentTarget());
-		if (target1->getBoundingBox().containsPoint(pos - GetMap()->getPosition()))
-		{
-			if (!building->IsWorking())
-			{
-				GetMenuLayer()->CreateMainLayer();
-			}
-			else
-			{
-				GetMenuLayer()->CreateSoldierLayer(target1->GetBuildingID());
-			}
-			return true;
-		}
-		return false;
-	};
-
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, building);
-}
-
-void BuildingManager::SetProducerController(Building* building)
-{
-	auto listener = EventListenerTouchOneByOne::create();
-
-	listener->onTouchBegan = [&, building](Touch *touch, Event *event)
-	{
-		auto visibleSize = Director::getInstance()->getVisibleSize();
-		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
-		auto target1 = static_cast<Sprite*>(event->getCurrentTarget());
-		if (target1->getBoundingBox().containsPoint(pos - static_cast<GameScene*>(this->getParent())->GetMap()->getPosition()))
-		{
-			
-			static_cast<GameScene*>(this->getParent())->GetMenuLayer()->CreateMainLayer();
-			return true;
-		}
-		return false;
-	};
-
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, building);
-}
-
-void BuildingManager::SetFactoryController(Building* building)
-{
-	auto listener = EventListenerTouchOneByOne::create();
-
-	listener->onTouchBegan = [&, building](Touch *touch, Event *event)
-	{
-		auto visibleSize = Director::getInstance()->getVisibleSize();
-		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
-		auto target1 = static_cast<Building*>(event->getCurrentTarget());
-		if (target1->getBoundingBox().containsPoint(pos - GetMap()->getPosition()))
-		{
-			if (!building->IsWorking())
-			{
-				GetMenuLayer()->CreateMainLayer();
-			}
-			else
-			{
-				GetMenuLayer()->CreateFactoryLayer(building->GetBuildingID());
-				
-			}
-			return true;
-		}
-		return false;
-	};
-
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, building);
-}
-
-Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
+Building* BuildingManager::CreateBuilding(int BuildingTypeName)
 {
 	Building* B = NULL;
 	Sprite* spr = NULL;
-	if (BuildingTypeName == "Base")
+	if (BuildingTypeName == BASE)
 	{
 		B = new Base(_pPower, _pMineral,0);
 		spr = Sprite::createWithSpriteFrameName("Base.png");
@@ -125,7 +30,7 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 		B->BindSprite(spr);
 
 	}
-	else if (BuildingTypeName == "Barrack")
+	else if (BuildingTypeName == BARRACK)
 	{
 		B = new Barrack(_pPower, _pMineral, 0);
 		spr = Sprite::createWithSpriteFrameName("Barrack.png");
@@ -133,7 +38,7 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 		B->BindSprite(spr);
 		B->schedule(schedule_selector(Barrack::BarrackUpdate), 0.5); 
 	}
-	else if (BuildingTypeName == "Mine")
+	else if (BuildingTypeName == MINE)
 	{
 		B = new Mine(_pPower, _pMineral,0);
 		spr = Sprite::createWithSpriteFrameName("Mine.png");
@@ -141,14 +46,14 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 		B->BindSprite(spr);
 
 	}
-	else if (BuildingTypeName == "PowerStation")
+	else if (BuildingTypeName == POWERSTATION)
 	{
 		B = new PowerStation(_pPower, _pMineral,0);
 		spr = Sprite::createWithSpriteFrameName( "PowerStation.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	}
-	else if (BuildingTypeName == "Factory")
+	else if (BuildingTypeName == FACTORY)
 	{
 		B = new Factory(_pPower, _pMineral, 0);
 		spr = Sprite::createWithSpriteFrameName("Factory.png");
@@ -174,8 +79,8 @@ Building* BuildingManager::CreateBuilding(char* BuildingTypeName)
 	B->_timeBar->setGlobalZOrder(9);
 	B->scheduleUpdate();
 	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
-	_buildingVec.push_back(B);
-	B->_numInVec = _buildingVec.size() - 1;
+	_buildingMap.insert(std::make_pair(B->GetBuildingID(),B));
+
 
 	return B;
 }
@@ -194,17 +99,12 @@ void BuildingManager::BindMineral(Mineral* m)
 void BuildingManager::UpdateMineralPerSecond()
 {
 	int val=0;
-	Building* p = NULL;
-	for (int i = 0; i < _buildingVec.size(); ++i)
+
+	for (auto building:_buildingMap)
 	{
-		p = _buildingVec.at(i);
-		if (!p)
+		if ((building.second->_type==MINE) && (building.second->_isWorking))
 		{
-			continue;
-		}
-		if ((p->_whatAmI == "Mine") && (p->_isWorking))
-		{
-			val += p->_mineralProducePerSecond;
+			val += building.second->_mineralProducePerSecond;
 		}
 	}
 	_mineralPerSecond = val;
@@ -247,23 +147,23 @@ bool BuildingManager::BuildingResourceCheck(int name)
 	int mineralCost, powerCost;
 	switch (name)
 	{
-	case(0):
+	case(BASE):
 		mineralCost =0 ;
 		powerCost =40 ;
 		break;
-	case(1):
+	case(FACTORY):
 		mineralCost = 100;
 		powerCost =35 ;
 		break;
-	case(2):
+	case(BARRACK):
 		mineralCost =100 ;
 		powerCost = 35;
 		break;
-	case(3):
+	case(MINE):
 		mineralCost = 50;
 		powerCost =25 ;
 		break;
-	case(4):
+	case(POWERSTATION):
 		mineralCost = 100;
 		powerCost = 0;
 		break;
@@ -281,21 +181,15 @@ bool BuildingManager::BuildingResourceCheck(int name)
 
 void BuildingManager::DestroyBuilding(Building* B)
 {
-	if (B->_whatAmI == "PowerStation"&&!B->_player)
+	if (B->_type==POWERSTATION&&!B->_player)
 	{
 		int freePower = _pPower->GetAvailableVal();
-		while (true)
-		{
-			int i = _buildingVec.size() - 1;
+	for(auto building:_buildingMap)
+	{
 			if (freePower < 0)
-			{
-				Building* p = _buildingVec.at(i);
-				if (p != NULL)
-				{
-					p->_isWorking = false;
-					freePower += p->_powerCost;
-				}
-				--i;
+			{	
+					building.second->_isWorking = false;
+					freePower += building.second->_powerCost;
 			}
 			else
 			{
@@ -303,17 +197,17 @@ void BuildingManager::DestroyBuilding(Building* B)
 			}
 		}
 	}
-	if (B->_whatAmI == "Mine" && !B->_player)
+	if (B->_type == MINE && !B->_player)
 	{
 		UpdateMineralPerSecond();
 	}
 	if (B->_player)
 	{
-		_enemyBuildingVec[B->_numInVec] = nullptr;
+		_enemyBuildingMap.erase(B->GetBuildingID());
 	}
 	else
 	{
-		_buildingVec[B->_numInVec] = nullptr;
+		_buildingMap.erase(B->GetBuildingID());
 	}
 	if (B->_player)
 	{
@@ -392,13 +286,18 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
 	B->_hpBar->setPosition(130, 220);
 	B->_hpBar->setGlobalZOrder(9);
 	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
-	_enemyBuildingVec.push_back(B);
-	B->_numInVec = _enemyBuildingVec.size() - 1;
+	_enemyBuildingMap.insert(std::make_pair(B->GetBuildingID(),B));
 	return B;
 }
 
-std::vector<Building*> BuildingManager::_buildingVec;
-std::vector<Building*> BuildingManager::_enemyBuildingVec;
+void BuildingManager::UpdateMineral(float dt)
+{
+	GetMineral()->_currentVal +=GetMineralPerSecond();
+
+}
+
+std::unordered_map<int,Building*> BuildingManager::_buildingMap;
+std::unordered_map<int,Building*> BuildingManager::_enemyBuildingMap;
 int BuildingManager::_mineralPerSecond = 0;
 Power* BuildingManager::_pPower;
 Mineral* BuildingManager::_pMineral;

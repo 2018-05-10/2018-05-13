@@ -2,13 +2,22 @@
 #include"MenuLayer.h"
 #include"Entity/Building/Base.h"
 #include"Entity\Soldier\Soldier.h"
-#include"Manager/ResourceManager.h"
 #include"Manager/BuildingManager.h"
 #include"Manager/MapManager.h"
 #include"MenuLayer.h"
 #include"Manager/SoldierManager.h"
+#include"Setting.h"
+#include"Controller\GameController.h"
 
 USING_NS_CC;
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
 
 Scene* GameScene::createScene()
 {
@@ -29,7 +38,7 @@ bool GameScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin= Director::getInstance()->getVisibleOrigin();
 
-	_map = TMXTiledMap::create("map.tmx");
+	_map = TMXTiledMap::create("Map/map1.tmx");
 	this->addChild(_map,0);
 	_map->setPosition(-1875,-937.5);
 	 _mapManager = MapManager::create();
@@ -38,12 +47,14 @@ bool GameScene::init()
 	_buildingManager = BuildingManager::create();
 	this->addChild(_buildingManager, 1);
 
+	_gameController = GameController::create();
+	this->addChild(_gameController, 1);
+
 	_menuLayer = MenuLayer::create();
 	this->addChild(_menuLayer, 10);
 	_soldierManager = SoldierManager::create();
 	this->addChild(_soldierManager, 1);
-	_resourceManager = ResourceManager::create();
-	this->addChild(_resourceManager, 1);
+
 
 	_power = Power::create();
 	_mineral = Mineral::create();
@@ -55,24 +66,23 @@ bool GameScene::init()
 
 
 
-	_mapManager->SetMouseController();
-	_mapManager->SetKeyboardController();
-	_mapManager->schedule(schedule_selector(MapManager::ControllerUpdate));
-	_mapManager->SetTestListener();
+	_gameController->SetMouseController();
+	_gameController->SetKeyboardController();
+	_gameController->schedule(schedule_selector(GameController::ControllerUpdate));
 	_mapManager->GetTiledInformation();
 
-	_soldierManager->SetSelectBoxController();
-	_soldierManager->SetTargetController();
+	_gameController->SetSelectBoxController();
+	_gameController->SetTargetController();
 
 
-	_mineral->schedule(schedule_selector(ResourceManager::UpdateMineral), 1.0f);
+	_mineral->schedule(schedule_selector(BuildingManager::UpdateMineral), 1.0f);
 
-	auto base =BuildingManager::CreateBuilding("Base");
+	auto base =BuildingManager::CreateBuilding(BASE);
 	_map->addChild(base,0);
 	base->setPosition(2000,1000);
-	GetMapManager()->SetBuilding(Point(2000,1000),0);
+	GetMapManager()->SetBuilding(Point(2000,1000),BASE);
 	base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0);
-	_buildingManager->SetBaseController(base);
+	_gameController->SetBuildingController(base);
 
 
 
@@ -82,7 +92,7 @@ bool GameScene::init()
 		_map->addChild(enemyTank, 150);
 		enemyTank->setPosition(1600+i*50, 900);
 		GetMapManager()->SetSoldier(Point(1600+i * 50, 900));
-		GetSoldierManager()->SetEnemyTargetController(enemyTank);
+		_gameController->SetEnemyTargetController(enemyTank);
 		enemyTank->schedule(schedule_selector(Soldier::EnemySearchEnemyUpdate), enemyTank->_attackInterval);
 		
 	}
@@ -119,7 +129,10 @@ Power* GameScene::GetPower()
 {
 	return _power;
 }
-
+GameController* GameScene::GetGameController()
+{
+	return _gameController;
+}
 
 SpriteFrameCache* GameScene::_frameCache = SpriteFrameCache::getInstance();
 TMXTiledMap* GameScene::_map;
@@ -129,4 +142,4 @@ BuildingManager* GameScene::_buildingManager;
 SoldierManager* GameScene::_soldierManager;
 Mineral* GameScene::_mineral;
 Power* GameScene::_power;
-ResourceManager* GameScene::_resourceManager;
+GameController* GameScene::_gameController;

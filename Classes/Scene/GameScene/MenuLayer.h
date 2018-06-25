@@ -48,14 +48,7 @@ public:
 	cocos2d::Menu* CreateMusicButton();
 	void MenuMusicCallBack(cocos2d::Ref* pSender);
 
-	//=========对建筑建造按钮的监控函数========
-	void SetBuildingListController();
-	void SetBaseConstructionController();
-	void SetBarrackConstructionController( );
-	void SetMineConstructionController();
-	void SetPowerStationController();
-	void SetFactoryController();
-
+	void BuildingTouchEvent(cocos2d::Sprite*);
 	//=====获取父节点中的其他子节点的信息======
 	cocos2d::TMXTiledMap* GetMap();
 	BuildingManager* GetBuildingManager();
@@ -65,7 +58,6 @@ public:
 	Power* GetPower();
 	
 private:
-	std::vector<cocos2d::Sprite*> _buildings;
 	cocos2d::Sprite* _target;
 	cocos2d::Layer* _layer;
 	bool _musicOn = true;

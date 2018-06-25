@@ -69,7 +69,7 @@ bool Server::AllAccept()
 {
 	Accept(_clientSocket1);
 	Accept(_clientSocket2);
-	_step = 1;
+	_step++;
 	return true;
 }
 
@@ -154,4 +154,10 @@ bool Server::Broadcast()
 		Sleep(1000);
 	}
 	return true;
+}
+
+void Server::SendStep()
+{
+	_step++;
+	send(_clientSocket2, "_step++", 8, 0);
 }

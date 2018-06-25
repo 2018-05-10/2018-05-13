@@ -63,9 +63,9 @@ bool Entity::Isdead()
 	}
 	return false;
 }
-char* Entity::WhatAmI()
+int Entity::Type()
 {
-	return _whatAmI;
+	return _type;
 }
 void Entity::Die()
 {}

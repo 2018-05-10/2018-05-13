@@ -2,9 +2,19 @@
 #include"Resource/Mineral.h"
 #include"Scene/GameScene/GameScene.h"
 #include"Manager/MapManager.h"
+
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
 Infantry::Infantry(int player)
 {
-	_whatAmI = "Infantry";
+	_type=INFANTRY;
 	_totalHP = 150;
 	_currentHP = 150;
 	_attack = 50;
@@ -21,7 +31,7 @@ Infantry::Infantry(int player)
 
 Infantry::Infantry(Mineral *m,int player)
 {
-	_whatAmI = "Infantry";
+	_type = INFANTRY;
 	_totalHP = 150;
 	_currentHP = 150;
 	_attack = 50;

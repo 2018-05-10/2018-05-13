@@ -2,7 +2,7 @@
 
 bool FlowWord::init() 
 {
-	m_textLab = Label::create("", "Arial", 35);
+	m_textLab = Label::create("", "Arial", 30);
 	m_textLab->setColor(Color3B(255, 0, 0));
 	m_textLab->setAnchorPoint(Point(1, 0));
 	m_textLab->setVisible(false);

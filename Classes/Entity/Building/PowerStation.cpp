@@ -1,8 +1,18 @@
 #include "PowerStation.h"
 
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
+
 PowerStation::PowerStation()
 {
-	_whatAmI = "PowerStation";
+	_type=POWERSTATION;
 
 	_totalHP = 2000;
 	_currentHP = 2000;
@@ -17,7 +27,7 @@ PowerStation::PowerStation()
 
 PowerStation::PowerStation(Power* p, Mineral* m,int player)
 {
-	_whatAmI = "PowerStation";
+	_type = POWERSTATION;
 	_pPower = p;
 
 	_totalHP = 2000;

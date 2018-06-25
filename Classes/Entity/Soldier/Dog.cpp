@@ -2,9 +2,19 @@
 #include"Resource/Mineral.h"
 #include"Scene/GameScene/GameScene.h"
 #include"Manager/MapManager.h"
+
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
 Dog::Dog(int player)
 {
-	_whatAmI = "Dog";
+	_type=DOG;
 	_totalHP = 100;
 	_currentHP = 100;
 	_attack = 20;
@@ -21,7 +31,7 @@ Dog::Dog(int player)
 
 Dog::Dog(Mineral* m ,int player)
 {
-	_whatAmI = "Dog";
+	_type = DOG;
 	_totalHP = 100;
 	_currentHP = 100;
 	_attack = 20;
@@ -54,18 +64,9 @@ void Dog::UpdateSprite()
 cocos2d::Animate* Dog::AnimateDie()
 {
 
-	Vector<SpriteFrame*> frameVec;
-	SpriteFrame* frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Dog_move_(%d,%d)_2.png", 
-		static_cast<int>(_toward.x), static_cast<int>(_toward.y)));
-	frameVec.pushBack(frame);
-	frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Dog_die_(%d,%d).png", 
-		static_cast<int>(_toward.x), static_cast<int>(_toward.y)));
-	frameVec.pushBack(frame);
-
-	Animation* animation = Animation::createWithSpriteFrames(frameVec);
-	animation->setLoops(1);
-	animation->setDelayPerUnit(0.2f);
-
+	int x = _toward.x;
+	int y = _toward.y;
+	auto animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("DogDie_%d_%d", x, y));
 	Animate* action = Animate::create(animation);
 
 	return action;
@@ -120,18 +121,7 @@ cocos2d::Animate* Dog::AnimateMove(Point target)
 	_toward.y = y;
 
 
-	Vector<SpriteFrame*> frameVec;
-	SpriteFrame* frame;
-	for (int i = 1; i < 3; i++)
-	{
-		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Dog_move_(%d,%d)_%d.png", x, y, i));
-		frameVec.pushBack(frame);
-	}
-
-	Animation* animation = Animation::createWithSpriteFrames(frameVec);
-	animation->setLoops(-1);
-	animation->setDelayPerUnit(0.2f);
-
+	auto animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("DogMove_%d_%d", x, y));
 	Animate* action = Animate::create(animation);
 
 	return action;
@@ -184,18 +174,7 @@ cocos2d::Animate* Dog::AnimateAttack(Point target)
 	_toward.y = y;
 
 
-	Vector<SpriteFrame*> frameVec;
-	SpriteFrame* frame;
-	for (int i = 2; i > 0; i--)
-	{
-		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Dog_move_(%d,%d)_%d.png", x, y, i));
-		frameVec.pushBack(frame);
-	}
-
-	Animation* animation = Animation::createWithSpriteFrames(frameVec);
-	animation->setLoops(1);
-	animation->setDelayPerUnit(0.2f);
-
+	auto animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("DogAttack_%d_%d", x, y));
 	Animate* action = Animate::create(animation);
 
 	return action;

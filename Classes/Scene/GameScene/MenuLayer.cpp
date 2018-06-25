@@ -13,10 +13,20 @@
 #include"Manager/SoldierManager.h"
 #include"Manager/MapManager.h"
 #include"Tool/FlowWord.h"
+#include"Controller\GameController.h"
 
 USING_NS_CC;
 using namespace extension;
 using namespace ui;
+
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
 
 bool MenuLayer::init()
 {
@@ -51,34 +61,41 @@ void  MenuLayer::CreateContructionLayer()
 	auto base = Sprite::createWithSpriteFrameName("Base.png");
 	base->setPosition(Point(contentSize.width / 2, contentSize.height  *3/8));
 	base->setContentSize(Size(0.6*base->getContentSize().width, 0.6*base->getContentSize().height));
+	base->setTag(BASE);
 	menuLayer->addChild(base);
-	_buildings.push_back(base);
+	this->BuildingTouchEvent(base);
+
 	
 	auto barrack= Sprite::createWithSpriteFrameName("Barrack.png");
 	barrack->setPosition(contentSize.width *3/4, contentSize.height  /2);
 	barrack->setContentSize(Size(0.6*barrack->getContentSize().width, 0.6*barrack->getContentSize().height));
+	barrack->setTag(BARRACK);
 	menuLayer->addChild(barrack);
-	_buildings.push_back(barrack);
+	this->BuildingTouchEvent(barrack);
+
 
 	auto mine = Sprite::createWithSpriteFrameName("Mine.png");
 	mine->setPosition(contentSize.width * 1 / 4, contentSize.height /4);
 	mine->setContentSize(Size(0.6*mine->getContentSize().width, 0.6*mine->getContentSize().height));
+	mine->setTag(MINE);
 	menuLayer->addChild(mine);
-	_buildings.push_back(mine);
+	this->BuildingTouchEvent(mine);
+
 
 	auto powerStation = Sprite::createWithSpriteFrameName("PowerStation.png");
 	powerStation->setPosition(contentSize.width * 3 / 4, contentSize.height / 4);
 	powerStation->setContentSize(Size(0.6*powerStation->getContentSize().width, 0.6*powerStation->getContentSize().height));
+	powerStation->setTag(POWERSTATION);
 	menuLayer->addChild(powerStation);
-	_buildings.push_back(powerStation);
+	this->BuildingTouchEvent(powerStation);
+
 
 	auto factory = Sprite::createWithSpriteFrameName("Factory.png");
 	factory->setPosition(contentSize.width / 4, contentSize.height / 2);
 	factory->setContentSize(Size(0.6*factory->getContentSize().width, 0.6*factory->getContentSize().height));
+	factory->setTag(FACTORY);
 	menuLayer->addChild(factory);
-	_buildings.push_back(factory);
-
-	this->SetBuildingListController();
+	this->BuildingTouchEvent(factory);
 
 	_layer->addChild(menuLayer,1,1);
 }
@@ -97,7 +114,7 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 	lab->setText(Value(static_cast<Barrack*>(GetMap()->getChildByTag(buildingID))->_buildingList.size()).asString());
 
 	auto soldier = Button::create("soldierpicture.png");
-	soldier->setScale(0.4);
+	soldier->setScale(0.6);
 	soldier->setPosition(Size(contentSize.width / 4, contentSize.height / 2));
 
 	soldier->addTouchEventListener([&, buildingID](Ref*, Widget::TouchEventType type)
@@ -109,7 +126,14 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-
+			if (GetMap()->getChildByTag(buildingID) == nullptr)
+			{
+				CreateMainLayer();
+				auto flowWord = FlowWord::create();
+				this->getParent()->addChild(flowWord);
+				flowWord->showWord("Building has been destroyed", Point(900, 700), 0.5, 2);
+				return;
+			}
 			if (GetSoldierManager()->CheckSoldierResource("Infantry"))
 			{
 				auto building = static_cast<Barrack*>(GetMap()->getChildByTag(buildingID));
@@ -144,7 +168,14 @@ void MenuLayer::CreateSoldierLayer(int buildingID)
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-
+			if (GetMap()->getChildByTag(buildingID) == nullptr)
+			{
+				CreateMainLayer();
+				auto flowWord = FlowWord::create();
+				this->getParent()->addChild(flowWord);
+				flowWord->showWord("Building has been destroyed", Point(900, 700), 0.5, 2);
+				return;
+			}
 			if (GetSoldierManager()->CheckSoldierResource("Dog"))
 			{
 				auto building = static_cast<Barrack*>(GetMap()->getChildByTag(buildingID));
@@ -185,7 +216,7 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 	lab->setText(Value(static_cast<Barrack*>(GetMap()->getChildByTag(buildingID))->_buildingList.size()).asString()); 
 
 	auto tank = Button::create("tankpicture.png");
-	tank->setScale(0.3);
+	tank->setScale(0.6);
 	tank->setPosition(Size(contentSize.width / 4, contentSize.height / 2));
 
 
@@ -198,7 +229,14 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-
+			if (GetMap()->getChildByTag(buildingID) == nullptr)
+			{
+				CreateMainLayer();
+				auto flowWord = FlowWord::create();
+				this->getParent()->addChild(flowWord);
+				flowWord->showWord("Building has been destroyed", Point(900, 700), 0.5, 2);
+				return;
+			}
 			if (GetSoldierManager()->CheckSoldierResource("Tank"))
 			{
 				auto building = static_cast<Factory*>(GetMap()->getChildByTag(buildingID));
@@ -224,51 +262,55 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 	_layer->addChild(menuLayer,1,1);
 }
 
-void MenuLayer::SetBuildingListController()
-{
-	this->SetBaseConstructionController();
-	this->SetBarrackConstructionController();
-	this->SetMineConstructionController();
-	this->SetPowerStationController();
-	this->SetFactoryController();
-}
-
-void MenuLayer::ClearLayer()
-{
-	_buildings.clear();
-	_layer->removeChildByTag(1);
-	_buildingListUI = nullptr;
-}
-
-void MenuLayer::SetBaseConstructionController()
+void MenuLayer::BuildingTouchEvent(Sprite* building)
 {
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(true);
-	
 
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
+
+	listener->onTouchBegan = [&,building](Touch *touch, Event *event)
 	{
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		auto target1 = static_cast<Sprite*>(event->getCurrentTarget());
 		Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
 		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
 		{
-			_target = Sprite::createWithSpriteFrameName("Base.png");
+			std::string name;
+			switch(building->getTag())
+			{
+			case BASE:
+				name = "Base.png";
+				break;
+			case FACTORY:
+				name = "Factory.png";
+				break;
+			case BARRACK:
+				name = "Barrack.png";
+				break;
+			case MINE:
+				name = "Mine.png";
+				break;
+			case POWERSTATION:
+				name = "PowerStation.png";
+				break;
+			}
+			_target = Sprite::createWithSpriteFrameName(name);
 			_target->setOpacity(100);
 			GetMap()->addChild(_target, 1);
-			auto worldPos = Point(_buildings[0]->getPosition().x + visibleSize.width*0.7, _buildings[0]->getPosition().y)-GetMap()->getPosition();
+			auto worldPos = Point(building->getPosition().x + visibleSize.width*0.7, building->getPosition().y) - GetMap()->getPosition();
 			_target->setPosition(worldPos);
-			_buildings[0]->setColor(Color3B(100, 100, 100));
+			building->setColor(Color3B(100, 100, 100));
 
 			return true;
 		}
 		return false;
 	};
-	listener->onTouchMoved = [&](Touch* touch, Event* event)
+	listener->onTouchMoved = [&, building](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_target->setPosition(originPos -GetMap()->getPosition());
-		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),0)&&GetBuildingManager()->BuildingResourceCheck(0))
+		_target->setPosition(originPos - GetMap()->getPosition());
+		if (MapManager::BuildingPositionCheck(originPos - GetMap()->getPosition(), building->getTag())
+			&& GetBuildingManager()->BuildingResourceCheck(building->getTag()))
 		{
 			_target->setColor(Color3B::GREEN);
 		}
@@ -277,93 +319,20 @@ void MenuLayer::SetBaseConstructionController()
 			_target->setColor(Color3B::RED);
 		}
 	};
-	listener->onTouchEnded = [&](Touch* touch, Event* event)
+	listener->onTouchEnded = [&, building](Touch* touch, Event* event)
 	{
 		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(), 0) && GetBuildingManager()->BuildingResourceCheck(0))
-	{
-		_target->removeFromParent();
-		auto building = BuildingManager::CreateBuilding("Base");
-		auto setPos =MapManager::ChangeToTiledPos(originPos - GetMap()->getPosition());
-		log("%f %f", setPos.x, setPos.y);
-		GetMap()->addChild(building, setPos.x+setPos.y, building->GetBuildingID());
-		setPos = MapManager::ChangeToCocosPos(setPos);
-		building->setPosition(setPos);
-		MapManager::SetBuilding(setPos,0);
-		GetBuildingManager()->SetBaseController(building);
-
-	
-	}
-		else
-	{
-		_target->removeFromParent();
-		auto flowWord = FlowWord::create();
-		this->getParent()->addChild(flowWord);
-		flowWord->showWord("Can't build",Point(900, 700), 0.5, 2);
-	}
-		_buildings[0]->setColor(Color3B(255, 255, 255));
-	};
-
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, _buildings[0]);
-}
-
-void MenuLayer::SetBarrackConstructionController()
-{
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->setSwallowTouches(true);
-
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
-	{
-		auto visibleSize = Director::getInstance()->getVisibleSize();
-		auto target1 = static_cast<Sprite*>(event->getCurrentTarget());
-		Point pos = convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
+		if (MapManager::BuildingPositionCheck(originPos - GetMap()->getPosition(), building->getTag())
+			&& GetBuildingManager()->BuildingResourceCheck(building->getTag()))
 		{
-			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target = Sprite::createWithSpriteFrameName("Barrack.png");
-			_target->setOpacity(100);
-			GetMap()->addChild(_target, 1);
-			auto worldPos = Point(_buildings[1]->getPosition().x + visibleSize.width*0.7, _buildings[1]->getPosition().y)-GetMap()->getPosition();
-			_target->setPosition(worldPos);
-			_buildings[1]->setColor(Color3B(100, 100, 100));
-
-			return true;
-		}
-		return false;
-	};
-	listener->onTouchMoved = [&](Touch* touch, Event* event)
-	{
-		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_target->setPosition(originPos -GetMap()->getPosition());
-		if( MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),2) && GetBuildingManager()->BuildingResourceCheck(2))
-		{
-			_target->setColor(Color3B::GREEN);
-		}
-		else
-		{
-			_target->setColor(Color3B::RED);
-		}
-
-	};
-	listener->onTouchEnded = [&](Touch* touch, Event* event)
-	{
-		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),2) && GetBuildingManager()->BuildingResourceCheck(2))
-		{
-
 			_target->removeFromParent();
-			auto building = BuildingManager::CreateBuilding("Barrack");
+			auto target = BuildingManager::CreateBuilding(building->getTag());
 			auto setPos = MapManager::ChangeToTiledPos(originPos - GetMap()->getPosition());
-			log("%f %f", setPos.x, setPos.y);
-			GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
+			GetMap()->addChild(target, setPos.x + setPos.y,target->GetBuildingID());
 			setPos = MapManager::ChangeToCocosPos(setPos);
-			building->setPosition(setPos);
-
-			MapManager::SetBuilding(setPos, 2);
-			GetBuildingManager()->SetBarrackController(building);
-
-		
-			
+			target->setPosition(setPos);
+			MapManager::SetBuilding(setPos, building->getTag());
+			GameScene::GetGameController()->SetBuildingController(target);
 		}
 		else
 		{
@@ -372,224 +341,19 @@ void MenuLayer::SetBarrackConstructionController()
 			this->getParent()->addChild(flowWord);
 			flowWord->showWord("Can't build", Point(900, 700), 0.5, 2);
 		}
-		_buildings[1]->setColor(Color3B(255, 255, 255));
+		building->setColor(Color3B(255, 255, 255));
 	};
 
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, _buildings[1]);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, building);
 }
 
-void MenuLayer::SetMineConstructionController()
+
+void MenuLayer::ClearLayer()
 {
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->setSwallowTouches(true);
-
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
-	{
-		auto visibleSize = Director::getInstance()->getVisibleSize();
-		auto target1 = static_cast<Sprite*>(event->getCurrentTarget());
-		Point pos = convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
-		{
-			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target = Sprite::createWithSpriteFrameName("Mine.png");
-			_target->setOpacity(100);
-			GetMap()->addChild(_target, 3);
-			auto worldPos = Point(_buildings[2]->getPosition().x + visibleSize.width*0.7, _buildings[2]->getPosition().y)
-				-GetMap()->getPosition();
-			_target->setPosition(worldPos);
-			_buildings[2]->setColor(Color3B(100, 100, 100));
-
-			return true;
-		}
-		return false;
-	};
-	listener->onTouchMoved = [&](Touch* touch, Event* event)
-	{
-		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_target->setPosition(originPos -GetMap()->getPosition());
-		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),3) && GetBuildingManager()->BuildingResourceCheck(3))
-		{
-			_target->setColor(Color3B::GREEN);
-		}
-		else
-		{
-			_target->setColor(Color3B::RED);
-		}
-
-	};
-	listener->onTouchEnded = [&](Touch* touch, Event* event)
-	{
-		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),3) && GetBuildingManager()->BuildingResourceCheck(3))
-		{
-
-			_target->removeFromParent();
-			auto building = BuildingManager::CreateBuilding("Mine");
-			auto setPos = MapManager::ChangeToTiledPos(originPos - GetMap()->getPosition());
-			log("%f %f", setPos.x, setPos.y);
-			GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
-			setPos = MapManager::ChangeToCocosPos(setPos);
-			building->setPosition(setPos);
-
-			MapManager::SetBuilding(setPos,3);
-			GetBuildingManager()->SetProducerController(building);
-
-		}
-		else
-		{
-			_target->removeFromParent();
-			auto flowWord = FlowWord::create();
-			this->getParent()->addChild(flowWord);
-			flowWord->showWord("Can't build", Point(900, 700), 0.5, 2);
-
-		}
-		_buildings[2]->setColor(Color3B(255, 255, 255));
-	};
-
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, _buildings[2]);
+	_layer->removeChildByTag(1);
+	_buildingListUI = nullptr;
 }
 
-void MenuLayer::SetPowerStationController()
-{
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->setSwallowTouches(true);
-
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
-	{
-		auto visibleSize = Director::getInstance()->getVisibleSize();
-		auto target1 = static_cast<Sprite*>(event->getCurrentTarget());
-		Point pos = convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
-		{
-			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target =Sprite::createWithSpriteFrameName("PowerStation.png");
-			
-			_target->setOpacity(100);
-			GetMap()->addChild(_target, 4);
-			auto worldPos = Point(_buildings[3]->getPosition().x + visibleSize.width*0.7, _buildings[3]->getPosition().y)
-				-GetMap()->getPosition();
-			_target->setPosition(worldPos);
-			_buildings[3]->setColor(Color3B(100, 100, 100));
-
-			return true;
-		}
-		return false;
-	};
-	listener->onTouchMoved = [&](Touch* touch, Event* event)
-	{
-		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_target->setPosition(originPos -GetMap()->getPosition());
-		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),4) && GetBuildingManager()->BuildingResourceCheck(4))
-		{
-			_target->setColor(Color3B::GREEN);
-		}
-		else
-		{
-			_target->setColor(Color3B::RED);
-		}
-
-	};
-	listener->onTouchEnded = [&](Touch* touch, Event* event)
-	{
-		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),4) && GetBuildingManager()->BuildingResourceCheck(4))
-		{
-
-			_target->removeFromParent();
-			auto building = BuildingManager::CreateBuilding("PowerStation");
-			auto setPos = MapManager::ChangeToTiledPos(originPos - GetMap()->getPosition());
-			log("%f %f", setPos.x, setPos.y);
-			GetMap()->addChild(building, setPos.x + setPos.y, building->GetBuildingID());
-			setPos = MapManager::ChangeToCocosPos(setPos);
-			building->setPosition(setPos);
-
-			MapManager::SetBuilding(setPos,4);
-			GetBuildingManager()->SetProducerController(building);
-
-			
-		}
-		else
-		{
-			_target->removeFromParent();
-			auto flowWord = FlowWord::create();
-			this->getParent()->addChild(flowWord);
-			flowWord->showWord("Can't build", Point(900, 700), 0.5, 2);
-		}
-		_buildings[3]->setColor(Color3B(255, 255, 255));
-	};
-
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, _buildings[3]);
-}
-
-void MenuLayer::SetFactoryController()
-{
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->setSwallowTouches(true);
-
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
-	{
-		auto visibleSize = Director::getInstance()->getVisibleSize();
-		auto target1 = static_cast<Sprite*>(event->getCurrentTarget());
-		Point pos = convertToNodeSpace(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (target1->getBoundingBox().containsPoint(pos - Point(visibleSize.width*0.7, 0)))
-		{
-			auto visibleSize = Director::getInstance()->getVisibleSize();
-			_target = Sprite::createWithSpriteFrameName("Factory.png");
-			_target->setOpacity(100);
-			GetMap()->addChild(_target, 5);
-			auto worldPos = Point(_buildings[4]->getPosition().x + visibleSize.width*0.7, _buildings[4]->getPosition().y)-GetMap()->getPosition();
-			_target->setPosition(worldPos);
-			_buildings[4]->setColor(Color3B(100, 100, 100));
-
-			return true;
-		}
-		return false;
-	};
-	listener->onTouchMoved = [&](Touch* touch, Event* event)
-	{
-		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		_target->setPosition(originPos -GetMap()->getPosition());
-		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),1) && GetBuildingManager()->BuildingResourceCheck(1))
-		{
-			_target->setColor(Color3B::GREEN);
-		}
-		else
-		{
-			_target->setColor(Color3B::RED);
-		}
-
-	};
-	listener->onTouchEnded = [&](Touch* touch, Event* event)
-	{
-		auto originPos = Point(Director::getInstance()->convertToGL(touch->getLocationInView()));
-		if (MapManager::BuildingPositionCheck(originPos -GetMap()->getPosition(),1) && GetBuildingManager()->BuildingResourceCheck(1))
-		{
-
-			_target->removeFromParent();
-			auto building = BuildingManager::CreateBuilding("Factory");
-			auto setPos = MapManager::ChangeToTiledPos(originPos - GetMap()->getPosition());
-			log("OK");
-			GetMap()->addChild(building, setPos.x + setPos.y,building->GetBuildingID());
-			setPos = MapManager::ChangeToCocosPos(setPos);
-			building->setPosition(setPos);
-
-			MapManager::SetBuilding(setPos,1);
-			GetBuildingManager()->SetFactoryController(building);
-
-			
-		}
-		else
-		{
-			_target->removeFromParent();
-			auto flowWord = FlowWord::create();
-			this->getParent()->addChild(flowWord);
-			flowWord->showWord("Can't build", Point(900, 700), 0.5, 2);
-		}
-		_buildings[4]->setColor(Color3B(255, 255, 255));
-	};
-
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, _buildings[4]);
-}
 
 Layer* MenuLayer::CreateLayer()
 {

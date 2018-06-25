@@ -10,7 +10,7 @@
 class ResourceManager;
 class SoldierManager;
 class MenuLayer;
-
+class GameController;
 class MapManager;
 class BuildingManager;
 
@@ -39,6 +39,8 @@ public:
 	//========获取地图管理器========
 	static MapManager* GetMapManager();
 
+	static GameController* GetGameController();
+
 	//===========获取资源类=======
 	static Mineral* GetMineral();
 	static Power* GetPower();
@@ -52,10 +54,10 @@ private:
 	static MenuLayer* _menuLayer;
 	static BuildingManager* _buildingManager;
 	static SoldierManager* _soldierManager;
-
+	static GameController* _gameController;
 	static Mineral* _mineral;
 	static Power* _power;
 
-	static ResourceManager* _resourceManager;
+
 	
 };

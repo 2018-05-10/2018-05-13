@@ -9,6 +9,7 @@ public:
 	CREATE_FUNC(RoomScene);
 
 	cocos2d::ui::Button* CreateButton(std::string);
+	virtual void update(float dt);
 
 	void CreateMasterLayer();
 

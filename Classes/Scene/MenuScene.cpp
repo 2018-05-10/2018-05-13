@@ -6,6 +6,7 @@
 #include"ui/CocosGUI.h"
 #include"NetScene.h"
 #include"LoginScene.h"
+#include"Setting.h"
 USING_NS_CC;
 using namespace extension;
 using namespace ui;
@@ -113,7 +114,7 @@ Button* MenuScene::CreateButton(std::string title, int site)
 	button->setScale9Enabled(true);
 	button->setSize(Size(300,50));
 	button->setTitleText(title);
-	button->setTitleFontSize(20);
+	button->setTitleFontSize(Setting::Font::Size::normal);
 	button->setPosition(Vec2(visibleOrigin.x + visibleSize.width / 4, visibleOrigin.y + visibleSize.height / 4 * site));
 
 	return button;

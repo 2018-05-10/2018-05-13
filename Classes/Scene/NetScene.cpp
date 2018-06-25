@@ -2,7 +2,7 @@
 #include"extensions/cocos-ext.h"
 #include"ui/CocosGUI.h"
 #include"SimpleAudioEngine.h"
-#include"RoomScene.h"
+#include"RoomScene/RoomScene.h"
 #include"Entity\Player.h"
 USING_NS_CC;
 using namespace extension;

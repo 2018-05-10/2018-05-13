@@ -17,8 +17,6 @@ public:
 	void ForcedAttack(Entity* target);            //强制攻击，所谓反补
 	bool init();
 	virtual void Die();
-	int _numInVec;             //在管理类里的总序号
-	int _numInTypeVec;         //在自己同类当中的序号
 	int GetMineralCost()const;
 	virtual void UpdateSprite();
 
@@ -30,8 +28,7 @@ public:
 	void EnemySearchEnemyUpdate(float dt);
 
 	int GetSoldierID();
-	static int soldiersID;
-	int _soldierID;
+
 
 
 	Point _targetPoint=Point(-1,-1);
@@ -47,7 +44,8 @@ protected:
 	float _attackInterval;
 	int _attackDistance;
 	Point _toward;
-
+	static int soldiersID;
+	int _soldierID;
 
 	SoldierManager* _pSoldierManager;
 };

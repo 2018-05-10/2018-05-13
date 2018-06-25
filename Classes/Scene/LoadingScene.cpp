@@ -2,6 +2,7 @@
 #include"SimpleAudioEngine.h"
 #include"GameScene\GameScene.h"
 #include"MenuScene.h"
+#include"Tool/AnimationTool.h"
 USING_NS_CC;
 
 using namespace CocosDenshion;
@@ -76,6 +77,7 @@ void LoadingScene::LoadImage()
 	cache->addImage("selectbox.png");
 	cache->addImage("button.png");
 	cache->addImage("buttonHighlighted.png");
+	AnimationTool::getInstance()->loadAnimation();
 }
 void LoadingScene::LoadSpriteFrame()
 {
@@ -91,13 +93,6 @@ cocos2d::ui::LoadingBar* LoadingScene::createLoadingBar() {
 	loadingBar->setScale(0.5);
 	loadingBar->setDirection(ui::LoadingBar::Direction::LEFT);
 	loadingBar->setPercent(10);
-
-
-	
-
-	
-
-	
 
 	return loadingBar;
 }

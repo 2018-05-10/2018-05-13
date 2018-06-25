@@ -76,7 +76,7 @@ void LoginScene::createLoginButton()
 		{
 			username.substr(0, 16);
 			Player::getInstance()->setName(username);
-
+			Player::getInstance()->client->_playerName;
 		
 			Director::getInstance()->replaceScene(TransitionFade::create(1.2f, NetScene::createScene()));
 		}

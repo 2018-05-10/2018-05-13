@@ -34,6 +34,7 @@ public:
 	bool Broadcast();
 
 	int _step;
+	void SendStep();//·¢ËÍ²½Öè
 };
 
 

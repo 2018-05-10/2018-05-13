@@ -16,14 +16,6 @@ public:
 	CREATE_FUNC(MapManager);
 	virtual bool init();
 
-	//==========移动地图视角的函数========
-	void KeyPressedEvent(cocos2d::EventKeyboard::KeyCode code,cocos2d::Event *event);
-	void KeyReleasedEvent(cocos2d::EventKeyboard::KeyCode code,cocos2d::Event *event);
-
-	void SetMouseController();
-	void SetKeyboardController();
-	void ControllerUpdate(float dt);
-
 	//==========tiledmap坐标与cocos坐标互相转换============
 	static cocos2d::Vec2 ChangeToTiledPos(cocos2d::Point);
 	static cocos2d::Vec2 ChangeToCocosPos(cocos2d::Vec2);
@@ -36,13 +28,12 @@ public:
 
 	//=========建筑与士兵建造时，更新地图vector上的信息，建筑占的点设为0，士兵设为2=======
 	static void SetBuilding(cocos2d::Point,int);
-	static void RemoveBuilding(Building*,char*);
+	static void RemoveBuilding(Building*,int);
 	static void RemoveSoldier(Soldier*);
 	void SetSoldier(cocos2d::Point);
 	static void SoldierDoMove(cocos2d::Point, cocos2d::Point);
 
-	//=========测试时使用的函数========
-	void SetTestListener();
+
 
 	//=======BFS宽度搜索，用于寻找出兵点与多个士兵的目的地=========
 	cocos2d::Point BFS(cocos2d::Point);
@@ -65,14 +56,4 @@ public:
 
 private:
 
-
-
-	bool _isClick = false;
-	bool _key_A_isPressed=false;
-	bool _key_W_isPressed = false;
-	bool _key_D_isPressed = false;
-	bool _key_S_isPressed = false;
-
-	//=======鼠标光标位置======
-	cocos2d::Point _mousePosition = cocos2d::Point(800, 450);
 };

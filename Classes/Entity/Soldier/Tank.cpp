@@ -2,9 +2,19 @@
 #include "Resource/Mineral.h"
 #include"Scene/GameScene/GameScene.h"
 #include"Manager/MapManager.h"
+
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
 Tank::Tank(int player)
 {
-	_whatAmI = "Tank";
+	_type=TANK;
 	_totalHP = 300;
 	_currentHP = 300;
 	_attack = 150;
@@ -21,7 +31,7 @@ Tank::Tank(int player)
 
 Tank::Tank(Mineral* m,int player)
 {
-	_whatAmI = "Tank";
+	_type=TANK;
 	_totalHP = 300;
 	_currentHP = 300;
 	_attack = 150;
@@ -47,19 +57,9 @@ bool Tank::init()
 
 cocos2d::Animate* Tank::AnimateDie()
 {
-	Vector<SpriteFrame*> frameVec;
-	SpriteFrame* frame;
-	for (int i = 1; i < 4; i++)
-	{
-		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Tank_die_(%d,%d)_%d.png",
-			static_cast<int>(_toward.x), static_cast<int>(_toward.y), i));
-		frameVec.pushBack(frame);
-	}
-
-	Animation* animation = Animation::createWithSpriteFrames(frameVec);
-	animation->setLoops(1);
-	animation->setDelayPerUnit(0.2f);
-
+	int x = _toward.x;
+	int y = _toward.y;
+	auto animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("TankDie_%d_%d", x, y));
 	Animate* action = Animate::create(animation);
 
 	return action;
@@ -113,22 +113,9 @@ cocos2d::Animate* Tank::AnimateMove(Point target)
 	_toward.x = x;
 	_toward.y = y;
 
-	Vector<SpriteFrame*> frameVec;
-	SpriteFrame* frame;
-	for (int i = 1; i < 2; i++)
-
-	{
-		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Tank_move_(%d,%d).png", x, y));
-
-		frameVec.pushBack(frame);
-	}
-
-
-	Animation* animation = Animation::createWithSpriteFrames(frameVec);
-	animation->setLoops(-1);
-	animation->setDelayPerUnit(0.2f);
-
+	auto animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("TankMove_%d_%d", x, y));
 	Animate* action = Animate::create(animation);
+
 
 	return action;
 }
@@ -205,38 +192,19 @@ cocos2d::Animate* Tank::AnimateAttack(Point target)
 	}
 
 	else if (-2.64 < angle&&angle < -2.07)
-
 	{
-
 		x = -1; y = -1;
-
 	}
-
 	else
-
 	{
-
 		x = -1; y = 0;
-
 	}
 
 	_toward.x = x;
 	_toward.y = y;
 
-	Vector<SpriteFrame*> frameVec;
-	SpriteFrame* frame;
-	for (int i = 1; i < 3; i++)
-	{
-		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Tank_attack_(%d,%d)_%d.png", x, y, i));
-		frameVec.pushBack(frame);
-	}
-	frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Tank_move_(%d,%d).png", x, y));
-	frameVec.pushBack(frame);
 
-	Animation* animation = Animation::createWithSpriteFrames(frameVec);
-	animation->setLoops(1);
-	animation->setDelayPerUnit(0.2f);
-
+	auto animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("TankAttack_%d_%d", x, y));
 	Animate* action = Animate::create(animation);
 
 	return action;

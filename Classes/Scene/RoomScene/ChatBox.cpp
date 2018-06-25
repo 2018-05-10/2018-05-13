@@ -1,4 +1,4 @@
-#include "Scene/ChatBox.h"
+#include "ChatBox.h"
 #include"Entity/Player.h"
 USING_NS_CC;
 
@@ -57,6 +57,8 @@ void ChatBox::boxInputInit()
 	boxInput->setTextColor(Color4B(0, 0, 0, 255 * 0.9f));
 	boxInput->setCursorEnabled(true);
 	boxInput->setCursorChar('|');
+	boxInput->setMaxLength(50);
+	boxInput->setMaxLengthEnabled(true);
 	this->addChild(boxInput);
 }
 
@@ -66,10 +68,10 @@ void ChatBox::boxHistoryInit()
 
 	boxHistory = cocos2d::ui::ListView::create();
 	boxHistory->setDirection(cocos2d::ui::ScrollView::Direction::VERTICAL);
-	boxHistory->setContentSize(Size(400,150));
+	boxHistory->setContentSize(Size(200,150));
 	boxHistory->setBackGroundColor(Color3B(50, 50, 50));
 	boxHistory->setBackGroundColorOpacity(225 * 0.8f);
-	
+	boxHistory->setPosition(Point(-50, 0));
 
 	addChild(boxHistory);
 }

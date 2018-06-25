@@ -20,19 +20,18 @@ public:
 	void SetIsWorking(bool a);         //改变是否工作的状态
 	Sprite* Build(char* TypeName);     //通过调用管理类里的函数来建造其他实体单位
 	bool init();
-	int _numInVec;       //在管理类里的Vector的位置，及序号
 	virtual void Die();
 	void BuildingUpdate(float dt);
 	void update(float dt);
 	//=======building id by cyy=======
 	int GetBuildingID();
-	static int buildingsID;
-	int _buildingID;
+
 
 protected:
 	bool _isWorking;
 
-
+	static int buildingsID;
+	int _buildingID;
 
 	int _powerCost;
 	int _mineralCost;

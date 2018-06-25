@@ -6,6 +6,17 @@
 #include<queue>
 #include<string>
 USING_NS_CC;
+
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
+
 bool MapManager::init()
 {
 	if (!Node::init())
@@ -29,116 +40,8 @@ bool MapManager::init()
 
 
 
-void MapManager::KeyReleasedEvent(cocos2d::EventKeyboard::KeyCode code, cocos2d::Event *event)
-{
-	if (code == EventKeyboard::KeyCode::KEY_D)
-	{
-		_key_D_isPressed = false;
-	}
-	if (code == EventKeyboard::KeyCode::KEY_W)
-	{
-		_key_W_isPressed = false;
-	}
-	if (code == EventKeyboard::KeyCode::KEY_A)
-	{
-		_key_A_isPressed = false;
-	}
-	if (code == EventKeyboard::KeyCode::KEY_S)
-	{
-		_key_S_isPressed = false;
-	}
-}
 
 
-void MapManager::KeyPressedEvent(EventKeyboard::KeyCode code, Event *event)
-{
-	if (code == EventKeyboard::KeyCode::KEY_D)
-	{
-		_key_D_isPressed=true;
-
-	}
-	if (code == EventKeyboard::KeyCode::KEY_W)
-	{
-		_key_W_isPressed = true;
-	}
-	if (code == EventKeyboard::KeyCode::KEY_A)
-	{
-		_key_A_isPressed = true;
-	}
-	if (code == EventKeyboard::KeyCode::KEY_S)
-	{
-		_key_S_isPressed = true;
-	}
-}
-
-void MapManager::SetMouseController()
-{
-	auto listener = EventListenerMouse::create();
-
-
-	listener->onMouseDown = [&](Event*) { _isClick = true; };
-	listener->onMouseMove = [&](Event* event) {
-		_mousePosition.x = static_cast<EventMouse*>(event)->getCursorX();
-		_mousePosition.y = static_cast<EventMouse*>(event)->getCursorY();
-	};
-	listener->onMouseUp = [&](Event*) { _isClick = false; };
-
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-	}
-
-void MapManager::SetKeyboardController()
-{
-	auto listener = EventListenerKeyboard::create();
-
-	listener->onKeyPressed = CC_CALLBACK_2(MapManager::KeyPressedEvent, this);
-	listener->onKeyReleased = CC_CALLBACK_2(MapManager::KeyReleasedEvent, this);
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-}
-
-void MapManager::ControllerUpdate(float dt)
-{
-	auto node =GetMap();
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	auto currentPos = node->getPosition();
-	auto origin = Director::getInstance()->getVisibleOrigin();
-	auto mapTiledNum =GetMap()->getMapSize();
-	auto tiledSize = GetMap()->getTileSize()*0.78125;
-	
-	Point mapSize = Point(mapTiledNum.width*tiledSize.width,mapTiledNum.height*tiledSize.height);
-	int speed = 20;
-	
-	
-
-	if ((_key_A_isPressed || _mousePosition.x <visibleSize.width / 6)&&!_isClick)
-	{
-		if (currentPos.x< 0)
-		{
-			currentPos += Point(speed, 0);
-		}
-	}
-	if ((_key_D_isPressed || _mousePosition.x >visibleSize.width*0.97) && !_isClick)
-	{
-		if (currentPos.x + mapSize.x > visibleSize.width)
-		{
-			currentPos += Point(-speed, 0);
-		}
-	}
-	if ((_key_S_isPressed || _mousePosition.y <visibleSize.height / 6) && !_isClick)
-	{
-		if (currentPos.y < 0)
-		{
-			currentPos += Point(0, speed);
-		}
-	}
-	if ((_key_W_isPressed || _mousePosition.y > visibleSize.height*5 / 6) && !_isClick)
-	{
-		if (currentPos.y + mapSize.y > visibleSize.height)
-		{
-			currentPos += Point(0, -speed);
-		}
-	}
-	node->setPosition(currentPos);
-}
 
 
 bool MapManager::BuildingPositionCheck(Point pos,int name)
@@ -159,27 +62,27 @@ bool MapManager::BuildingPositionCheck(Point pos,int name)
 	
 	switch (name)
 	{
-	case(0):
+	case(BASE):
 		width = 4;
 		height = 4;
 		originPos += Point(4, 3);
 		break;
-	case(1):
+	case(FACTORY):
 		width = 3;
 		height = 3;
 		originPos += Point(3,3);
 		break;
-	case(2):
+	case(BARRACK):
 		width = 4;
 		height = 4;
 		originPos += Point(3, 3);
 		break;
-	case(3):
+	case(MINE):
 		width = 4;
 		height = 4;
 		originPos += Point(3, 3);
 		break;
-	case(4):
+	case(POWERSTATION):
 		width = 3;
 		height = 3;
 		originPos += Point(3, 3);
@@ -205,26 +108,6 @@ bool MapManager::BuildingPositionCheck(Point pos,int name)
 	return true;
 }
 
-void MapManager::SetTestListener()
-{
-	auto listener = EventListenerTouchOneByOne::create();
-
-	listener->onTouchBegan = [&](Touch *touch, Event *event)
-	{
-		return true;
-	};
-	listener->onTouchEnded = [&](Touch *touch, Event *event)
-	{
-
-		/*Point pos = Director::getInstance()->convertToGL(touch->getLocationInView());
-		Vec2 pos2 = ChangeToTiledPos(pos- GetMap()->getPosition());
-		log("%f %f", pos2.x, pos2.y);
-		log("%d", _objectVec[pos2.x][pos2.y])*/;
-		
-	};
-
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-}
 
 void MapManager::GetTiledInformation()
 {
@@ -255,33 +138,32 @@ void MapManager::SetBuilding(Point pos,int name)
 
 	switch (name)
 	{
-	case(0):
+	case BASE:
 		width = 4;
 		height = 4;
 		originPos += Point(3, 3);
 		break;
-	case(1):
+	case FACTORY:
 		width = 3;
 		height = 3;
 		originPos += Point(3, 3);
 		break;
-	case(2):
+	case BARRACK:
 		width = 4;
 		height = 4;
 		originPos += Point(3, 3);
 		break;
-	case(3):
+	case MINE:
 		width = 4;
 		height = 4;
 		originPos += Point(3, 3);
 		break;
-	case(4):
+	case POWERSTATION:
 		width = 3;
 		height = 3;
 		originPos += Point(3, 3);
 		break;
 	}
-
 	for (int i = 0; i < width+1; ++i)
 	{
 		for (int j = 0; j < height+1; ++j)
@@ -297,45 +179,42 @@ void MapManager::SetBuilding(Point pos,int name)
 	
 }
 
-void MapManager::RemoveBuilding(Building* building, char* name)
+void MapManager::RemoveBuilding(Building* building, int name)
 {
 	auto pos = building->getPosition();
 	auto originPos = ChangeToTiledPos(pos);
 
 	int width, height;
-	
 
-	if (name == "Base")
+	switch (name)
 	{
-		width = 4;
-		height = 4;
-		originPos += Point(3, 3);
+	case BASE:
+			width = 4;
+			height = 4;
+			originPos += Point(3, 3);
+			break;
+		
+	case FACTORY:
+			width = 3;
+			height = 3;
+			originPos += Point(3, 3);
+			break;
+	case BARRACK:
+			width = 4;
+			height = 4;
+			originPos += Point(3, 3);
+			break;
+	case MINE:
+			width = 4;
+			height = 4;
+			originPos += Point(3, 3);
+			break;
+	case POWERSTATION:
+			width = 3;
+			height = 3;
+			originPos += Point(3, 3);
+			break;
 	}
-	else if (name == "Factory")
-	{
-		width = 3;
-		height = 3;
-		originPos += Point(3, 3);
-	}
-	if (name == "Barrack")
-	{
-		width = 4;
-		height = 4;
-		originPos += Point(3, 3);
-	}
-	if (name == "Mine")
-	{
-		width = 4;
-		height = 4;
-		originPos += Point(3, 3);
-	}
-	else if (name == "PowerStation")
-	{
-		width = 3;
-		height = 3;
-		originPos += Point(3, 3);
-	}
-
 	for (int i = 0; i < width + 1; ++i)
 	{
 		for (int j = 0; j < height + 1; ++j)

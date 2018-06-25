@@ -38,6 +38,7 @@ static bool ServerRecvAndSend(Server* _server)
 	{
 		if (_server->IsConnected())
 		{
+			//交换名称
 			std::thread _task1(&Server::RecvAndSend1, _server);//
 			std::thread _task2(&Server::RecvAndSend2, _server);//
 			_task1.detach();
@@ -56,7 +57,6 @@ static bool RecvAndSend(Server* _server)//在连接建立之后，以创建的Server对象为参
 	return true;
 }
 
-
 static bool SendMsgMod(Client* _client)//游戏中，进入发送信息状态时调用此函数， 用户可以输入聊天信息
 {
 	if (_client->IsConnected())
@@ -72,14 +72,19 @@ static bool RecvMsgMod(Client* _client)//仅仅在房间里进行聊天时使用
 {
 	if (_client->IsConnected())
 	{
-		std::thread _task(&Client::RecvMsg, _client);
+		std::thread _task(&Client::RecvToMap, _client);
 		_task.detach();
 		return true;
 	}
 	return false;
 }
 
-static bool RecvInGame(Client* _client)//进入游戏后两边均调用此函数， 此后的SendData()所发信息均会在本地map中更新
+static void SendMap(Client* _client)
+{
+
+}
+
+/*static bool RecvInGame(Client* _client)//进入游戏后两边均调用此函数， 此后的SendData()所发信息均会在本地map中更新
 {
 	if (_client->IsConnected())
 	{
@@ -88,8 +93,6 @@ static bool RecvInGame(Client* _client)//进入游戏后两边均调用此函数， 此后的Send
 		return true;
 	}
 	return true;
-}
-
-
+}*/
 
 #endif 

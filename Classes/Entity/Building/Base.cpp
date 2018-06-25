@@ -1,8 +1,17 @@
 #include "Base.h"
 
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
 Base::Base()
 {
-	_whatAmI = "Base";
+	_type = BASE;
 
 	_totalHP = 5000;
 	_currentHP = 5000;
@@ -17,7 +26,7 @@ Base::Base()
 
 Base::Base(Power* p,Mineral* m,int player)
 {
-	_whatAmI = "Base";
+	_type = BASE;
 	_pPower = p;
 	_pMineral = m;
 

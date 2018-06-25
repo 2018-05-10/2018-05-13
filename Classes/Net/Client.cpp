@@ -5,13 +5,7 @@ Client::Client()//不用关心
 	WSADATA _data;
 	WSAStartup(MAKEWORD(2, 2), &_data);
 	_clientSocket = 0;
-}
-
-Client::Client(SOCKET _socket)//不用关心
-{
-	WSADATA _data;
-	WSAStartup(MAKEWORD(2, 2), &_data);
-	_clientSocket = _socket;
+	_step = 0;
 }
 
 Client::~Client()//不用关心
@@ -49,6 +43,7 @@ bool Client::ConnectForJoiner(unsigned short _port)//不用关心
 	_addr.sin_port = htons(_port);
 	_addr.sin_addr.S_un.S_addr = inet_addr(_ip);
 	connect(_clientSocket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr));
+	_step++;
 	return true;
 }
 
@@ -103,11 +98,7 @@ bool Client::SendData(float _p1, float _p2, int _p3, int _p4, int _p5, int _p6) 
 	_str[96] = 'd';
 	_str[97] = 'd';
 	_str[98] = 'd';
-	_str[99] = '\0';
-	if (_str[0] != '\0')
-	{
-		_judge = Send(_str, 100);
-	}
+	_judge = Send(_str, 100);
 	if (_judge <= 0)
 	{
 		return false;
@@ -120,20 +111,23 @@ bool Client::RecvData(float &_p1, float &_p2, int &_p3, int &_p4, int &_p5, int 
 	char* _str = new char[1024];
 	int _judge = 0;
 	Recv(_str, 1024);
-	if (_str[strlen(_str) - 1] != 'd' || _str[strlen(_str) - 2] != 'd' || _str[strlen(_str) - 3] != 'd')//判断是不是对话信息
+	if (_str == "_step++")
 	{
-		_str[strlen(_str) - 1] = '\0';
-		_str[strlen(_str) - 2] = '\0';
-		_str[strlen(_str) - 3] = '\0';
-		std::string _chat = _str;
-		_chatMsgRecv.push_back(_chat);//将对话信息输出
+		_step++;
 		return true;
 	}
-	else
+	else if(strlen(_str) == 99 && _str[96] == 'd' && _str[97] == 'd' && _str[98] == 'd')
 	{
 		ChangeFrom(_str, _p1, _p2, _p3, _p4, _p5, _p6);
 		return true;
 	}
+	else
+	{
+		std::string _chat = _str;
+		_chatMsgRecv.push_back(_chat);//将对话信息输出
+		return true;
+	}
+	
 }
 
 char* Client::ChangeTo(float _p1, float _p2, int _p3, int _p4, int _p5, int _p6) const//不用关心
@@ -177,6 +171,10 @@ void Client::ChangeFrom(char* _str, float &_p1, float &_p2, int &_p3, int &_p4, 
 
 bool Client::SendMsg()//SendMsgMod所开的线程函数
 {
+	const char* _myName = new char[1024];
+	_myName = _playerName.c_str();
+	send(_clientSocket, _myName, sizeof(_myName), 0);
+
 	while (1)
 	{
 		Sleep(500);
@@ -191,14 +189,12 @@ bool Client::SendMsg()//SendMsgMod所开的线程函数
 				_judge = Send(_str, 1024);
 			}
 		}
-		Sleep(10);
 		_chatMsgSend.clear();
 	}
 	return true;
 }
 
-
-bool Client::RecvMsg()///在房间中使用，RecvMsgMod所开的线程函数
+/*bool Client::RecvMsg()///在房间中使用，RecvMsgMod所开的线程函数
 {
 	while (1)
 	{
@@ -211,16 +207,20 @@ bool Client::RecvMsg()///在房间中使用，RecvMsgMod所开的线程函数
 			//std::cout << _str << std::endl;
 		}
 	}
-}
+}*/
 
-bool Client::RecvToMap()//RecvInGame所开的线程函数，会将收到的数据信息同步到对应的map
+bool Client::RecvToMap()//RecvMsgMod所开的线程函数，功能整合到这个函数了
 {
-	float _x;
-	float _y;
-	int _life;
-	int _goal;
-	int _id;
-	int _judge;
+	char* _opName = new char[1024];
+	recv(_clientSocket, _opName, 1024, 0);
+	_opponentName = _opName;
+
+	float _x = 0;
+	float _y = 0;
+	int _life = 0;
+	int _goal = 0;
+	int _id = 0;
+	int _judge = 0;
 	while (1)
 	{
 		RecvData(_x, _y, _life, _goal, _id, _judge);
@@ -231,6 +231,11 @@ bool Client::RecvToMap()//RecvInGame所开的线程函数，会将收到的数�
 		_units[_id]._id = _id;
 		_units[_id]._judge = _judge;
 	}
+	return true;
+}
+
+bool Client::SendMap()
+{
 	return true;
 }
 

@@ -7,10 +7,20 @@
 #include"Scene\GameScene\GameScene.h"
 #include"Scene\GameScene\MenuLayer.h"
 #include"Entity\Soldier\Soldier.h"
+#include"Controller\GameController.h"
+
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
 
 Factory::Factory()
 {
-	_whatAmI = "Factory";
+	_type = FACTORY;
 	
 	_totalHP = 2000;
 	_currentHP = 2000;
@@ -26,7 +36,7 @@ Factory::Factory()
 
 Factory::Factory(Power* p, Mineral* m,int player)
 {
-	_whatAmI = "Factory";
+	_type=FACTORY;
 	_pPower = p;
 
 
@@ -82,7 +92,7 @@ void Factory::FactoryUpdate(float dt)
 		auto landPos = GameScene::GetMapManager()->BFS(pos);
 		tank->setPosition(landPos);
 		tank->schedule(schedule_selector(Soldier::SearchEnemyUpdate), tank->GetAttackInterval());
-		GameScene::GetSoldierManager()->SetSoldierController(tank);
+		GameScene::GetGameController()->SetSoldierController(tank);
 		GameScene::GetMapManager()->SetSoldier(landPos);
 		_buildingList.pop();
 		if (GameScene::GetMenuLayer()->_buildingListUI!=nullptr)

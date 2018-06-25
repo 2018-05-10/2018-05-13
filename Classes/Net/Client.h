@@ -28,7 +28,6 @@ private:
 	SOCKET _clientSocket;
 public:
 	Client();
-	Client(SOCKET);
 	~Client();
 
 	bool Create();
@@ -44,19 +43,25 @@ public:
 	bool RecvData(float&, float&, int&, int&, int&, int&);
 
 	char* ChangeTo(float, float, int, int, int, int) const;
-	void ChangeFrom(char*, float&, float&, int&, int&, int&, int&) const; 
+	void ChangeFrom(char*, float&, float&, int&, int&, int&, int&) const;
 
 	bool SendMsg();
 	bool RecvMsg();
 
 	bool RecvToMap();
+	bool SendMap();//
 
 	char* RecvBroadcast();;
 
 	std::map<int, unit> _units;
 
-	std::vector<std::string> _chatMsgRecv;
 	std::vector<std::string> _chatMsgSend;
+	std::vector<std::string> _chatMsgRecv;
+
+	std::string _playerName;
+	std::string _opponentName;
+
+	int _step;
 };
 
 

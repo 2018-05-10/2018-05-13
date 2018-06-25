@@ -40,6 +40,9 @@
     <Filter Include="src\Scene\RoomScene">
       <UniqueIdentifier>{4605aa6f-8301-4311-97b8-bb5276b3c113}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Controller">
+      <UniqueIdentifier>{3c6b0c51-257c-40d0-a775-b9cc787f9eb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -108,9 +111,6 @@
     <ClCompile Include="..\Classes\Entity\Building\Factory.cpp">
       <Filter>src\Entity\Building</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Manager\ResourceManager.cpp">
-      <Filter>src\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Net\Client.cpp">
       <Filter>src\Net</Filter>
     </ClCompile>
@@ -129,11 +129,17 @@
     <ClCompile Include="..\Classes\Scene\LoginScene.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Scene\RoomScene.cpp">
+    <ClCompile Include="..\Classes\Scene\RoomScene\ChatBox.cpp">
       <Filter>src\Scene\RoomScene</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Scene\ChatBox.cpp">
+    <ClCompile Include="..\Classes\Scene\RoomScene\RoomScene.cpp">
       <Filter>src\Scene\RoomScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Controller\GameController.cpp">
+      <Filter>src\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Tool\AnimationTool.cpp">
+      <Filter>src\Tool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,9 +209,6 @@
     <ClInclude Include="..\Classes\Entity\Building\Factory.h">
       <Filter>src\Entity\Building</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Manager\ResourceManager.h">
-      <Filter>src\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\Net\API.h">
       <Filter>src\Net</Filter>
     </ClInclude>
@@ -227,22 +230,28 @@
     <ClInclude Include="..\Classes\Scene\LoginScene.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Scene\RoomScene.h">
-      <Filter>src\Scene\RoomScene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Scene\ChatBox.h">
-      <Filter>src\Scene\RoomScene</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\Entity\Player.h">
       <Filter>src\Entity</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Scene\GameScene\ResultBox.h">
       <Filter>src\Scene\GameScene</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Tool\SearchRod.h">
+    <ClInclude Include="..\Classes\Tool\SearchRoad.h">
       <Filter>src\Tool</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Tool\SearchRoad.cpp">
+    <ClInclude Include="..\Classes\Scene\RoomScene\ChatBox.h">
+      <Filter>src\Scene\RoomScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scene\RoomScene\RoomScene.h">
+      <Filter>src\Scene\RoomScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Setting.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Controller\GameController.h">
+      <Filter>src\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Tool\AnimationTool.h">
       <Filter>src\Tool</Filter>
     </ClInclude>
   </ItemGroup>

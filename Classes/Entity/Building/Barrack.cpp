@@ -3,9 +3,20 @@
 #include"Manager\SoldierManager.h"
 #include"Scene\GameScene\GameScene.h"
 #include"Scene\GameScene\MenuLayer.h"
+#include"Controller/GameController.h"
+
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
 Barrack::Barrack()
 {
-	_whatAmI = "Barrack";
+	_type = BARRACK;
 
 	_totalHP = 2000;
 	_currentHP = 2000;
@@ -21,7 +32,7 @@ Barrack::Barrack()
 
 Barrack::Barrack(Power* p, Mineral* m,int player)
 {
-	_whatAmI = "Barrack";
+	_type = BARRACK;
 	_pPower = p;
 
 
@@ -78,7 +89,7 @@ void Barrack::BarrackUpdate(float dt)
 		auto landPos = GameScene::GetMapManager()->BFS(pos);
 		infantry->setPosition(landPos);
 		infantry->schedule(schedule_selector(Soldier::SearchEnemyUpdate), infantry->GetAttackInterval());
-		GameScene::GetSoldierManager()->SetSoldierController(infantry);
+		GameScene::GetGameController()->SetSoldierController(infantry);
 		GameScene::GetMapManager()->SetSoldier(landPos);
 	}
 	else if (_buildingList.front() == "Dog")
@@ -90,7 +101,7 @@ void Barrack::BarrackUpdate(float dt)
 		auto landPos = GameScene::GetMapManager()->BFS(pos);
 		dog->setPosition(landPos);
 		dog->schedule(schedule_selector(Soldier::SearchEnemyUpdate), dog->GetAttackInterval());
-		GameScene::GetSoldierManager()->SetSoldierController(dog);
+		GameScene::GetGameController()->SetSoldierController(dog);
 		GameScene::GetMapManager()->SetSoldier(landPos);
 	}
 	

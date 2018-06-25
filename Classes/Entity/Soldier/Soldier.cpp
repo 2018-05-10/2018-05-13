@@ -6,6 +6,15 @@
 #include"Manager/MapManager.h"
 #include"SimpleAudioEngine.h"
 
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
 Soldier::Soldier() {}
 
 Soldier::~Soldier() {}
@@ -54,7 +63,7 @@ bool Soldier::init()
 void Soldier::Die()     
 {
 	_isDead = true;
-	if (_whatAmI == "Tank")
+	if (_type=TANK)
 	{
 		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/BoomSound.wav");
 	}
@@ -115,21 +124,19 @@ void Soldier::SearchEnemyUpdate(float dt)
 		return;
 	}
 	leastDir = 1000000;
-	for (auto building :BuildingManager::_enemyBuildingVec)
+	for (auto building :BuildingManager::_enemyBuildingMap)
 	{
 
-		if (building != nullptr)
-		{
-			auto targetPos = MapManager::ChangeToTiledPos(building->getPosition()); 
+
+			auto targetPos = MapManager::ChangeToTiledPos(building.second->getPosition()); 
 			auto soldierPos= MapManager::ChangeToTiledPos(this->getPosition());
 			Point deltaPos = targetPos - soldierPos;
 			if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) <leastDir)
 			{
-				target = building;
+				target = building.second;
 				leastDir = pow(deltaPos.x, 2) + pow(deltaPos.y, 2);
 			}
 			
-		}
 	}
 	if (leastDir <= _attackDistance)
 	{
@@ -173,21 +180,19 @@ void Soldier::EnemySearchEnemyUpdate(float dt)
 		return;
 	}
 	leastDir = 1000000;
-	for (auto building : BuildingManager::_buildingVec)
+	for (auto building : BuildingManager::_buildingMap)
 	{
 
-		if (building != nullptr)
-		{
-			auto targetPos = MapManager::ChangeToTiledPos(building->getPosition());
+
+			auto targetPos = MapManager::ChangeToTiledPos(building.second->getPosition());
 			auto soldierPos = MapManager::ChangeToTiledPos(this->getPosition());
 			Point deltaPos = targetPos - soldierPos;
 			if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) <leastDir)
 			{
-				target = building;
+				target = building.second;
 				leastDir = pow(deltaPos.x, 2) + pow(deltaPos.y, 2);
 			}
 
-		}
 	}
 	if (leastDir <= _attackDistance)
 	{
