@@ -1,9 +1,24 @@
 #include "Building.h"
 #include"Manager/BuildingManager.h"
 #include"Scene/GameScene/GameScene.h"
+#include"Manager\SoldierManager.h"
+#include"Manager/MapManager.h"
 #include"PowerStation.h"
+#include"SimpleAudioEngine.h"
 
-Building::Building() {}
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
+Building::Building() 
+{
+
+}
 
 Building::~Building() {}
 
@@ -17,26 +32,25 @@ void Building::SetIsWorking(bool a)
 	_isWorking = a;
 }
 
-//Sprite* Building::Build(char* TypeName)
-//{
-//	Sprite* a = NULL;
-//	a = _pManager->CreateBuilding(TypeName);
-//	if (a == NULL)
-//	{
-//		a = _pManager->GetPairManager()->CreateSoldier(TypeName);
-//	}
-//	return a;
-//}
+
 
 bool Building::init()
 {
 	return true;
 }
 
-//void Building::Die()
-//{
-//	_pManager->DestroyBuilding(this);
-//}
+void Building::Die()
+{
+	if (_isDead)
+	{
+		return;
+	}
+	_isDead = true;
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/BoomSound.wav");
+	MapManager::RemoveBuilding(this, _type);
+	
+	BuildingManager::DestroyBuilding(this);
+}
 
 
 
@@ -45,12 +59,21 @@ int Building::buildingsID = 2;
 
 int Building::GetBuildingID()
 {
-	return buildingsID;
+	return _buildingID;
 }
 
 void Building::BuildingUpdate(float dt)
 {
-	
+	if (_timeBar && !_player)
+	{
+		this->unscheduleUpdate();
+		_timeBar->removeFromParent();
+
+	}	if (_player)
+	{
+		GetSprite()->setColor(Color3B(255, 255, 255));
+		return;
+	}
 	if (_pPower->GetUsedVal() > _pPower->GetTotalVal())
 	{
 		
@@ -62,24 +85,23 @@ void Building::BuildingUpdate(float dt)
 		_isWorking = true;
 
 		int freePower = _pPower->GetAvailableVal();
-		if (_whatAmI == "Mine")
+		if (_type == MINE)
 		{
 			BuildingManager::UpdateMineralPerSecond();
 		}
-		if (_whatAmI == "PowerStation")
+		if (_type == POWERSTATION)
 		{
 			if (freePower > 0)
 			{
 				_pPower->Add(static_cast<PowerStation*>(this)->GetPowerProduce());
-				Building* p = NULL;
-				for (int i = 0; i <BuildingManager::_buildingVec.size(); i++)
+
+				for (auto building:BuildingManager::_buildingMap)
 				{
-					p = BuildingManager::_buildingVec.at(i);
-					if ((!p->_isWorking) && (p->_powerCost <= freePower))
+					if ((!building.second->_isWorking) && (building.second->_powerCost <= freePower))
 					{
-						freePower -= p->_powerCost;
-						p->_isWorking = true;
-						_pPower->Use(p->_powerCost);
+						freePower -= building.second->_powerCost;
+						building.second->_isWorking = true;
+						_pPower->Use(building.second->_powerCost);
 					}
 				}
 			}
@@ -87,4 +109,13 @@ void Building::BuildingUpdate(float dt)
 		
 	}
 	
+}
+
+void Building::update(float dt)
+{ 
+	if (_timeBar)
+	{
+		
+		_timeBar->setScaleX(_timeBar->getScaleX() + 0.016/static_cast<float>(_timeToBuild));
+	}
 }

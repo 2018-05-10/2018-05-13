@@ -1,35 +1,43 @@
 #include "PowerStation.h"
 
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
+
 PowerStation::PowerStation()
 {
-	_whatAmI = "PowerStation";
+	_type=POWERSTATION;
 
 	_totalHP = 2000;
 	_currentHP = 2000;
 	_powerCost = 0;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	_player = 1;
+	_buildingID = buildingsID;
 	++buildingsID;
 
-	Sprite* spr = Sprite::createWithSpriteFrameName("PowerStation.png");
-	this->BindSprite(spr);
 }
 
-PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo)
+PowerStation::PowerStation(Power* p, Mineral* m,int player)
 {
-	_whatAmI = "PowerStation";
+	_type = POWERSTATION;
 	_pPower = p;
-	_pManager = pManagerItBelongsTo;
 
 	_totalHP = 2000;
 	_currentHP = 2000;
 	_powerCost = 0;
 	_mineralCost = 100;
 	_timeToBuild = 15;
+	_player = player;
+	_buildingID = buildingsID;
 	++buildingsID;
-
-	Sprite* spr = Sprite::createWithSpriteFrameName("PowerStation.png");
-	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
@@ -39,7 +47,10 @@ PowerStation::PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelo
 
 PowerStation::~PowerStation() 
 {
-	_pPower->Reduce(_powerProduce);
+	if (!_player)
+	{
+		_pPower->Reduce(_powerProduce);
+	}
 }
 
 bool PowerStation::init()

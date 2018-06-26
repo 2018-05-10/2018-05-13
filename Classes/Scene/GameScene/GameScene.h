@@ -2,14 +2,17 @@
 
 #pragma once
 #include "cocos2d.h"
-#include"Manager/BuildingManager.h"
-#include"Manager/MapManager.h"
-#include"MenuLayer.h"
-#include"Manager/SoldierManager.h"
+
 #include"Resource/Mineral.h"
 #include"Resource/Power.h"
 
+
 class ResourceManager;
+class SoldierManager;
+class MenuLayer;
+class GameController;
+class MapManager;
+class BuildingManager;
 
 class GameScene :public cocos2d::Layer
 {
@@ -22,33 +25,39 @@ public:
 	CREATE_FUNC(GameScene);
 
 	//======获取地图========
-	cocos2d::TMXTiledMap* GetMap();
+	static cocos2d::TMXTiledMap* GetMap();
 
 	//======获取建筑管理器========
-	BuildingManager* GetBuildingManager()const;
+	static BuildingManager* GetBuildingManager();
 
 	//=========获取士兵管理器======
-	SoldierManager* GetSoldierManager()const;
+	static SoldierManager* GetSoldierManager();
 
 	//=========获取游戏内的菜单======
-	MenuLayer* GetMenuLayer()const;
+	static MenuLayer* GetMenuLayer();
 
 	//========获取地图管理器========
-	MapManager* GetMapManager()const;
+	static MapManager* GetMapManager();
+
+	static GameController* GetGameController();
 
 	//===========获取资源类=======
-	Mineral* GetMineral();
-	Power* GetPower();
+	static Mineral* GetMineral();
+	static Power* GetPower();
 
+	static cocos2d::SpriteFrameCache* _frameCache;
+	static cocos2d::SpriteFrameCache* _frameCacheOfExplosion;
 private:
 	
-	cocos2d::TMXTiledMap* _map;
-	MapManager* _mapManager;
-	MenuLayer* _menuLayer;
-	BuildingManager* _buildingManager;
-	SoldierManager* _soldierManager;
-	Mineral* _mineral;
-	Power* _power;
-	ResourceManager* _resourceManager;
+	static cocos2d::TMXTiledMap* _map;
+	static MapManager* _mapManager;
+	static MenuLayer* _menuLayer;
+	static BuildingManager* _buildingManager;
+	static SoldierManager* _soldierManager;
+	static GameController* _gameController;
+	static Mineral* _mineral;
+	static Power* _power;
+
+
 	
 };

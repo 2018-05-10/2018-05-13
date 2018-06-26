@@ -41,6 +41,7 @@ bool SettingScene::init()
 		switch (type)
 		{
 		case Widget::TouchEventType::BEGAN:
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
 			break;
 		case Widget::TouchEventType::MOVED:
 			break;
@@ -60,7 +61,7 @@ void SettingScene::BGinit()
 	auto _visibleOrigin = Director::getInstance()->getVisibleOrigin();
 
 
-	auto _bg = Scale9Sprite::create("bg.jpg");
+	auto _bg = Scale9Sprite::create("bg.png");
 	this->addChild(_bg);
 	_bg->setContentSize(Size(_visibleSize.width, _visibleSize.height));
 	_bg->setPosition(_visibleSize.width / 2, _visibleSize.height / 2);

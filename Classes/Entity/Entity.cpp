@@ -1,4 +1,7 @@
 #include "Entity.h"
+#include"Tool/FlowWord.h"
+using namespace ui;
+using namespace cocostudio;
 
 Entity::Entity()
 {
@@ -41,7 +44,13 @@ void Entity::Hit(int attack)
 	{
 		_currentHP = 0;
 	}
-	if (_currentHP == 0)
+	float percent = static_cast<float>(_currentHP) / static_cast<float>(_totalHP);
+	_hpBar->setScaleX(percent);
+	auto flowWord = FlowWord::create();
+	this->addChild(flowWord,1000);
+	flowWord->showWord(StringUtils::format("-%d", attack), this->getContentSize()/2,0.3,1.2);
+	
+	if (_currentHP == 0&&!_isDead)
 	{
 		Die();
 	}
@@ -54,9 +63,9 @@ bool Entity::Isdead()
 	}
 	return false;
 }
-char* Entity::WhatAmI()
+int Entity::Type()
 {
-	return _whatAmI;
+	return _type;
 }
 void Entity::Die()
 {}

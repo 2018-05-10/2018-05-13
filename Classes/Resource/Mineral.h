@@ -4,6 +4,7 @@ USING_NS_CC;
 
 class Mineral :public Node
 {
+	friend class BuildingManager;
 	friend class ResourceManager;
 public:
 	Mineral();

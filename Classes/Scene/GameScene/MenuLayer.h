@@ -2,21 +2,30 @@
 
 #pragma once
 #include"cocos2d.h"
-
 #include<vector>
+#include"ui/CocosGUI.h"
+#include"cocostudio/CocoStudio.h"
+
+using namespace cocos2d::ui;
+using namespace cocostudio;
 
 class  MapManager;
 class  BuildingManager;
 class  SoldierManager;
 class  Building;
+class Mineral;
+class Power;
 
 class MenuLayer :public cocos2d::Layer
 {
+	friend class Factory;
+	friend class Barrack;
 public:
 
 	virtual bool init();
 	CREATE_FUNC(MenuLayer);
 
+	void update(float dt);
 	//=====初始化主菜单=====
 	void CreateMainLayer();
 
@@ -36,26 +45,22 @@ public:
 	cocos2d::Layer* CreateLayer();
 
 	//========音乐开关及其调用函数=========
-	void CreateMusicButton();
+	cocos2d::Menu* CreateMusicButton();
 	void MenuMusicCallBack(cocos2d::Ref* pSender);
 
-	//=========对建筑建造按钮的监控函数========
-	void SetBuildingListController();
-	void SetBaseConstructionController();
-	void SetBarrackConstructionController( );
-	void SetMineConstructionController();
-	void SetPowerStationController();
-	void SetFactoryController();
-
+	void BuildingTouchEvent(cocos2d::Sprite*);
 	//=====获取父节点中的其他子节点的信息======
 	cocos2d::TMXTiledMap* GetMap();
 	BuildingManager* GetBuildingManager();
 	SoldierManager* GetSoldierManager();
 	MapManager* GetMapManager();
-	
+	Mineral* GetMineral();
+	Power* GetPower();
 	
 private:
-	std::vector<cocos2d::Sprite*> _buildings;
 	cocos2d::Sprite* _target;
+	cocos2d::Layer* _layer;
 	bool _musicOn = true;
+	Widget* _resourceUI;
+	Widget* _buildingListUI;
 };

@@ -4,6 +4,17 @@
 #include"Manager/BuildingManager.h"
 #include"Manager/SoldierManager.h"
 #include"Manager/MapManager.h"
+#include"SimpleAudioEngine.h"
+
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+#define EXPLOSION 9
 
 Soldier::Soldier() {}
 
@@ -20,10 +31,10 @@ void Soldier::Attack(Entity* target)
 	{
 		return;
 	}
-	if (this->GetPlayer() != target->GetPlayer())
+	if (this->GetPlayer() != target->GetPlayer()&&!this->_isDead)
 	{
 		this->GetSprite()->stopAllActions();
-		this->stopAllActions();
+
 		auto func = [=]()
 		{
 			GameScene::GetSoldierManager()->Move(this);
@@ -52,17 +63,19 @@ bool Soldier::init()
 
 void Soldier::Die()     
 {
-	if (_player)
+	_isDead = true;
+	if (_type=TANK)
 	{
-		for (auto soldier : SoldierManager::_soldierVec)
-		{
-			if (soldier->_target == this)
-			{
-				soldier->_target = nullptr;
-			}
-		}
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/BoomSound.wav");
 	}
-	auto func = [&, this]()
+	MapManager::RemoveSoldier(this);
+	
+	if (_type == EXPLOSION)
+	{
+		//±¬Õ¨¹¥»÷
+	}
+
+	auto func = [this]()
 	{
 		GameScene::GetSoldierManager()->DestroySoldier(this);
 	};
@@ -86,7 +99,8 @@ void Soldier::SearchEnemyUpdate(float dt)
 	int leastDir =1000000;
 	Entity* target=nullptr;
 
-	if (this->_target)
+	
+	if (this->_target&&!_target->Isdead())
 	{
 		auto targetPos = MapManager::ChangeToTiledPos(_target->getPosition());
 		auto soldierPos = MapManager::ChangeToTiledPos(this->getPosition());
@@ -97,19 +111,18 @@ void Soldier::SearchEnemyUpdate(float dt)
 			return;
 		}
 	}
-	for (auto soldier : SoldierManager::_enemySoldier)
+	for (auto soldier : SoldierManager::_enemySoldierMap)
 	{
-		if (soldier != nullptr)
-		{
-			auto targetPos = MapManager::ChangeToTiledPos(soldier->getPosition());
+
+			auto targetPos = MapManager::ChangeToTiledPos(soldier.second->getPosition());
 			auto soldierPos = MapManager::ChangeToTiledPos(this->getPosition());
 			Point deltaPos = targetPos - soldierPos;
 			if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) <leastDir)
 			{
-				target =soldier;
+				target =soldier.second;
 				leastDir = pow(deltaPos.x, 2) + pow(deltaPos.y, 2);
 			}
-		}
+		
 	}
 	if (leastDir <= _attackDistance)
 	{
@@ -117,27 +130,82 @@ void Soldier::SearchEnemyUpdate(float dt)
 		return;
 	}
 	leastDir = 1000000;
-	for (auto building :BuildingManager::_enemyBuildingVec)
+	for (auto building :BuildingManager::_enemyBuildingMap)
 	{
 
-		if (building != nullptr)
-		{
-			auto targetPos = MapManager::ChangeToTiledPos(building->getPosition()); 
+
+			auto targetPos = MapManager::ChangeToTiledPos(building.second->getPosition()); 
 			auto soldierPos= MapManager::ChangeToTiledPos(this->getPosition());
 			Point deltaPos = targetPos - soldierPos;
 			if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) <leastDir)
 			{
-				target = building;
+				target = building.second;
 				leastDir = pow(deltaPos.x, 2) + pow(deltaPos.y, 2);
 			}
 			
-		}
 	}
 	if (leastDir <= _attackDistance)
 	{
 		this->Attack(target);
 	}
 }
+void Soldier::EnemySearchEnemyUpdate(float dt)
+{
+
+	int leastDir = 1000000;
+	Entity* target = nullptr;
+
+
+	if (this->_target && !_target->Isdead())
+	{
+		auto targetPos = MapManager::ChangeToTiledPos(_target->getPosition());
+		auto soldierPos = MapManager::ChangeToTiledPos(this->getPosition());
+		Point deltaPos = targetPos - soldierPos;
+		if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) < this->_attackDistance)
+		{
+			this->Attack(this->_target);
+			return;
+		}
+	}
+	for (auto soldier : SoldierManager::_soldierMap)
+	{
+
+			auto targetPos = MapManager::ChangeToTiledPos(soldier.second->getPosition());
+			auto soldierPos = MapManager::ChangeToTiledPos(this->getPosition());
+			Point deltaPos = targetPos - soldierPos;
+			if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) <leastDir)
+			{
+				target = soldier.second;
+				leastDir = pow(deltaPos.x, 2) + pow(deltaPos.y, 2);
+			}
+		
+	}
+	if (leastDir <= _attackDistance)
+	{
+		this->Attack(target);
+		return;
+	}
+	leastDir = 1000000;
+	for (auto building : BuildingManager::_buildingMap)
+	{
+
+
+			auto targetPos = MapManager::ChangeToTiledPos(building.second->getPosition());
+			auto soldierPos = MapManager::ChangeToTiledPos(this->getPosition());
+			Point deltaPos = targetPos - soldierPos;
+			if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) <leastDir)
+			{
+				target = building.second;
+				leastDir = pow(deltaPos.x, 2) + pow(deltaPos.y, 2);
+			}
+
+	}
+	if (leastDir <= _attackDistance)
+	{
+		this->Attack(target);
+	}
+}
+
 float Soldier::GetAttackInterval()
 {
 	return _attackInterval;
@@ -164,3 +232,10 @@ void Soldier::UpdateSprite()
 {
 
 }
+
+int Soldier::GetSoldierID()
+{
+	return _soldierID;
+}
+
+int Soldier::soldiersID = -2;

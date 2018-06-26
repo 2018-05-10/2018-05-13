@@ -4,10 +4,13 @@
 #include"SimpleAudioEngine.h"
 #include"extensions/cocos-ext.h"
 #include"ui/CocosGUI.h"
-
+#include"NetScene.h"
+#include"LoginScene.h"
+#include"Setting.h"
 USING_NS_CC;
 using namespace extension;
 using namespace ui;
+
 
 Scene* MenuScene::createScene()
 {
@@ -38,11 +41,12 @@ bool MenuScene::init()
 		switch (type)
 		{
 		case Widget::TouchEventType::BEGAN:
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
 			break;
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-			auto transition = TransitionFade::create(0.5,GameScene::createScene());
+			auto transition = TransitionFade::create(0.5,LoginScene::createScene());
 			Director::getInstance()->replaceScene(transition);
 			break;
 		}
@@ -55,12 +59,14 @@ bool MenuScene::init()
 		switch (type)
 		{
 		case Widget::TouchEventType::BEGAN:
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
 			break;
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
 			auto transition = TransitionFade::create(0.5, SettingScene::createScene());
 			Director::getInstance()->pushScene(transition);
+			log("succeed");
 			break;
 		}
 	});
@@ -73,6 +79,7 @@ bool MenuScene::init()
 		switch (type)
 		{
 		case Widget::TouchEventType::BEGAN:
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
 			break;
 		case Widget::TouchEventType::MOVED:
 			break;
@@ -107,7 +114,7 @@ Button* MenuScene::CreateButton(std::string title, int site)
 	button->setScale9Enabled(true);
 	button->setSize(Size(300,50));
 	button->setTitleText(title);
-	button->setTitleFontSize(20);
+	button->setTitleFontSize(Setting::Font::Size::normal);
 	button->setPosition(Vec2(visibleOrigin.x + visibleSize.width / 4, visibleOrigin.y + visibleSize.height / 4 * site));
 
 	return button;
@@ -149,7 +156,7 @@ void MenuScene::BGinit()
 	auto _visibleOrigin = Director::getInstance()->getVisibleOrigin();
 
 
-	auto _bg = Scale9Sprite::create("bg.jpg");
+	auto _bg = Scale9Sprite::create("bg.png");
 	this->addChild(_bg);
 	_bg->setContentSize(Size(_visibleSize.width, _visibleSize.height));
 	_bg->setPosition(_visibleSize.width / 2, _visibleSize.height / 2);

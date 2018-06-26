@@ -10,16 +10,13 @@ class MenuLayer;
 
 class BuildingManager :public cocos2d::Node
 {
+	
 public:
 	CREATE_FUNC(BuildingManager);
 	
 
 
-	//========不同建筑的点击事件=====
-	void SetBaseController(Building*);
-	void SetBarrackController(Building*);
-	void SetFactoryController(Building*);
-	void SetProducerController(Building*);
+	
 
 	//=======建造建筑时的资源检测=========
 	bool BuildingResourceCheck(int name);
@@ -33,17 +30,22 @@ public:
 
 	//===========by lym==============
 	int GetMineralPerSecond()const;                  //取得当前所有正常工作的矿场的产矿总速度
-	static void UpdateMineralPerSecond();              //建筑或摧毁矿场时更新产矿总速度  =======进行了一些改动 by cyy========
+	static void UpdateMineralPerSecond();  
+	void UpdateMineral(float dt);
 	void BindPower(Power* p);               //绑定一个电力类对象，即改manager下的所有对象都影响这个电力类对象
-	void BindMineral(Mineral* m);           //绑定一个矿产类对象
+	void BindMineral(Mineral* m);  //绑定一个矿产类对象
+	static void DestroyBuilding(Building* B);
 
-	Building* CreateBuilding(char* BuildingTypeName);          //创建一个建筑对象并绑定其精灵，参数是建筑名字的字符串，例如“Mine”等等
-	static Vector<Building*> _buildingVec;
+	static Building* CreateBuilding(int BuildingTypeName);          //创建一个建筑对象并绑定其精灵，参数是建筑名字的字符串，例如“Mine”等等
+	static Building* CreateEnemyBuilding(char* BuildingTypeName);
+	static std::unordered_map<int,Building*>  _buildingMap;
+	static std::unordered_map<int,Building*> _enemyBuildingMap;
+
 	static int _mineralPerSecond;
 private:
 
-	Power * _pPower = NULL;
-	Mineral* _pMineral = NULL;
+	static Power * _pPower;
+	static Mineral* _pMineral;
 
-	int _player;
+
 };

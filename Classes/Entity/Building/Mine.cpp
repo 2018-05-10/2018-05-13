@@ -1,35 +1,43 @@
 #include "Mine.h"
 
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+
 Mine::Mine()
 {
-	_whatAmI = "Mine";
+	_type = MINE;
 	
 	_totalHP = 2000;
 	_currentHP = 2000;
 	_mineralCost = 50;
 	_powerCost = 25;
 	_timeToBuild = 15;
+	_player = 1;
+	_buildingID = buildingsID;
 	++buildingsID;
 
-	Sprite* spr = Sprite::createWithSpriteFrameName("Mine.png");
-	this->BindSprite(spr);
 }
 
-Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
+Mine::Mine(Power* p,Mineral* m,int player)
 {
-	_whatAmI = "Mine";
+	_type = MINE;
 	_pPower = p;
-	_pManager = pManagerItBelongsTo;
+
 
 	_totalHP = 2000;
 	_currentHP = 2000;
 	_mineralCost = 50;
 	_powerCost = 25;
 	_timeToBuild = 15;
+	_player = player;
+	_buildingID = buildingsID;
 	++buildingsID;
-
-	Sprite* spr = Sprite::createWithSpriteFrameName("Mine.png");
-	this->BindSprite(spr);
 
 	m->Cost(_mineralCost);
 	p->Use(_powerCost);
@@ -38,7 +46,10 @@ Mine::Mine(Power* p,Mineral* m, BuildingManager* pManagerItBelongsTo)
 
 Mine::~Mine() 
 {
-	_pPower->Free(_powerCost);
+	if (!_player)
+	{
+		_pPower->Free(_powerCost);
+	}
 }
 
 int Mine::GetMineralCost()

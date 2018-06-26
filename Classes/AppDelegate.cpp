@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include"Scene/MenuScene.h"
 #include"Scene/GameScene/GameScene.h"
+#include"Scene/LoadingScene.h"
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -72,6 +73,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0f / 60);
 
+	Director::getInstance()->setProjection(kCCDirectorProjection2D);
+
     // Set the design resolution
     glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
     auto frameSize = glview->getFrameSize();
@@ -94,7 +97,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = GameScene::createScene();
+    auto scene =LoadingScene::createScene();
 
     // run
     director->runWithScene(scene);

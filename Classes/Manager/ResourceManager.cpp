@@ -1,5 +1,6 @@
 #include"ResourceManager.h"
 #include"Scene/GameScene/GameScene.h"
+#include"BuildingManager.h"
 
 USING_NS_CC;
 
@@ -11,21 +12,21 @@ void ResourceManager::UpdateMineral(float dt)
 
 TMXTiledMap* ResourceManager::GetMap()
 {
-	return 	static_cast<GameScene*>(this->getParent())->GetMap();
+	return 	GameScene::GetMap();
 }
 BuildingManager*  ResourceManager::GetBuildingManager()
 {
-	return  static_cast<GameScene*>(this->getParent())->GetBuildingManager();
+	return 	GameScene::GetBuildingManager();
 }
 SoldierManager* ResourceManager::GetSoldierManager()
 {
-	return static_cast<GameScene*>(this->getParent())->GetSoldierManager();
+	return 	GameScene::GetSoldierManager();
 }
 Mineral* ResourceManager::GetMineral()
 {
-	return  static_cast<GameScene*>(this->getParent())->GetMineral();
+	return  	GameScene::GetMineral();
 }
 Power* ResourceManager::GetPower()
 {
-	return  static_cast<GameScene*>(this->getParent())->GetPower();
+	return  	GameScene::GetPower();
 }

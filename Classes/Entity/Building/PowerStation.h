@@ -5,7 +5,7 @@ class PowerStation :public Building
 {
 public:
 	PowerStation();
-	PowerStation(Power* p, Mineral* m, BuildingManager* pManagerItBelongsTo);
+	PowerStation(Power* p, Mineral* m,int player);
 	~PowerStation();
 	bool init();
 	int GetPowerProduce();
