@@ -26,6 +26,9 @@ public:
 
 	//=======士兵移动函数==========
 	void Move(Soldier*);
+	static void EnemyCreate(float x, float y,int type);
+	static void SetEnemyTarget(float x,float y,int ID);
+	static void SetEnemyTargetEnemy(int, int);
 
 	//======存储被选中士兵的vector
 	static std::unordered_map<int ,Soldier*> _beChoosedMap;
@@ -43,11 +46,10 @@ public:
 private:
 	static Mineral* _pMineral;
 	int _player;
-	std::unordered_map<int,Soldier*>::iterator _iter;
 	BuildingManager* _pPairManager;
 public:
-	static Soldier *CreateSoldier(char* SoldierTypeName,int player);
-	static Soldier *CreateEnemySoldier(char* SoldierTypeName, int player);
+	static Soldier *CreateSoldier(int SoldierTypeName,int player);
+	static Soldier *CreateEnemySoldier(int SoldierTypeName, int player);
 
 	void BindMineral(Mineral* m);
 	void DestroySoldier(Soldier* S);

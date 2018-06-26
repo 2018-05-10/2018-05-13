@@ -13,6 +13,8 @@ class BuildingManager;
 class Building :public Entity
 {
 	friend class BuildingManager;
+	friend class GameScene;
+	friend class NetScene;
 public:
 	Building();
 	virtual ~Building();
@@ -23,15 +25,15 @@ public:
 	virtual void Die();
 	void BuildingUpdate(float dt);
 	void update(float dt);
-	//=======building id by cyy=======
-	int GetBuildingID();
+
 
 
 protected:
 	bool _isWorking;
 
 	static int buildingsID;
-	int _buildingID;
+	static int enemyBuildingsID;
+
 
 	int _powerCost;
 	int _mineralCost;

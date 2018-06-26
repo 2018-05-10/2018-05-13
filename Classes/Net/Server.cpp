@@ -78,7 +78,7 @@ void Server::RecvAndSend1() const
 	while (1)
 	{
 		char _str[1024] = { 0 };
-		int _judge = recv(_clientSocket1, _str, sizeof(_str), 0);
+		int _judge = recv(_clientSocket1, _str, 1024, 0);
 		if (_judge <= 0)
 		{
 			break;
@@ -92,7 +92,7 @@ void Server::RecvAndSend2() const
 	while (1)
 	{
 		char _str[1024] = { 0 };
-		int _judge = recv(_clientSocket2, _str, sizeof(_str), 0);
+		int _judge = recv(_clientSocket2, _str, 1024, 0);
 		if (_judge <= 0)
 		{
 			break;
@@ -150,9 +150,14 @@ bool Server::Broadcast()
 	_ip = GetIp();
 	for (int i = 0; i < 10000; i++)
 	{
-		sendto(_s, _ip, 1000, 0, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr));
+		sendto(_s, _ip, 500, 0, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr));
 		Sleep(1000);
+		if (_step == 1)
+		{
+			break;
+		}
 	}
+	//delete[] _ip;
 	return true;
 }
 

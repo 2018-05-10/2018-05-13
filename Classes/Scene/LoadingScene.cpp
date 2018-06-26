@@ -64,7 +64,7 @@ void LoadingScene::LoadSound()
 
 void LoadingScene::endLoading()
 {
-	const auto transition = TransitionFade::create(1,GameScene::createScene());
+	const auto transition = TransitionFade::create(1,MenuScene::createScene());
 	Director::getInstance()->replaceScene(transition);
 }
 void LoadingScene::LoadImage()

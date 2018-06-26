@@ -5,6 +5,7 @@
 #include"Entity\Soldier\Soldier.h"
 #include"Entity\Building\Building.h"
 #include"Scene\GameScene\MenuLayer.h"
+#include"Entity\Player.h"
 USING_NS_CC;
 
 #define BASE 1
@@ -15,6 +16,9 @@ USING_NS_CC;
 #define INFANTRY 6
 #define DOG 7
 #define TANK 8
+#define CREATE_ENEMY 1000
+#define SET_ENEMY_TARGET 1001
+#define SET_ENEMY_TARGET_ENEMY 1002
 
 namespace SearchRoad
 {
@@ -204,7 +208,7 @@ void GameController::SetSoldierController(Soldier* soldier)
 		if (target1->getBoundingBox().containsPoint(pos -GameScene:: GetMap()->getPosition()))
 		{
 			SoldierManager::_beChoosedMap.clear();
-			SoldierManager::_beChoosedMap.insert(std::make_pair(target1->GetSoldierID(), target1));
+			SoldierManager::_beChoosedMap.insert(std::make_pair(target1->GetID(), target1));
 			target1->GetSprite()->setColor(Color3B::BLUE);
 			return true;
 		}
@@ -240,6 +244,8 @@ void GameController::SetTargetController()
 			{
 				auto tileStart = MapManager::ChangeToTiledPos(soldier.second->getPosition());
 				auto tileEnd = MapManager::ChangeToTiledPos(soldier.second->_targetPoint);
+				Player::getInstance()->client->SendData(tileEnd.x, tileEnd.y, 0, soldier.second->GetID(),
+					soldier.second->GetType(), SET_ENEMY_TARGET);
 				soldier.second->stopAllActions();
 				soldier.second->_path.clear();
 				SearchRoad::startSearch(tileStart, tileEnd, soldier.second);
@@ -270,6 +276,8 @@ void GameController::SetEnemyTargetController(Entity* enemy)
 			{
 				for (auto soldier : SoldierManager::_beChoosedMap)
 				{
+					Player::getInstance()->client->SendData(0, 0, enemy->GetID(), soldier.second->GetID(),
+						soldier.second->GetType(), SET_ENEMY_TARGET_ENEMY);
 					soldier.second->_target = enemy;
 				}
 			}
@@ -302,10 +310,10 @@ void GameController::SetBuildingController(Building* building)
 					GameScene::GetMenuLayer()->CreateContructionLayer();
 					break;
 				case(FACTORY):
-					GameScene::GetMenuLayer()->CreateFactoryLayer(building->GetBuildingID());
+					GameScene::GetMenuLayer()->CreateFactoryLayer(building->GetID());
 					break;
 				case(BARRACK):
-					GameScene::GetMenuLayer()->CreateSoldierLayer(building->GetBuildingID());
+					GameScene::GetMenuLayer()->CreateSoldierLayer(building->GetID());
 					break;
 				case(MINE):
 					GameScene::GetMenuLayer()->CreateMainLayer();

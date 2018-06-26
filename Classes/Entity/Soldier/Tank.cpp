@@ -25,8 +25,8 @@ Tank::Tank(int player)
 	_attackDistance = 64;
 	_toward = Point(1, 0);
 	_target = NULL;
-	_soldierID = soldiersID;
-	--soldiersID;
+	_ID = enemySoldiersID;
+	--enemySoldiersID;
 } 
 
 Tank::Tank(Mineral* m,int player)
@@ -42,8 +42,9 @@ Tank::Tank(Mineral* m,int player)
 	_player = player;
 	_toward = Point(1, 0);
 	_target = NULL;
-	_soldierID = soldiersID;
+	_ID = soldiersID;
 	--soldiersID;
+
 }
 
 Tank::~Tank() 

@@ -9,17 +9,18 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <list>
+#include <queue>
+#include <deque>
 #pragma comment(lib,"ws2_32.lib")
 
 typedef struct unit
 {
 	float _x;
 	float _y;
-	int _life;
 	int _goal;
 	int _id;
-	int _judge;
+	int _kind;
+	int _func;
 };
 
 class Client
@@ -36,8 +37,8 @@ public:
 	bool IsConnected() const;
 	char* GetIp() const;
 
-	int Send(char*, int) const; //¼ò»¯send
-	int Recv(char*, int) const; //¼ò»¯recv
+	int Send(char*, int) const;
+	int Recv(char*, int) const;
 
 	bool SendData(float, float, int, int, int, int) const;
 	bool RecvData(float&, float&, int&, int&, int&, int&);
@@ -46,14 +47,17 @@ public:
 	void ChangeFrom(char*, float&, float&, int&, int&, int&, int&) const;
 
 	bool SendMsg();
-	bool RecvMsg();
+	//bool RecvMsg();
 
-	bool RecvToMap();
-	bool SendMap();//
+	bool RecvToOrder();
+	//bool RecvToMap();
+	//bool SendMap();
 
 	char* RecvBroadcast();;
 
-	std::map<int, unit> _units;
+	//std::map<int, unit> _units;
+	std::deque<unit> _orders;
+
 
 	std::vector<std::string> _chatMsgSend;
 	std::vector<std::string> _chatMsgRecv;
@@ -62,6 +66,7 @@ public:
 	std::string _opponentName;
 
 	int _step;
+	bool _isReady;
 };
 
 

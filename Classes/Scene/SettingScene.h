@@ -17,8 +17,11 @@ public:
 	void CreateMusicButton();
 	void MenuMusicCallBack(cocos2d::Ref* pSender);
 
-	void CreateSlider();
-	void SliderCallBack(Ref *pSender, cocos2d::ui::Slider::EventType type);
+	void CreateSlider1();
+	void SliderCallBack1(Ref *pSender, cocos2d::ui::Slider::EventType type);
+
+	void CreateSlider2();
+	void SliderCallBack2(Ref *pSender, cocos2d::ui::Slider::EventType type);
 
 private:
 	bool _musicOn = true;

@@ -36,6 +36,7 @@ bool RoomScene::init()
 	SendMsgMod(Player::getInstance()->client);
 	RecvMsgMod(Player::getInstance()->client);
 
+
 	if (Player::getInstance()->isMaster)
 	{
 		auto startButton = CreateButton("Start");
@@ -53,6 +54,7 @@ bool RoomScene::init()
 			case Widget::TouchEventType::ENDED:
 				if (Player::getInstance()->serve->IsConnected())
 				{
+					SendStep(Player::getInstance()->serve);
 					auto transition = TransitionFade::create(0.5, GameScene::createScene());
 					Director::getInstance()->replaceScene(transition);
 				}
@@ -75,6 +77,11 @@ bool RoomScene::init()
 	chatBox->setPosition(visibleSize.width * 0.08f, visibleSize.height * 0.15f);
 	layer->addChild(chatBox);
 	this->scheduleUpdate();
+
+	auto text = Text::create(Player::getInstance()->client->_opponentName, "fonts/OpenSans-Regular.ttf", 24);
+	this->addChild(text);
+	text->setPosition(Point(900, 400));
+
 	return true;
 }
 
@@ -107,10 +114,12 @@ Button* RoomScene::CreateButton(std::string title)
 
  void RoomScene::update(float dt)
 {
-	 log("%d", Player::getInstance()->client->_step);
-	 if (Player::getInstance()->client->_step == 2)
+	 if (Player::getInstance()->client->_step >=2)
 	 {
 		 auto transition = TransitionFade::create(0.5, GameScene::createScene());
 		 Director::getInstance()->replaceScene(transition);
+		 this->unscheduleUpdate();
 	 }
+	 auto tmp = Player::getInstance()->client->_opponentName;
+
 }

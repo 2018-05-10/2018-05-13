@@ -8,6 +8,7 @@
 #include"Scene\GameScene\MenuLayer.h"
 #include"Entity\Soldier\Soldier.h"
 #include"Controller\GameController.h"
+#include"Entity\Player.h"
 
 #define BASE 1
 #define FACTORY 2
@@ -17,6 +18,10 @@
 #define INFANTRY 6
 #define DOG 7
 #define TANK 8
+#define CREATE_ENEMY 1000
+#define SET_ENEMY_TARGET 1001
+#define SET_ENEMY_TARGET_ENEMY 1002
+
 
 Factory::Factory()
 {
@@ -28,8 +33,8 @@ Factory::Factory()
 	_mineralCost = 100;
 	_timeToBuild = 1;
 	_player = 1;
-	_buildingID = buildingsID;
-	++buildingsID;
+	_ID = enemyBuildingsID;
+	++enemyBuildingsID;
 
 	
 }
@@ -46,7 +51,7 @@ Factory::Factory(Power* p, Mineral* m,int player)
 	_mineralCost = 100;
 	_timeToBuild = 1;
 	_player = player;
-	_buildingID = buildingsID;
+	_ID = buildingsID;
 	++buildingsID;
 
 	m->Cost(_mineralCost);
@@ -87,10 +92,11 @@ void Factory::FactoryUpdate(float dt)
 	{
 		auto pos =this->getPosition();
 		auto tilePos = MapManager::ChangeToTiledPos(pos);
-		auto tank = SoldierManager::CreateSoldier("Tank", 0);
+		auto tank = SoldierManager::CreateSoldier(TANK, 0);
 		GameScene::GetMap()->addChild(tank, 150 + tilePos.x + tilePos.y);
 		auto landPos = GameScene::GetMapManager()->BFS(pos);
 		tank->setPosition(landPos);
+		Player::getInstance()->client->SendData(landPos.x,landPos.y,0,tank->GetID(),TANK,CREATE_ENEMY);
 		tank->schedule(schedule_selector(Soldier::SearchEnemyUpdate), tank->GetAttackInterval());
 		GameScene::GetGameController()->SetSoldierController(tank);
 		GameScene::GetMapManager()->SetSoldier(landPos);

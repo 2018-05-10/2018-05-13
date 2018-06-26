@@ -4,6 +4,8 @@
 #include"SimpleAudioEngine.h"
 #include"RoomScene/RoomScene.h"
 #include"Entity\Player.h"
+#include"Entity\Soldier\Soldier.h"
+#include"Entity\Building\Building.h"
 USING_NS_CC;
 using namespace extension;
 using namespace ui;
@@ -38,7 +40,10 @@ bool NetScene::init()
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-			Player::getInstance()->client =new Client();
+			Soldier::soldiersID=-2;
+			Soldier::enemySoldiersID = -100002;
+			Building::buildingsID = 2;
+			Building::enemyBuildingsID = 100002;
 			Player::getInstance()->serve = new Server();
 			OpenTheRoom(Player::getInstance()->serve, Player::getInstance()->client,20000);
 			Player::getInstance()->isMaster = true;
@@ -60,7 +65,10 @@ bool NetScene::init()
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-			Player::getInstance()->client = new Client();
+			Soldier::soldiersID = -100002;
+			Soldier::enemySoldiersID = -2;
+			Building::buildingsID = 1000002;
+			Building::enemyBuildingsID = 2;
 			RoomJoinerClient(Player::getInstance()->client, 20000);
 			auto transition = TransitionFade::create(0.5, RoomScene::createScene());
 			Director::getInstance()->replaceScene(transition);

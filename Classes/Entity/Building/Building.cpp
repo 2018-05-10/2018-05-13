@@ -55,12 +55,10 @@ void Building::Die()
 
 
 //========building ID by cyy=====
-int Building::buildingsID = 2;
+int Building::buildingsID;
+int Building::enemyBuildingsID;
 
-int Building::GetBuildingID()
-{
-	return _buildingID;
-}
+
 
 void Building::BuildingUpdate(float dt)
 {
@@ -76,8 +74,8 @@ void Building::BuildingUpdate(float dt)
 	}
 	if (_pPower->GetUsedVal() > _pPower->GetTotalVal())
 	{
-		
 		_isWorking = false;
+		this->GetSprite()->setColor(Color3B(100, 100, 100));
 	}
 	else
 	{
@@ -85,13 +83,13 @@ void Building::BuildingUpdate(float dt)
 		_isWorking = true;
 
 		int freePower = _pPower->GetAvailableVal();
-		if (_type == MINE)
+		if (_type == MINE && !_player)
 		{
 			BuildingManager::UpdateMineralPerSecond();
 		}
 		if (_type == POWERSTATION)
 		{
-			if (freePower > 0)
+			if (freePower > 0&&!_player)
 			{
 				_pPower->Add(static_cast<PowerStation*>(this)->GetPowerProduce());
 

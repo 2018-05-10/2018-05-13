@@ -14,7 +14,7 @@
 #include"Manager/MapManager.h"
 #include"Tool/FlowWord.h"
 #include"Controller\GameController.h"
-
+#include"Entity\Player.h"
 USING_NS_CC;
 using namespace extension;
 using namespace ui;
@@ -27,6 +27,9 @@ using namespace ui;
 #define INFANTRY 6
 #define DOG 7
 #define TANK 8
+#define CREATE_ENEMY 1000
+#define SET_ENEMY_TARGET 1001
+#define SET_ENEMY_TARGET_ENEMY 1002
 
 bool MenuLayer::init()
 {
@@ -36,7 +39,7 @@ bool MenuLayer::init()
 	}
 
 	_layer=CreateLayer();
-
+	this->addChild(CreateMusicButton());
 	this->addChild(_layer);
 	this->schedule(schedule_selector(MenuLayer::update), 0.2f);
 	
@@ -328,10 +331,11 @@ void MenuLayer::BuildingTouchEvent(Sprite* building)
 			_target->removeFromParent();
 			auto target = BuildingManager::CreateBuilding(building->getTag());
 			auto setPos = MapManager::ChangeToTiledPos(originPos - GetMap()->getPosition());
-			GetMap()->addChild(target, setPos.x + setPos.y,target->GetBuildingID());
+			GetMap()->addChild(target, setPos.x + setPos.y,target->GetID());
 			setPos = MapManager::ChangeToCocosPos(setPos);
 			target->setPosition(setPos);
 			MapManager::SetBuilding(setPos, building->getTag());
+			Player::getInstance()->client->SendData(setPos.x, setPos.y, 0, target->GetID(), target->GetType(), CREATE_ENEMY);
 			GameScene::GetGameController()->SetBuildingController(target);
 		}
 		else

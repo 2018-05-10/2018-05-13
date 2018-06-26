@@ -7,13 +7,24 @@
 #include"Scene\GameScene\MenuLayer.h"
 #include"Entity/Soldier/Soldier.h"
 #include"Tool\SearchRoad.h"
+#include"BuildingManager.h"
 #include<algorithm>
 #include<utility>
 USING_NS_CC;
 using namespace ui;
 using namespace cocostudio;
 
-
+#define BASE 1
+#define FACTORY 2
+#define BARRACK 3
+#define MINE 4
+#define POWERSTATION 5
+#define INFANTRY 6
+#define DOG 7
+#define TANK 8
+#define CREATE_ENEMY 1000
+#define SET_ENEMY_TARGET 1001
+#define SET_ENEMY_TARGET_ENEMY 1002
 
 bool SoldierManager::init()
 {
@@ -30,31 +41,27 @@ bool SoldierManager::init()
 
 
 
-Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
+Soldier* SoldierManager::CreateSoldier(int SoldierNameType,int player)
 {
 	Sprite* spr = NULL;
 	Soldier* S = NULL;
-	if (SoldierNameType == "Dog")
+	switch (SoldierNameType)
 	{
-		S = new Dog(_pMineral,player);
-		spr = Sprite::createWithSpriteFrameName("Dog_move_(1,0)_1.png");
-		S->BindSprite(spr);
-	}
-	else if (SoldierNameType == "Infantry")
-	{
-		S = new Infantry(_pMineral,player);
-		spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,0).png");
-		S->BindSprite(spr);
-	}
-	else if (SoldierNameType == "Tank")
-	{
-		S = new Tank(_pMineral,player);
-		spr = Sprite::createWithSpriteFrameName("Tank_move_(1,1).png");
-		S->BindSprite(spr);
-	}
-	else
-	{
-		return NULL;
+	case DOG:
+			S = new Dog(_pMineral, player);
+			spr = Sprite::createWithSpriteFrameName("Dog_move_(1,0)_1.png");
+			S->BindSprite(spr);
+			break;
+	case INFANTRY:
+			S = new Infantry(_pMineral, player);
+			spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,0).png");
+			S->BindSprite(spr);
+			break;
+	case TANK:
+			S = new Tank(_pMineral, player);
+			spr = Sprite::createWithSpriteFrameName("Tank_move_(1,1).png");
+			S->BindSprite(spr);
+			break;
 	}
 	S->autorelease();
 	S->_hpBar = Sprite::createWithSpriteFrameName("GreenBar.png");
@@ -62,7 +69,7 @@ Soldier* SoldierManager::CreateSoldier(char* SoldierNameType,int player)
 	S->_hpBar->setContentSize(Size(40, 5));
 	S->_hpBar->setPosition(35, 60);
 	S->_hpBar->setGlobalZOrder(9);
-	_soldierMap.insert(std::make_pair(S->GetSoldierID(),S));
+	_soldierMap.insert(std::make_pair(S->GetID(),S));
 
 
 
@@ -83,15 +90,15 @@ void SoldierManager::DestroySoldier(Soldier* S)
 {
 	if (S->_player)
 	{
-		_enemySoldierMap.erase(S->GetSoldierID());
+		_enemySoldierMap.erase(S->GetID());
 	}
 	else
 	{
-		_soldierMap.erase(S->GetSoldierID());
-		if (_beChoosedMap.find(S->GetSoldierID()) != _beChoosedMap.end())
+		_soldierMap.erase(S->GetID());
+		if (_beChoosedMap.find(S->GetID()) != _beChoosedMap.end())
 		{
 
-			_beChoosedMap.erase(S->GetSoldierID());
+			_beChoosedMap.erase(S->GetID());
 		}
 	}
 
@@ -236,38 +243,34 @@ void SoldierManager::Move(Soldier* soldier)
 	}
 }
 
-Soldier *SoldierManager::CreateEnemySoldier(char* SoldierNameType, int player)
+Soldier *SoldierManager::CreateEnemySoldier(int SoldierNameType, int player)
 {
 	Sprite* spr = NULL;
 	Soldier* S = NULL;
-	if (SoldierNameType == "Dog")
+	switch (SoldierNameType)
 	{
-		S = new Dog( player);
+	case DOG:
+		S = new Dog(player);
 		spr = Sprite::createWithSpriteFrameName("Dog_move_(1,0)_1.png");
 		S->BindSprite(spr);
-	}
-	else if (SoldierNameType == "Infantry")
-	{
+		break;
+	case INFANTRY:
 		S = new Infantry(player);
 		spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,0).png");
 		S->BindSprite(spr);
-	}
-	else if (SoldierNameType == "Tank")
-	{
+		break;
+	case TANK:
 		S = new Tank(player);
 		spr = Sprite::createWithSpriteFrameName("Tank_move_(1,0).png");
 		S->BindSprite(spr);
-	}
-	else
-	{
-		return NULL;
+		break;
 	}
 	S->autorelease();
 	S->_hpBar = Sprite::createWithSpriteFrameName("RedBar.png");
 	S->addChild(S->_hpBar);
 	S->_hpBar->setContentSize(Size(40, 5));
 	S->_hpBar->setPosition(35, 60);
-	_enemySoldierMap.insert(std::make_pair(S->GetSoldierID(),S));
+	_enemySoldierMap.insert(std::make_pair(S->GetID(),S));
 
 
 	return S;
@@ -420,6 +423,48 @@ int SearchRoad::startSearch(Point startp, Point endp, Soldier* soldier)
 	openList.clear();
 	closeList.clear();
 	return find;
+}
+
+void SoldierManager::EnemyCreate(float x, float y,int type)
+{
+	if (type > 5)
+	{
+		auto enemy = CreateEnemySoldier(type, 1);
+		GameScene::GetMap()->addChild(enemy, 1000, enemy->GetID());
+		enemy->setPosition(Point(x, y));
+		enemy->schedule(schedule_selector(Soldier::EnemySearchEnemyUpdate),enemy->GetAttackInterval());
+		GameScene::GetMapManager()->SetSoldier(Point(x,y));
+	}
+	else
+	{
+		auto enemy = BuildingManager::CreateEnemyBuilding(type);
+		GameScene::GetMap()->addChild(enemy, 1000, enemy->GetID());
+		enemy->setPosition(Point(x, y));
+		MapManager::SetBuilding(Point(x, y), enemy->Type());
+	}
+}
+void SoldierManager::SetEnemyTarget(float x, float y,int ID)
+{
+	auto enemy=static_cast<Soldier*>(GameScene::GetMap()->getChildByTag(ID));
+	if (enemy != NULL)
+	{
+		enemy->_targetPoint = MapManager::ChangeToCocosPos(Point(x, y));
+		auto start = MapManager::ChangeToTiledPos(enemy->getPosition());
+		auto end = Point(x, y);
+		enemy->_path.clear();
+		enemy->stopAllActions();
+		SearchRoad::startSearch(start, end, enemy);
+		GameScene::GetSoldierManager()->Move(enemy);
+	}
+}
+void SoldierManager::SetEnemyTargetEnemy(int ID, int goal)
+{
+	
+	auto enemy = static_cast<Soldier*>(GameScene::GetMap()->getChildByTag(ID));
+	if (enemy != NULL&& GameScene::GetMap()->getChildByTag(goal)!=NULL)
+	{
+		enemy->_target = static_cast<Entity*>(GameScene::GetMap()->getChildByTag(goal));
+	}
 }
 
 std::unordered_map<int,Soldier*> SoldierManager::_enemySoldierMap;

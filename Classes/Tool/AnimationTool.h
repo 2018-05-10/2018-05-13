@@ -27,6 +27,10 @@ public:
 	cocos2d::Animation* TankDieAnimation(int x, int y);
 	cocos2d::Animation* TankMoveAnimation(int x, int y);
 	cocos2d::Animation* TankAttackAnimation(int x, int y);
+
+	cocos2d::Animation* ExplosionDieAnimation(int x, int y);
+	cocos2d::Animation* ExplosionMoveAnimation(int x, int y);
+	cocos2d::Animation* ExplosionAttackAnimation(int x, int y);
 	
 private:
 	AnimationTool();

@@ -37,7 +37,7 @@ public:
 	static void DestroyBuilding(Building* B);
 
 	static Building* CreateBuilding(int BuildingTypeName);          //创建一个建筑对象并绑定其精灵，参数是建筑名字的字符串，例如“Mine”等等
-	static Building* CreateEnemyBuilding(char* BuildingTypeName);
+	static Building* CreateEnemyBuilding(int BuildingTypeName);
 	static std::unordered_map<int,Building*>  _buildingMap;
 	static std::unordered_map<int,Building*> _enemyBuildingMap;
 

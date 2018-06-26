@@ -2,6 +2,7 @@
 #include"extensions/cocos-ext.h"
 #include"SimpleAudioEngine.h"
 #include"ui/CocosGUI.h"
+#include"Setting.h"
 
 USING_NS_CC;
 using namespace ui;
@@ -28,11 +29,14 @@ bool SettingScene::init()
 
 	BGinit();
 
-	auto music_text = Label::createWithTTF("MusicSound", "fonts/Marker Felt.ttf", 32);
+	auto music_text = Label::createWithTTF("MusicSound", Setting::Font::Type::title, Setting::Font::Size::normal);
 	music_text->setPosition(Vec2(visibleSize.width*0.25 + origin.x, origin.y + visibleSize.height*0.7));
 	this->addChild(music_text);
-
-	this->CreateSlider();
+	auto effect_text= Label::createWithTTF("EffectSound", Setting::Font::Type::title, Setting::Font::Size::normal);
+	music_text->setPosition(Vec2(visibleSize.width*0.25 + origin.x, origin.y + visibleSize.height*0.4));
+	this->addChild(effect_text);
+	this->CreateSlider1();
+	this->CreateSlider2();
 	this->CreateMusicButton();
 
 	auto OKButton=CreateButton("OK", 1);
@@ -82,7 +86,7 @@ Button* SettingScene::CreateButton(std::string title, int site)
 	return button;
 }
 
-void SettingScene::CreateSlider()
+void SettingScene::CreateSlider1()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto visibleOrigin = Director::getInstance()->getVisibleOrigin();
@@ -95,14 +99,35 @@ void SettingScene::CreateSlider()
 	sl->setPosition(Point(visibleOrigin.x + visibleSize.width*0.6,visibleOrigin.y + visibleSize.height*0.7));
 	sl->setPercent(75);
 
-	sl->addEventListener(CC_CALLBACK_2(SettingScene::SliderCallBack, this));
+	sl->addEventListener(CC_CALLBACK_2(SettingScene::SliderCallBack1, this));
 	this->addChild(sl);
 }
 
-void SettingScene::SliderCallBack(Ref *pSender, Slider::EventType type) {
+void SettingScene::SliderCallBack1(Ref *pSender, Slider::EventType type) {
 	auto item = static_cast<Slider*>(pSender);
-	log("%i", item->getPercent());
-		CocosDenshion::SimpleAudioEngine::sharedEngine()->setBackgroundMusicVolume(item->getPercent() / 100.0f);
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->setBackgroundMusicVolume(item->getPercent() / 100.0f);
+}
+
+void SettingScene::CreateSlider2()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto visibleOrigin = Director::getInstance()->getVisibleOrigin();
+
+	auto sl = Slider::create();
+	sl->loadBarTexture("sliderTrack.png");
+	sl->loadSlidBallTextures("sliderThumb.png", "sliderThumb.png", "");
+
+	sl->loadProgressBarTexture("sliderProgress.png");
+	sl->setPosition(Point(visibleOrigin.x + visibleSize.width*0.6, visibleOrigin.y + visibleSize.height*0.4));
+	sl->setPercent(75);
+
+	sl->addEventListener(CC_CALLBACK_2(SettingScene::SliderCallBack2, this));
+	this->addChild(sl);
+}
+
+void SettingScene::SliderCallBack2(Ref *pSender, Slider::EventType type) {
+	auto item = static_cast<Slider*>(pSender);
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->setEffectsVolume(item->getPercent() / 100.0f);
 }
 
 void SettingScene::CreateMusicButton()

@@ -7,6 +7,7 @@ class Soldier :public Entity
 {
 	friend class SoldierManager;
 	friend class GameScene;
+	friend class NetScene;
 public:
 	Soldier();
 	virtual ~Soldier();
@@ -15,6 +16,7 @@ public:
 	int GetSpeed();
 	void Attack(Entity* target);           //普通攻击，会先分辨敌我，再攻击
 	void ForcedAttack(Entity* target);            //强制攻击，所谓反补
+	void Aoe(cocos2d::Point,int);
 	bool init();
 	virtual void Die();
 	int GetMineralCost()const;
@@ -27,7 +29,7 @@ public:
 	void SearchEnemyUpdate(float dt);
 	void EnemySearchEnemyUpdate(float dt);
 
-	int GetSoldierID();
+
 
 
 
@@ -45,7 +47,8 @@ protected:
 	int _attackDistance;
 	Point _toward;
 	static int soldiersID;
-	int _soldierID;
+	static int enemySoldiersID;
+
 
 	SoldierManager* _pSoldierManager;
 };

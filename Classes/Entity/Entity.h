@@ -13,6 +13,7 @@ public:
 	virtual ~Entity();
 	void SetPlayer(int num);
 	int GetPlayer();
+	int GetType();
 
 	Sprite* GetSprite();
 	int GetTotalHP();
@@ -25,7 +26,7 @@ public:
 	Size VisualField;    //视野
 	int Type();
 	virtual void Die();    //死亡，调用管理类的函数，再调用析构函数；在子类里定义
-
+	int GetID();
 	
 protected:
 	Sprite * _sprite;
@@ -33,6 +34,7 @@ protected:
 	int _currentHP;
 	int _type;     //类名
 	int _player;       //属于哪一方
+	int _ID;
 	cocos2d::Sprite* _hpBar;
 	bool _isDead=false;
 };

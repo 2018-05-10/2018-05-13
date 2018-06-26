@@ -24,7 +24,7 @@ Building* BuildingManager::CreateBuilding(int BuildingTypeName)
 	Sprite* spr = NULL;
 	if (BuildingTypeName == BASE)
 	{
-		B = new Base(_pPower, _pMineral,0);
+		B = new Base(_pPower, _pMineral, 0);
 		spr = Sprite::createWithSpriteFrameName("Base.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
@@ -36,11 +36,11 @@ Building* BuildingManager::CreateBuilding(int BuildingTypeName)
 		spr = Sprite::createWithSpriteFrameName("Barrack.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
-		B->schedule(schedule_selector(Barrack::BarrackUpdate), 0.5); 
+		B->schedule(schedule_selector(Barrack::BarrackUpdate), 0.5);
 	}
 	else if (BuildingTypeName == MINE)
 	{
-		B = new Mine(_pPower, _pMineral,0);
+		B = new Mine(_pPower, _pMineral, 0);
 		spr = Sprite::createWithSpriteFrameName("Mine.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
@@ -48,8 +48,8 @@ Building* BuildingManager::CreateBuilding(int BuildingTypeName)
 	}
 	else if (BuildingTypeName == POWERSTATION)
 	{
-		B = new PowerStation(_pPower, _pMineral,0);
-		spr = Sprite::createWithSpriteFrameName( "PowerStation.png");
+		B = new PowerStation(_pPower, _pMineral, 0);
+		spr = Sprite::createWithSpriteFrameName("PowerStation.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	}
@@ -65,24 +65,25 @@ Building* BuildingManager::CreateBuilding(int BuildingTypeName)
 	{
 		return NULL;
 	}
-	B->autorelease();
-	B->_hpBar = Sprite::createWithSpriteFrameName("GreenBar.png");
-	B->addChild(B->_hpBar);
-	B->_hpBar->setContentSize(Size(200, 5));
-	B->_hpBar->setPosition(130, 220);
-	B->_hpBar->setGlobalZOrder(9);
-	B->_timeBar= Sprite::createWithSpriteFrameName("BlueBar.png");
-	B->addChild(B->_timeBar);
-	B->_timeBar->setContentSize(Size(200, 5));
-	B->_timeBar->setPosition(130, 240);
-	B->_timeBar->setScaleX(0);
-	B->_timeBar->setGlobalZOrder(9);
-	B->scheduleUpdate();
-	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
-	_buildingMap.insert(std::make_pair(B->GetBuildingID(),B));
+
+		B->autorelease();
+		B->_hpBar = Sprite::createWithSpriteFrameName("GreenBar.png");
+		B->addChild(B->_hpBar);
+		B->_hpBar->setContentSize(Size(200, 5));
+		B->_hpBar->setPosition(130, 220);
+		B->_hpBar->setGlobalZOrder(9);
+		B->_timeBar = Sprite::createWithSpriteFrameName("BlueBar.png");
+		B->addChild(B->_timeBar);
+		B->_timeBar->setContentSize(Size(200, 5));
+		B->_timeBar->setPosition(130, 240);
+		B->_timeBar->setScaleX(0);
+		B->_timeBar->setGlobalZOrder(9);
+		B->scheduleUpdate();
+		B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
+		_buildingMap.insert(std::make_pair(B->GetID(), B));
 
 
-	return B;
+		return B;
 }
 
 void BuildingManager::BindPower(Power* p)
@@ -181,15 +182,24 @@ bool BuildingManager::BuildingResourceCheck(int name)
 
 void BuildingManager::DestroyBuilding(Building* B)
 {
-	if (B->_type==POWERSTATION&&!B->_player)
+	if (B->_player)
 	{
-		int freePower = _pPower->GetAvailableVal();
+		_enemyBuildingMap.erase(B->GetID());
+	}
+	else
+	{
+		_buildingMap.erase(B->GetID());
+	}
+	if (B->_type==POWERSTATION&&!B->_player&&B->IsWorking())
+	{
 	for(auto building:_buildingMap)
 	{
-			if (freePower < 0)
+			if (GameScene::GetPower()->GetAvailableVal()<0)
 			{	
 					building.second->_isWorking = false;
-					freePower += building.second->_powerCost;
+					GameScene::GetPower()->_availableVal += building.second->_powerCost;
+					building.second->GetSprite()->setColor(Color3B(100, 100, 100));
+					++GameScene::GetPower()->_availableVal;
 			}
 			else
 			{
@@ -197,18 +207,11 @@ void BuildingManager::DestroyBuilding(Building* B)
 			}
 		}
 	}
-	if (B->_type == MINE && !B->_player)
+	if (B->_type == MINE && !B->_player&&B->_isWorking)
 	{
 		UpdateMineralPerSecond();
 	}
-	if (B->_player)
-	{
-		_enemyBuildingMap.erase(B->GetBuildingID());
-	}
-	else
-	{
-		_buildingMap.erase(B->GetBuildingID());
-	}
+	
 	if (B->_player)
 	{
 		for (auto soldier : SoldierManager::_soldierMap)
@@ -233,11 +236,11 @@ void BuildingManager::DestroyBuilding(Building* B)
 	
 }
 
-Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
+Building* BuildingManager::CreateEnemyBuilding(int BuildingTypeName)
 {
 	Building* B = NULL;
 	Sprite* spr = NULL;
-	if (BuildingTypeName == "Base")
+	if (BuildingTypeName == BASE)
 	{
 		B = new Base();
 		spr = Sprite::createWithSpriteFrameName("Base.png");
@@ -245,14 +248,14 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
 		B->BindSprite(spr);
 
 	}
-	else if (BuildingTypeName == "Barrack")
+	else if (BuildingTypeName == BARRACK)
 	{
 		B = new Barrack();
 		spr = Sprite::createWithSpriteFrameName("Barrack.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	}
-	else if (BuildingTypeName == "Mine")
+	else if (BuildingTypeName == MINE)
 	{
 		B = new Mine();
 		spr = Sprite::createWithSpriteFrameName("Mine.png");
@@ -260,14 +263,14 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
 		B->BindSprite(spr);
 
 	}
-	else if (BuildingTypeName == "PowerStation")
+	else if (BuildingTypeName == POWERSTATION)
 	{
 		B = new PowerStation();
 		spr = Sprite::createWithSpriteFrameName("PowerStation.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
 	}
-	else if (BuildingTypeName == "Factory")
+	else if (BuildingTypeName == FACTORY)
 	{
 		B = new Factory();
 		spr = Sprite::createWithSpriteFrameName("Factory.png");
@@ -286,7 +289,7 @@ Building* BuildingManager::CreateEnemyBuilding(char* BuildingTypeName)
 	B->_hpBar->setPosition(130, 220);
 	B->_hpBar->setGlobalZOrder(9);
 	B->scheduleOnce(schedule_selector(Building::BuildingUpdate), B->_timeToBuild);
-	_enemyBuildingMap.insert(std::make_pair(B->GetBuildingID(),B));
+	_enemyBuildingMap.insert(std::make_pair(B->GetID(),B));
 	return B;
 }
 

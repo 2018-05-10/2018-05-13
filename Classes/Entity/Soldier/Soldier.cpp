@@ -222,14 +222,17 @@ Entity* Soldier::GetTarget()
 	return _target;
 }
 
+void Soldier::Aoe(Point point, int dir)
+{
+	for
+}
+
 void Soldier::UpdateSprite()
 {
 
 }
 
-int Soldier::GetSoldierID()
-{
-	return _soldierID;
-}
 
-int Soldier::soldiersID = -2;
+
+int Soldier::soldiersID;
+int Soldier::enemySoldiersID;

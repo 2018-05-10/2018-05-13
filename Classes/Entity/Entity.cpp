@@ -78,3 +78,11 @@ int Entity::GetPlayer()
 {
 	return _player;
 }
+int Entity::GetType()
+{
+	return _type;
+}
+int Entity::GetID()
+{
+	return _ID;
+}

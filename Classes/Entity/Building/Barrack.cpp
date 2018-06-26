@@ -4,6 +4,7 @@
 #include"Scene\GameScene\GameScene.h"
 #include"Scene\GameScene\MenuLayer.h"
 #include"Controller/GameController.h"
+#include"Entity/Player.h"
 
 #define BASE 1
 #define FACTORY 2
@@ -13,6 +14,9 @@
 #define INFANTRY 6
 #define DOG 7
 #define TANK 8
+#define CREATE_ENEMY 1000
+#define SET_ENEMY_TARGET 1001
+#define SET_ENEMY_TARGET_ENEMY 1002
 
 Barrack::Barrack()
 {
@@ -24,8 +28,8 @@ Barrack::Barrack()
 	_mineralCost = 100;
 	_timeToBuild = 15;
 	_player = 1;
-	_buildingID = buildingsID;
-	++buildingsID;
+	_ID = enemyBuildingsID;
+	++enemyBuildingsID;
 
 
 }
@@ -42,7 +46,7 @@ Barrack::Barrack(Power* p, Mineral* m,int player)
 	_mineralCost = 100;
 	_timeToBuild = 1;
 	_player = player;
-	_buildingID = buildingsID;
+	_ID = buildingsID;
 	++buildingsID;
 
 	m->Cost(_mineralCost);
@@ -84,10 +88,11 @@ void Barrack::BarrackUpdate(float dt)
 	{
 		auto pos = this->getPosition();
 		auto tilePos = MapManager::ChangeToTiledPos(pos);
-		auto infantry = SoldierManager::CreateSoldier("Infantry", 0);
+		auto infantry = SoldierManager::CreateSoldier(INFANTRY, 0);
 		GameScene::GetMap()->addChild(infantry, 150 + tilePos.x + tilePos.y);
 		auto landPos = GameScene::GetMapManager()->BFS(pos);
 		infantry->setPosition(landPos);
+		Player::getInstance()->client->SendData(landPos.x, landPos.y, 0, infantry->GetID(), INFANTRY, CREATE_ENEMY);
 		infantry->schedule(schedule_selector(Soldier::SearchEnemyUpdate), infantry->GetAttackInterval());
 		GameScene::GetGameController()->SetSoldierController(infantry);
 		GameScene::GetMapManager()->SetSoldier(landPos);
@@ -96,10 +101,11 @@ void Barrack::BarrackUpdate(float dt)
 	{
 		auto pos = this->getPosition();
 		auto tilePos = MapManager::ChangeToTiledPos(pos);
-		auto dog = SoldierManager::CreateSoldier("Dog", 0);
+		auto dog = SoldierManager::CreateSoldier(DOG, 0);
 		GameScene::GetMap()->addChild(dog, 150 + tilePos.x + tilePos.y);
 		auto landPos = GameScene::GetMapManager()->BFS(pos);
 		dog->setPosition(landPos);
+		Player::getInstance()->client->SendData(landPos.x, landPos.y, 0, dog->GetID(), DOG, CREATE_ENEMY);
 		dog->schedule(schedule_selector(Soldier::SearchEnemyUpdate), dog->GetAttackInterval());
 		GameScene::GetGameController()->SetSoldierController(dog);
 		GameScene::GetMapManager()->SetSoldier(landPos);

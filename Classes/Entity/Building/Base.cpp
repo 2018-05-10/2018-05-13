@@ -19,8 +19,8 @@ Base::Base()
 	_mineralCost = 0;
 	_timeToBuild = 10;
 	_player = 1; 
-	_buildingID = buildingsID;
-	++buildingsID;
+	_ID = enemyBuildingsID;
+	++enemyBuildingsID;
 
 }
 
@@ -37,7 +37,7 @@ Base::Base(Power* p,Mineral* m,int player)
 	_mineralCost = 0;
 	_timeToBuild = 10;
 	_player = player;
-	_buildingID=buildingsID++;
+	_ID=buildingsID++;
 
 
 	m->Cost(_mineralCost);

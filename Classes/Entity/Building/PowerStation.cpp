@@ -20,8 +20,8 @@ PowerStation::PowerStation()
 	_mineralCost = 100;
 	_timeToBuild = 15;
 	_player = 1;
-	_buildingID = buildingsID;
-	++buildingsID;
+	_ID = enemyBuildingsID;
+	++enemyBuildingsID;
 
 }
 
@@ -36,7 +36,7 @@ PowerStation::PowerStation(Power* p, Mineral* m,int player)
 	_mineralCost = 100;
 	_timeToBuild = 15;
 	_player = player;
-	_buildingID = buildingsID;
+	_ID = buildingsID;
 	++buildingsID;
 
 	m->Cost(_mineralCost);

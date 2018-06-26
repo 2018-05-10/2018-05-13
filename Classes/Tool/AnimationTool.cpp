@@ -192,3 +192,80 @@ Animation* AnimationTool::TankAttackAnimation(int x, int y)
 
 	return animation;
 }
+
+Animation* AnimationTool::ExplosionDieAnimation(int x, int y)
+
+{
+
+	Vector<SpriteFrame*> frameVec;
+	SpriteFrame* frame;
+	frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Explosion_attack_(%d,%d)_3.png", x, y));
+
+	frameVec.pushBack(frame);
+
+	Animation* animation = Animation::createWithSpriteFrames(frameVec);
+
+	animation->setLoops(1);
+	animation->setDelayPerUnit(0.2f);
+
+	return animation;
+
+}
+
+
+
+Animation* AnimationTool::ExplosionMoveAnimation(int x, int y)
+
+{
+
+	Vector<SpriteFrame*> frameVec;
+	SpriteFrame* frame;
+
+	for (int i = 1; i < 4; i++)
+
+	{
+		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Explosion_attack_(%d,%d)_%d.png", x, y, i));
+		frameVec.pushBack(frame);
+	}
+	frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Explosion_move_(%d,%d).png", x, y));
+	frameVec.pushBack(frame);
+
+	Animation* animation = Animation::createWithSpriteFrames(frameVec);
+
+	animation->setLoops(1);
+	animation->setDelayPerUnit(0.2f);
+
+	return animation;
+
+}
+
+
+
+Animation* AnimationTool::ExplosionAttackAnimation(int x, int y)
+
+{
+
+	Vector<SpriteFrame*> frameVec;
+	SpriteFrame* frame;
+
+	for (int i = 1; i < 4; i++)
+	{
+		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Explosion_attack_(%d,%d)_%d.png", x, y, i));
+
+		frameVec.pushBack(frame);
+
+	}
+
+	frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Explosion_move_(%d,%d).png", x, y));
+
+	frameVec.pushBack(frame);
+
+
+
+	Animation* animation = Animation::createWithSpriteFrames(frameVec);
+
+	animation->setLoops(1);
+	animation->setDelayPerUnit(0.2f);
+
+	return animation;
+}

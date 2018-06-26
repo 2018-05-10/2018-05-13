@@ -8,6 +8,9 @@
 #include"Manager/SoldierManager.h"
 #include"Setting.h"
 #include"Controller\GameController.h"
+#include"Entity\Soldier\Soldier.h"
+#include"Net\API.h"
+#include"Entity\Player.h"
 
 USING_NS_CC;
 #define BASE 1
@@ -18,6 +21,9 @@ USING_NS_CC;
 #define INFANTRY 6
 #define DOG 7
 #define TANK 8
+#define CREATE_ENEMY 1000
+#define SET_ENEMY_TARGET 1001
+#define SET_ENEMY_TARGET_ENEMY 1002
 
 Scene* GameScene::createScene()
 {
@@ -77,28 +83,77 @@ bool GameScene::init()
 
 	_mineral->schedule(schedule_selector(BuildingManager::UpdateMineral), 1.0f);
 
-	auto base =BuildingManager::CreateBuilding(BASE);
-	_map->addChild(base,0);
-	base->setPosition(2000,1000);
-	GetMapManager()->SetBuilding(Point(2000,1000),BASE);
-	base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0);
-	_gameController->SetBuildingController(base);
+	
+
+	initBattle();
 
 
-
-	for (auto i = 0; i < 5; ++i)
-	{
-		auto enemyTank = SoldierManager::CreateEnemySoldier("Tank", 1);
-		_map->addChild(enemyTank, 150);
-		enemyTank->setPosition(1600+i*50, 900);
-		GetMapManager()->SetSoldier(Point(1600+i * 50, 900));
-		_gameController->SetEnemyTargetController(enemyTank);
-		enemyTank->schedule(schedule_selector(Soldier::EnemySearchEnemyUpdate), enemyTank->_attackInterval);
-		
-	}
-
+	this->schedule(schedule_selector(GameScene::RecvDataUpdate));
 	
 	return true;
+}
+
+void onEnter()
+{
+
+}
+
+void GameScene::RecvDataUpdate(float dt)
+{
+	while (!Player::getInstance()->client->_orders.empty())
+	{
+		auto map = Player::getInstance()->client->_orders;
+		switch (Player::getInstance()->client->_orders.front()._func)
+		{
+		case CREATE_ENEMY:
+				SoldierManager::EnemyCreate(Player::getInstance()->client->_orders.front()._x, 
+				Player::getInstance()->client->_orders.front()._y, 
+				Player::getInstance()->client->_orders.front()._kind);
+			break;
+		case SET_ENEMY_TARGET:
+				SoldierManager::SetEnemyTarget(Player::getInstance()->client->_orders.front()._x, 
+				Player::getInstance()->client->_orders.front()._y,
+				Player::getInstance()->client->_orders.front()._id);
+			break;
+		case SET_ENEMY_TARGET_ENEMY:
+			SoldierManager::SetEnemyTargetEnemy(Player::getInstance()->client->_orders.front()._id,
+				Player::getInstance()->client->_orders.front()._goal);
+			break;
+		}
+		Player::getInstance()->client->_orders.pop_front();
+	}
+}
+
+void GameScene::initBattle()
+{
+	if (Player::getInstance()->isMaster)
+	{
+		auto base = BuildingManager::CreateBuilding(BASE);
+		_map->addChild(base, 0);
+		base->setPosition(MapManager::ChangeToCocosPos(Point(60, 5)));
+		GetMapManager()->SetBuilding(MapManager::ChangeToCocosPos(Point(60,5)), BASE);
+		base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0.1);
+		_gameController->SetBuildingController(base);
+		auto enemybase = BuildingManager::CreateEnemyBuilding(BASE);
+		_map->addChild(enemybase, 0);
+		enemybase->setPosition(MapManager::ChangeToCocosPos(Point(5,60)));
+		GetMapManager()->SetBuilding(MapManager::ChangeToCocosPos(Point(5,60)), BASE);
+		base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0.1);
+	}
+	else
+	{
+		auto base = BuildingManager::CreateBuilding(BASE);
+		_map->addChild(base, 0);
+		base->setPosition(MapManager::ChangeToCocosPos(Point(5, 60)));
+		GetMapManager()->SetBuilding(MapManager::ChangeToCocosPos(Point(5,60)), BASE);
+		base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0.1);
+		_gameController->SetBuildingController(base);
+		auto enemybase = BuildingManager::CreateEnemyBuilding(BASE);
+		_map->addChild(enemybase, 0);
+		enemybase->setPosition(MapManager::ChangeToCocosPos(Point(60,5)));
+		GetMapManager()->SetBuilding(MapManager::ChangeToCocosPos(Point(60, 5)), BASE);
+		base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0.1);
+	}
 }
 
 TMXTiledMap* GameScene::GetMap()

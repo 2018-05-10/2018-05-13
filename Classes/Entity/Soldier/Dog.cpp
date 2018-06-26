@@ -25,8 +25,8 @@ Dog::Dog(int player)
 	_player = player;
 	_target = NULL;
 	_toward = Point(1, 0);
-	_soldierID = soldiersID;
-	--soldiersID;
+	_ID = enemySoldiersID;
+	--enemySoldiersID;
 }
 
 Dog::Dog(Mineral* m ,int player)
@@ -42,7 +42,7 @@ Dog::Dog(Mineral* m ,int player)
 	_player = player;
 	_target = NULL;
 	_toward = Point(1, 0);
-	_soldierID = soldiersID;
+	_ID = soldiersID;
 	--soldiersID;
 
 }
