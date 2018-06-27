@@ -77,6 +77,7 @@ void LoadingScene::LoadImage()
 	cache->addImage("selectbox.png");
 	cache->addImage("button.png");
 	cache->addImage("buttonHighlighted.png");
+	GameScene::_frameCache->addSpriteFramesWithFile("Entity/Explosion.plist", "Entity/Explosion.png");
 	AnimationTool::getInstance()->loadAnimation();
 }
 void LoadingScene::LoadSpriteFrame()

@@ -3,6 +3,7 @@
 #include"Entity/Soldier/Infantry.h"
 #include"Entity/Soldier/Dog.h"
 #include"Entity/Soldier/Tank.h"
+#include"Entity/Soldier/Explosion.h"
 #include"Manager/MapManager.h"
 #include"Scene\GameScene\MenuLayer.h"
 #include"Entity/Soldier/Soldier.h"
@@ -22,10 +23,11 @@ using namespace cocostudio;
 #define INFANTRY 6
 #define DOG 7
 #define TANK 8
+#define EXPLOSION 9
 #define CREATE_ENEMY 1000
 #define SET_ENEMY_TARGET 1001
 #define SET_ENEMY_TARGET_ENEMY 1002
-
+#define ENEMY_DIE 1003
 bool SoldierManager::init()
 {
 	if (!Node::init())
@@ -33,9 +35,7 @@ bool SoldierManager::init()
 		return false;
 	}
 
-	
 
-	//this->schedule(schedule_selector(SoldierManager::update), 0.1f);
 	return true;
 }
 
@@ -49,17 +49,22 @@ Soldier* SoldierManager::CreateSoldier(int SoldierNameType,int player)
 	{
 	case DOG:
 			S = new Dog(_pMineral, player);
-			spr = Sprite::createWithSpriteFrameName("Dog_move_(1,0)_1.png");
+			spr = Sprite::createWithSpriteFrameName("Dog_move_(1,1)_1.png");
 			S->BindSprite(spr);
 			break;
 	case INFANTRY:
 			S = new Infantry(_pMineral, player);
-			spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,0).png");
+			spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,1).png");
 			S->BindSprite(spr);
 			break;
 	case TANK:
 			S = new Tank(_pMineral, player);
 			spr = Sprite::createWithSpriteFrameName("Tank_move_(1,1).png");
+			S->BindSprite(spr);
+			break;
+	case EXPLOSION:
+			S = new  Explosion(_pMineral, player);
+			spr = Sprite::createWithSpriteFrameName("Explosion_move_(1,1).png");
 			S->BindSprite(spr);
 			break;
 	}
@@ -79,11 +84,11 @@ Soldier* SoldierManager::CreateSoldier(int SoldierNameType,int player)
 
 void SoldierManager::ClearAll()
 {
-
-	for (auto soldier:_soldierMap)
-	{
-			soldier.second->removeFromParent();
-	}
+	_soldierMap.clear();
+	_enemySoldierMap.clear();
+	_beChoosedMap.clear();
+	Soldier::soldiersID = 0;
+	Soldier::enemySoldiersID = 0;
 }
 
 void SoldierManager::DestroySoldier(Soldier* S)
@@ -165,6 +170,10 @@ bool SoldierManager::CheckSoldierResource(char* type)
 	{
 		mineralCost = 10;
 	}
+	else if (type == "Explosion")
+	{
+		mineralCost = 70;
+	}
 	if (GetMineral()->GetCurrentVal() -mineralCost >= 0)
 	{
 		return true;
@@ -211,7 +220,6 @@ void SoldierManager::Move(Soldier* soldier)
 		}
 		if (soldier->_path.empty() || soldier->_path.front() == soldier->_path.back())
 		{
-
 		
 			soldier->_targetPoint = Point(-1, -1);
 			return;
@@ -251,17 +259,22 @@ Soldier *SoldierManager::CreateEnemySoldier(int SoldierNameType, int player)
 	{
 	case DOG:
 		S = new Dog(player);
-		spr = Sprite::createWithSpriteFrameName("Dog_move_(1,0)_1.png");
+		spr = Sprite::createWithSpriteFrameName("Dog_move_(1,1)_1.png");
 		S->BindSprite(spr);
 		break;
 	case INFANTRY:
 		S = new Infantry(player);
-		spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,0).png");
+		spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,1).png");
 		S->BindSprite(spr);
 		break;
 	case TANK:
 		S = new Tank(player);
-		spr = Sprite::createWithSpriteFrameName("Tank_move_(1,0).png");
+		spr = Sprite::createWithSpriteFrameName("Tank_move_(1,1).png");
+		S->BindSprite(spr);
+		break;
+	case EXPLOSION:
+		S = new  Explosion( player);
+		spr = Sprite::createWithSpriteFrameName("Explosion_move_(1,1).png");
 		S->BindSprite(spr);
 		break;
 	}
@@ -427,12 +440,15 @@ int SearchRoad::startSearch(Point startp, Point endp, Soldier* soldier)
 
 void SoldierManager::EnemyCreate(float x, float y,int type)
 {
-	if (type > 5)
+	if (type >POWERSTATION)
 	{
 		auto enemy = CreateEnemySoldier(type, 1);
 		GameScene::GetMap()->addChild(enemy, 1000, enemy->GetID());
 		enemy->setPosition(Point(x, y));
-		enemy->schedule(schedule_selector(Soldier::EnemySearchEnemyUpdate),enemy->GetAttackInterval());
+		if (type!=EXPLOSION)
+		{
+			enemy->schedule(schedule_selector(Soldier::EnemySearchEnemyUpdate), enemy->GetAttackInterval());
+		}
 		GameScene::GetMapManager()->SetSoldier(Point(x,y));
 	}
 	else
@@ -466,7 +482,14 @@ void SoldierManager::SetEnemyTargetEnemy(int ID, int goal)
 		enemy->_target = static_cast<Entity*>(GameScene::GetMap()->getChildByTag(goal));
 	}
 }
-
+void SoldierManager::EnemyDie(int ID)
+{
+	auto enemy = static_cast<Entity*>(GameScene::GetMap()->getChildByTag(ID));
+	if (enemy != NULL)
+	{
+		enemy->Die();
+	}
+}
 std::unordered_map<int,Soldier*> SoldierManager::_enemySoldierMap;
 std::unordered_map<int,Soldier*> SoldierManager::_soldierMap;
 std::unordered_map<int,Soldier*> SoldierManager::_beChoosedMap;

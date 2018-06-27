@@ -1,4 +1,5 @@
 #include"BuildingManager.h"
+#include"Entity/Building/Building.h"
 #include"Entity/Building/Base.h"
 #include"Entity/Building/Barrack.h"
 #include"Entity/Building/Factory.h"
@@ -7,6 +8,9 @@
 #include"Scene/GameScene/GameScene.h"
 #include"Scene/GameScene/MenuLayer.h"
 #include"Manager\SoldierManager.h"
+#include"Scene/MenuScene.h"
+#include"Scene/ResultScene.h"
+#include"Entity/Player.h"
 USING_NS_CC;
 
 #define BASE 1
@@ -18,6 +22,17 @@ USING_NS_CC;
 #define DOG 7
 #define TANK 8
 
+bool BuildingManager::init()
+{
+	if (!Node::init())
+	{
+		return false;
+	}
+	_mineralPerSecond = 0;
+
+	return true;
+}
+
 Building* BuildingManager::CreateBuilding(int BuildingTypeName)
 {
 	Building* B = NULL;
@@ -28,6 +43,7 @@ Building* BuildingManager::CreateBuilding(int BuildingTypeName)
 		spr = Sprite::createWithSpriteFrameName("Base.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
+		++_myBuildingCount;
 
 	}
 	else if (BuildingTypeName == BARRACK)
@@ -59,7 +75,7 @@ Building* BuildingManager::CreateBuilding(int BuildingTypeName)
 		spr = Sprite::createWithSpriteFrameName("Factory.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
-		B->schedule(schedule_selector(Factory::FactoryUpdate), 10);
+		B->schedule(schedule_selector(Factory::FactoryUpdate), 1);
 	}
 	else
 	{
@@ -192,14 +208,21 @@ void BuildingManager::DestroyBuilding(Building* B)
 	}
 	if (B->_type==POWERSTATION&&!B->_player&&B->IsWorking())
 	{
-	for(auto building:_buildingMap)
-	{
+		
+		if (!B->_player)
+		{
+			GameScene::GetPower()->Reduce(static_cast<PowerStation*>(B)->GetPowerProduce());
+		}
+		for(auto building:_buildingMap)
+		{
 			if (GameScene::GetPower()->GetAvailableVal()<0)
 			{	
+				if (building.second->IsWorking())
+				{
 					building.second->_isWorking = false;
-					GameScene::GetPower()->_availableVal += building.second->_powerCost;
 					building.second->GetSprite()->setColor(Color3B(100, 100, 100));
-					++GameScene::GetPower()->_availableVal;
+					GameScene::GetPower()->Free(building.second->_powerCost);
+				}
 			}
 			else
 			{
@@ -210,6 +233,30 @@ void BuildingManager::DestroyBuilding(Building* B)
 	if (B->_type == MINE && !B->_player&&B->_isWorking)
 	{
 		UpdateMineralPerSecond();
+	}
+	if (B->_type == BASE)
+	{
+		if (!B->_player)
+		{
+			--_myBuildingCount;
+		}
+		else
+		{
+			--_opBuildingCount;
+		}
+		if (_myBuildingCount == 0 || _opBuildingCount==0)
+		{
+			if (_myBuildingCount)
+			{
+				Player::getInstance()->setResult(1);
+			}
+			else
+			{
+				Player::getInstance()->setResult(0);
+			}
+			auto transition = TransitionFade::create(0.5, ResultScene::createScene());
+			Director::getInstance()->replaceScene(transition);
+		}
 	}
 	
 	if (B->_player)
@@ -246,6 +293,7 @@ Building* BuildingManager::CreateEnemyBuilding(int BuildingTypeName)
 		spr = Sprite::createWithSpriteFrameName("Base.png");
 		spr->setColor(Color3B(100, 100, 100));
 		B->BindSprite(spr);
+		++_opBuildingCount;
 
 	}
 	else if (BuildingTypeName == BARRACK)
@@ -299,8 +347,20 @@ void BuildingManager::UpdateMineral(float dt)
 
 }
 
+void BuildingManager::ClearAll()
+{
+	_buildingMap.clear();
+	_enemyBuildingMap.clear();
+	Building::buildingsID = 0;
+	Building::enemyBuildingsID = 0;
+}
+
+int BuildingManager::_myBuildingCount=0;
+int BuildingManager::_opBuildingCount=0;
+
+Power*  BuildingManager::_pPower;
+Mineral* BuildingManager::_pMineral;
+
 std::unordered_map<int,Building*> BuildingManager::_buildingMap;
 std::unordered_map<int,Building*> BuildingManager::_enemyBuildingMap;
-int BuildingManager::_mineralPerSecond = 0;
-Power* BuildingManager::_pPower;
-Mineral* BuildingManager::_pMineral;
+int BuildingManager::_mineralPerSecond;

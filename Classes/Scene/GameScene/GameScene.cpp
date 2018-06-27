@@ -11,6 +11,7 @@
 #include"Entity\Soldier\Soldier.h"
 #include"Net\API.h"
 #include"Entity\Player.h"
+#include"Scene/RoomScene/ChatBox.h"
 
 USING_NS_CC;
 #define BASE 1
@@ -24,6 +25,7 @@ USING_NS_CC;
 #define CREATE_ENEMY 1000
 #define SET_ENEMY_TARGET 1001
 #define SET_ENEMY_TARGET_ENEMY 1002
+#define ENEMY_DIE 1003
 
 Scene* GameScene::createScene()
 {
@@ -83,7 +85,13 @@ bool GameScene::init()
 
 	_mineral->schedule(schedule_selector(BuildingManager::UpdateMineral), 1.0f);
 
-	
+	auto layer = LayerColor::create(Color4B::WHITE);
+	layer->setOpacity(150);
+	layer->setContentSize(Size(visibleSize.width / 6, visibleSize.height/5));
+	this->addChild(layer);
+	auto chatBox = ChatBox::create();
+	chatBox->setPosition(visibleSize.width * 0.08f, visibleSize.height * 0.15f);
+	layer->addChild(chatBox);
 
 	initBattle();
 
@@ -102,23 +110,25 @@ void GameScene::RecvDataUpdate(float dt)
 {
 	while (!Player::getInstance()->client->_orders.empty())
 	{
-		auto map = Player::getInstance()->client->_orders;
 		switch (Player::getInstance()->client->_orders.front()._func)
 		{
 		case CREATE_ENEMY:
 				SoldierManager::EnemyCreate(Player::getInstance()->client->_orders.front()._x, 
 				Player::getInstance()->client->_orders.front()._y, 
 				Player::getInstance()->client->_orders.front()._kind);
-			break;
+				break;
 		case SET_ENEMY_TARGET:
 				SoldierManager::SetEnemyTarget(Player::getInstance()->client->_orders.front()._x, 
 				Player::getInstance()->client->_orders.front()._y,
 				Player::getInstance()->client->_orders.front()._id);
-			break;
+				break;
 		case SET_ENEMY_TARGET_ENEMY:
-			SoldierManager::SetEnemyTargetEnemy(Player::getInstance()->client->_orders.front()._id,
+				SoldierManager::SetEnemyTargetEnemy(Player::getInstance()->client->_orders.front()._id,
 				Player::getInstance()->client->_orders.front()._goal);
-			break;
+				break;
+		case ENEMY_DIE:
+				SoldierManager::EnemyDie(Player::getInstance()->client->_orders.front()._id);
+				break;
 		}
 		Player::getInstance()->client->_orders.pop_front();
 	}
@@ -155,6 +165,17 @@ void GameScene::initBattle()
 		base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0.1);
 	}
 }
+
+void GameScene::onExit()
+{
+	Layer::onExit();
+	SoldierManager::ClearAll();
+	BuildingManager::ClearAll();
+	MapManager::ClearAll();
+	Player::getInstance()->isEnd += 10000;
+	
+}
+
 
 TMXTiledMap* GameScene::GetMap()
 {

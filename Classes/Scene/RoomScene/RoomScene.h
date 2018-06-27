@@ -11,7 +11,13 @@ public:
 	cocos2d::ui::Button* CreateButton(std::string);
 	virtual void update(float dt);
 
-	void CreateMasterLayer();
 
+	void initNameLayer();
+	
 	void BGinit();
+private:
+	cocos2d::ui::Text* _masterName;
+	cocos2d::ui::Text* _clientName;
+	cocos2d::Layer* masterLayer;
+	cocos2d::Layer* clientLayer;
 };

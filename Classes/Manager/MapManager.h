@@ -16,6 +16,7 @@ public:
 	CREATE_FUNC(MapManager);
 	virtual bool init();
 
+	static void ClearAll();
 	//==========tiledmap坐标与cocos坐标互相转换============
 	static cocos2d::Vec2 ChangeToTiledPos(cocos2d::Point);
 	static cocos2d::Vec2 ChangeToCocosPos(cocos2d::Vec2);

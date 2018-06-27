@@ -28,6 +28,7 @@ bool RoomScene::init()
 	auto origin = Director::getInstance()->getVisibleOrigin();
 
 	BGinit();
+	initNameLayer();
 
 	if (Player::getInstance()->isMaster)
 	{
@@ -52,7 +53,7 @@ bool RoomScene::init()
 			case Widget::TouchEventType::MOVED:
 				break;
 			case Widget::TouchEventType::ENDED:
-				if (Player::getInstance()->serve->IsConnected())
+				if (Player::getInstance()->serve->IsConnected()&& Player::getInstance()->client->_isReady)
 				{
 					SendStep(Player::getInstance()->serve);
 					auto transition = TransitionFade::create(0.5, GameScene::createScene());
@@ -67,6 +68,31 @@ bool RoomScene::init()
 		auto readyButton = CreateButton("Ready");
 		readyButton->setTitleFontSize(Setting::Font::Size::normal);
 		this->addChild(readyButton);
+		readyButton->addTouchEventListener([&, readyButton](Ref*, Widget::TouchEventType type)
+		{
+			switch (type)
+			{
+			case Widget::TouchEventType::BEGAN:
+				CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
+				break;
+			case Widget::TouchEventType::MOVED:
+				break;
+			case Widget::TouchEventType::ENDED:
+				if (!Player::getInstance()->client->_isReady)
+				{
+					Player::getInstance()->client->_isReady = 1;
+					Player::getInstance()->client->_chatMsgSend.push_back("_getReady");
+					readyButton->setTitleText("Cancel");
+				}
+				else
+				{
+					Player::getInstance()->client->_isReady = 0;
+					Player::getInstance()->client->_chatMsgSend.push_back("_cancelReady");
+					readyButton->setTitleText("Ready");
+				}
+				break;
+			}
+		});
 	}
 
 	auto layer = LayerColor::create(Color4B::WHITE);
@@ -77,10 +103,6 @@ bool RoomScene::init()
 	chatBox->setPosition(visibleSize.width * 0.08f, visibleSize.height * 0.15f);
 	layer->addChild(chatBox);
 	this->scheduleUpdate();
-
-	auto text = Text::create(Player::getInstance()->client->_opponentName, "fonts/OpenSans-Regular.ttf", 24);
-	this->addChild(text);
-	text->setPosition(Point(900, 400));
 
 	return true;
 }
@@ -121,5 +143,59 @@ Button* RoomScene::CreateButton(std::string title)
 		 this->unscheduleUpdate();
 	 }
 	 auto tmp = Player::getInstance()->client->_opponentName;
+	 if (Player::getInstance()->isMaster)
+	 {
+		 if (Player::getInstance()->client->_opponentName != "" && _clientName==nullptr)
+		 {
+			 auto size = clientLayer->getContentSize();
+			 _clientName = ui::Text::create(Player::getInstance()->client->_opponentName, "fonts/OpenSans-Regular.ttf", Setting::Font::Size::normal);
+			 _clientName->setColor(Color3B::BLUE);
+			 clientLayer->addChild(_clientName);
+			 _clientName->setPosition(size / 2);
+		 }
+	 }
+	 else
+	 {
+		 if (Player::getInstance()->client->_opponentName != "" && _masterName == nullptr)
+		 {
+			 auto size = masterLayer->getContentSize();
+			 _masterName = ui::Text::create(Player::getInstance()->client->_opponentName, "fonts/OpenSans-Regular.ttf", Setting::Font::Size::normal);
+			 _masterName->setColor(Color3B::RED);
+			 masterLayer->addChild(_masterName);
+			 _masterName->setPosition(size / 2);
+		 }
+	 }
 
 }
+
+ void RoomScene::initNameLayer()
+ {
+	 auto visibleSize = Director::getInstance()->getVisibleSize();
+
+	 masterLayer = LayerColor::create(Color4B::WHITE);
+	 clientLayer = LayerColor::create(Color4B::WHITE);
+	 masterLayer->setContentSize(visibleSize / 5);
+	 clientLayer->setContentSize(visibleSize / 5);
+	 masterLayer->setOpacity(150);
+	 clientLayer->setOpacity(150);
+	 this->addChild(masterLayer);
+	 this->addChild(clientLayer);
+	 masterLayer->setPosition(visibleSize.width * 1 / 5, visibleSize.height * 3 / 4);
+	 clientLayer->setPosition(visibleSize.width * 3 / 5, visibleSize.height * 3 / 4);
+	 if (Player::getInstance()->isMaster)
+	 {
+		 auto size = masterLayer->getContentSize();
+		 _masterName = ui::Text::create(Player::getInstance()->getName(),"fonts/OpenSans-Regular.ttf", Setting::Font::Size::normal);
+		 _masterName->setColor(Color3B::RED);
+		 masterLayer->addChild(_masterName);
+		 _masterName->setPosition(size / 2);
+	 }
+	 else
+	 {
+		 auto size = clientLayer->getContentSize();
+		 _clientName = ui::Text::create(Player::getInstance()->getName(), "fonts/OpenSans-Regular.ttf", Setting::Font::Size::normal);
+		 _clientName->setColor(Color3B::BLUE);
+		 clientLayer->addChild(_clientName);
+		 _clientName->setPosition(size / 2);
+	 }
+ }

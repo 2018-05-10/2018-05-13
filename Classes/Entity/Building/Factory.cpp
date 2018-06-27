@@ -18,6 +18,7 @@
 #define INFANTRY 6
 #define DOG 7
 #define TANK 8
+#define EXPLOSION 9
 #define CREATE_ENEMY 1000
 #define SET_ENEMY_TARGET 1001
 #define SET_ENEMY_TARGET_ENEMY 1002
@@ -90,22 +91,36 @@ void Factory::FactoryUpdate(float dt)
 	}
 	if (_buildingList.front() == "Tank")
 	{
-		auto pos =this->getPosition();
+		auto pos = this->getPosition();
 		auto tilePos = MapManager::ChangeToTiledPos(pos);
 		auto tank = SoldierManager::CreateSoldier(TANK, 0);
 		GameScene::GetMap()->addChild(tank, 150 + tilePos.x + tilePos.y);
 		auto landPos = GameScene::GetMapManager()->BFS(pos);
 		tank->setPosition(landPos);
-		Player::getInstance()->client->SendData(landPos.x,landPos.y,0,tank->GetID(),TANK,CREATE_ENEMY);
+		Player::getInstance()->client->SendData(landPos.x, landPos.y, 0, tank->GetID(), TANK, CREATE_ENEMY);
 		tank->schedule(schedule_selector(Soldier::SearchEnemyUpdate), tank->GetAttackInterval());
 		GameScene::GetGameController()->SetSoldierController(tank);
 		GameScene::GetMapManager()->SetSoldier(landPos);
 		_buildingList.pop();
+	}
+	else if (_buildingList.front() == "Explosion")
+	{
+		auto pos = this->getPosition();
+		auto tilePos = MapManager::ChangeToTiledPos(pos);
+		auto explosion = SoldierManager::CreateSoldier(EXPLOSION, 0);
+		GameScene::GetMap()->addChild(explosion, 150 + tilePos.x + tilePos.y);
+		auto landPos = GameScene::GetMapManager()->BFS(pos);
+		explosion->setPosition(landPos);
+		Player::getInstance()->client->SendData(landPos.x, landPos.y, 0, explosion->GetID(),EXPLOSION, CREATE_ENEMY);
+		GameScene::GetGameController()->SetSoldierController(explosion);
+		GameScene::GetMapManager()->SetSoldier(landPos);
+		_buildingList.pop();
+	}
 		if (GameScene::GetMenuLayer()->_buildingListUI!=nullptr)
 		{
 			auto lab = static_cast<Text*>(Helper::seekWidgetByName(GameScene::GetMenuLayer()->_buildingListUI, "Number"));
 			lab->setText(Value(this->_buildingList.size()).asString());
 		}
 		
-	}
+	
 }

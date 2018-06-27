@@ -5,6 +5,7 @@
 #include"Manager/SoldierManager.h"
 #include"Manager/MapManager.h"
 #include"SimpleAudioEngine.h"
+#include"Entity/Player.h"
 
 #define BASE 1
 #define FACTORY 2
@@ -14,6 +15,11 @@
 #define INFANTRY 6
 #define DOG 7
 #define TANK 8
+#define EXPLOSION 9
+#define CREATE_ENEMY 1000
+#define SET_ENEMY_TARGET 1001
+#define SET_ENEMY_TARGET_ENEMY 1002
+#define ENEMY_DIE 1003
 
 Soldier::Soldier() {}
 
@@ -30,17 +36,16 @@ void Soldier::Attack(Entity* target)
 	{
 		return;
 	}
-	if (this->GetPlayer() != target->GetPlayer()&&!this->_isDead)
+	if (this->GetPlayer() != target->GetPlayer())
 	{
-		this->GetSprite()->stopAllActions();
-
-		auto func = [=]()
+		if (!this->Isdead())
 		{
-			GameScene::GetSoldierManager()->Move(this);
-		};
-		auto callFunc = CallFunc::create(func);
-	
-		this->GetSprite()->runAction(AnimateAttack(target->getPosition()));
+			this->GetSprite()->stopAllActions();
+			if (this->_type != EXPLOSION)
+			{
+				this->GetSprite()->runAction(AnimateAttack(target->getPosition()));
+			}
+		}
 
 		target->Hit(_attack);
 	}
@@ -62,11 +67,23 @@ bool Soldier::init()
 
 void Soldier::Die()     
 {
+	if (_isDead)
+	{
+		return;
+	}
 	_isDead = true;
-	if (_type=TANK)
+	Player::getInstance()->client->SendData(0, 0, 0, this->GetID(), this->GetType(), ENEMY_DIE);
+	if (_type == EXPLOSION)
+	{
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/BoomSound.wav");
+		Aoe(MapManager::ChangeToTiledPos(this->getPosition()), 5);
+	}
+
+	if (_type==TANK)
 	{
 		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/BoomSound.wav");
 	}
+
 	MapManager::RemoveSoldier(this);
 	
 	auto func = [this]()
@@ -74,7 +91,9 @@ void Soldier::Die()
 		GameScene::GetSoldierManager()->DestroySoldier(this);
 	};
 	auto callFunc = CallFunc::create(func);
-	this->GetSprite()->runAction(Sequence::create(AnimateDie(),callFunc, NULL));
+
+		this->GetSprite()->runAction(Sequence::create(AnimateDie(), callFunc, NULL));
+	
 }
 
 int Soldier::GetMineralCost()const
@@ -224,7 +243,42 @@ Entity* Soldier::GetTarget()
 
 void Soldier::Aoe(Point point, int dir)
 {
-	for
+	std::queue<Soldier*> tmp;
+	if (this->_player)
+	{
+		for (auto soldier : SoldierManager::_soldierMap)
+		{
+
+			auto targetPos = MapManager::ChangeToTiledPos(soldier.second->getPosition());
+			auto soldierPos = MapManager::ChangeToTiledPos(this->getPosition());
+			Point deltaPos = targetPos - soldierPos;
+			if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) < this->_attackDistance)
+			{
+				tmp.push(soldier.second);
+			}
+
+		}
+	}
+	else
+	{
+		for (auto soldier : SoldierManager::_enemySoldierMap)
+		{
+
+			auto targetPos = MapManager::ChangeToTiledPos(soldier.second->getPosition());
+			auto soldierPos = MapManager::ChangeToTiledPos(this->getPosition());
+			Point deltaPos = targetPos - soldierPos;
+			if (pow(deltaPos.x, 2) + pow(deltaPos.y, 2) < this->_attackDistance)
+			{
+				tmp.push(soldier.second);
+			}
+
+		}
+	}
+	while (!tmp.empty())
+	{
+		this->Attack(tmp.front());
+		tmp.pop();
+	}
 }
 
 void Soldier::UpdateSprite()

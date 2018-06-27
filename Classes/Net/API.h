@@ -89,11 +89,11 @@ static void SendStep(Server* _server)//房主开始游戏时调用
 	_task.join();
 }
 
-static void SendData(Client* _client, float _p1, float _p2, int _p3, int _p4, int _p5, int _p6)
+/*static void SendData(Client* _client, float _p1, float _p2, int _p3, int _p4, int _p5, int _p6)
 {
 	std::thread _task(&Client::SendData, _client, _p1, _p2, _p3, _p4, _p5, _p6);
 	_task.detach();
-}
+}*/
 
 /*static bool RecvInGame(Client* _client)//进入游戏后两边均调用此函数， 此后的SendData()所发信息均会在本地map中更新
 {

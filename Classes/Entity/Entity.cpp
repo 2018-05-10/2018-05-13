@@ -57,11 +57,7 @@ void Entity::Hit(int attack)
 }
 bool Entity::Isdead()
 {
-	if (_currentHP == 0)
-	{
-		return true;
-	}
-	return false;
+	return _isDead;
 }
 int Entity::Type()
 {

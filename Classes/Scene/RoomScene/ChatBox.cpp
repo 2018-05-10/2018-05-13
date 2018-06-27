@@ -1,5 +1,6 @@
 #include "ChatBox.h"
 #include"Entity/Player.h"
+#include"Setting.h"
 USING_NS_CC;
 
 constexpr int MAX_MSG_NUM = 10;
@@ -7,6 +8,10 @@ constexpr int MAX_MSG_NUM = 10;
 bool ChatBox::init()
 {
 
+	if (!Node::init())
+	{
+		return false;
+	}
 	boxInputInit();
 	boxHistoryInit();
 
@@ -17,7 +22,7 @@ bool ChatBox::init()
 
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 
-		this->schedule(schedule_selector(ChatBox::updateHistory), 0.5f);
+	this->schedule(schedule_selector(ChatBox::updateHistory), 0.5f);
 
 	return true;
 }
@@ -30,7 +35,8 @@ void ChatBox::keyReleasedAct(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::E
 			static_cast<TextFieldTTF*>(boxInput->getVirtualRenderer())->detachWithIME();
 			if (!boxInput->getString().empty()) {
 				Player::getInstance()->client->_chatMsgSend.push_back(boxInput->getString());
-				auto text = cocos2d::ui::Text::create(boxInput->getString(), "fonts/OpenSans-Regular.ttf", 24);
+				auto str = Player::getInstance()->getName()+std::string(": ")+ boxInput->getString();
+				auto text = cocos2d::ui::Text::create(str, "fonts/OpenSans-Regular.ttf", Setting::Font::Size::chat);
 				text->ignoreContentAdaptWithSize(false);
 				text->setColor(cocos2d::Color3B::RED);
 				auto width = text->getContentSize().width;
@@ -90,7 +96,8 @@ void ChatBox::updateHistory(float dt)
 
 	for (auto txt : Player::getInstance()->client->_chatMsgRecv)
 	{
-		auto text = cocos2d::ui::Text::create(txt, "fonts/OpenSans-Regular.ttf", 24);
+		auto str = Player::getInstance()->client->_opponentName + std::string(": ") + txt;
+		auto text = cocos2d::ui::Text::create(str, "fonts/OpenSans-Regular.ttf", Setting::Font::Size::chat);
 		text->ignoreContentAdaptWithSize(false);
 		text->setColor(cocos2d::Color3B::BLUE);
 		auto width = text->getContentSize().width;

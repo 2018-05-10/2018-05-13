@@ -1,5 +1,5 @@
 ﻿#include "Client.h"
-
+#include "Entity\Player.h"
 Client::Client()//不用关心
 {
 	WSADATA _data;
@@ -96,17 +96,17 @@ int Client::Recv(char* _buffer, int _len) const//不用关心
 
 bool Client::SendData(float _p1, float _p2, int _p3, int _p4, int _p5, int _p6) const//在单位的属性有改变时均需调用此函数来发送新的属性值
 {
-	char _str[1024] = { 0 };
+	char _str[100] = { 0 };
 	int _judge = 0;
 	char* _str2 = ChangeTo(_p1, _p2, _p3, _p4, _p5, _p6);
-	for (int i = 0; i < 1024; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		_str[i] = _str2[i];
 	}
 	_str[96] = 'd';
 	_str[97] = 'd';
 	_str[98] = 'd';
-	_judge = Send(_str, 1024);
+	_judge = Send(_str, 100);
 	if (_judge <= 0)
 	{
 		return false;
@@ -117,9 +117,9 @@ bool Client::SendData(float _p1, float _p2, int _p3, int _p4, int _p5, int _p6) 
 
 bool Client::RecvData(float &_p1, float &_p2, int &_p3, int &_p4, int &_p5, int &_p6)//游戏中接受数据，如果收到对话信息则输出到聊天层中
 {
-	char* _str = new char[1024];
+	char* _str = new char[100];
 	int _judge = 0;
-	Recv(_str, 1024);
+	Recv(_str, 100);
 	std::string _s = _str;
 	if (_s == "_step++")
 	{
@@ -130,6 +130,12 @@ bool Client::RecvData(float &_p1, float &_p2, int &_p3, int &_p4, int &_p5, int 
 	if (_s == "_getReady")
 	{
 		_isReady = 1;
+		delete[] _str;
+		return true;
+	}
+	if (_s == "_cancelReady")
+	{
+		_isReady = 0;
 		delete[] _str;
 		return true;
 	}
@@ -196,24 +202,32 @@ void Client::ChangeFrom(char* _str, float &_p1, float &_p2, int &_p3, int &_p4, 
 
 bool Client::SendMsg()//SendMsgMod所开的线程函数
 {
-	const char* _myName = new char[1024];
+	const char* _myName = new char[100];
 	_myName = _playerName.c_str();
-	send(_clientSocket, _myName, 1024, 0);
+	send(_clientSocket, _myName, 100, 0);
 
 	while (1)
 	{
+		if (Player::getInstance()->isEnd >= 5000)
+		{
+			break;
+		}
 		Sleep(50);
 		std::vector<std::string>::iterator _it = _chatMsgSend.begin();
-		char _str[1024] = { 0 };
+		char _str[100] = { 0 };
 		int _judge = 0;
 		for (1; _it != _chatMsgSend.end(); _it++)
 		{
 			strcpy(_str, (*_it).c_str());
 			if (_str[0] != '\0')
 			{
-				_judge = Send(_str, 1024);
+				_judge = Send(_str, 100);
 				1;
 			}
+		}
+		if (Player::getInstance()->isEnd >= 5000)
+		{
+			break;
 		}
 		_chatMsgSend.clear();
 	}
@@ -238,8 +252,8 @@ bool Client::SendMsg()//SendMsgMod所开的线程函数
 
 bool Client::RecvToOrder()//RecvMsgMod所开的线程函数，功能整合到这个函数了
 {
-	char* _opName = new char[1024];
-	recv(_clientSocket, _opName, 1024, 0);
+	char* _opName = new char[100];
+	recv(_clientSocket, _opName, 100, 0);
 	_opponentName = _opName;
 
 	float _x = 0;
@@ -250,12 +264,24 @@ bool Client::RecvToOrder()//RecvMsgMod所开的线程函数，功能整合到这
 	int _func = 0;
 	while (1)
 	{
+		if (Player::getInstance()->isEnd >= 5000)
+		{
+			break;
+		}
 		RecvData(_x, _y, _goal, _id, _kind, _func);
+		int i = Player::getInstance()->isEnd;
+		if (Player::getInstance()->isEnd >= 5000)
+		{
+			break;
+		}
 		unit _u =
 		{
 			_x, _y, _goal, _id, _kind, _func
 		};
+		
+		
 		_orders.push_back(_u);
+		
 	}
 	//delete[] _opName;
 	return true;

@@ -14,12 +14,13 @@ class BuildingManager :public cocos2d::Node
 public:
 	CREATE_FUNC(BuildingManager);
 	
-
+	virtual bool init();
 
 	
 
 	//=======建造建筑时的资源检测=========
 	bool BuildingResourceCheck(int name);
+	static void ClearAll();
 
 	cocos2d::TMXTiledMap* GetMap();
 	SoldierManager* GetSoldierManager();
@@ -43,9 +44,8 @@ public:
 
 	static int _mineralPerSecond;
 private:
-
-	static Power * _pPower;
+	static Power* _pPower;
 	static Mineral* _pMineral;
-
-
+	static int _myBuildingCount;
+	static int _opBuildingCount;
 };

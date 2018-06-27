@@ -20,7 +20,7 @@ Infantry::Infantry(int player)
 	_attack = 50;
 	_speed = 1;
 	_mineralCost = 20;
-	_attackInterval = 1.0;
+	_attackInterval = 0.5;
 	_attackDistance = 49;
 	_player = player;
 	_target = NULL;
@@ -37,7 +37,7 @@ Infantry::Infantry(Mineral *m,int player)
 	_attack = 50;
 	_speed = 1;
 	_mineralCost = 20;
-	_attackInterval = 0.3;
+	_attackInterval = 0.5;
 	_attackDistance = 49;
 	_player = player;
 	_target = NULL;

@@ -23,6 +23,7 @@ USING_NS_CC;
 namespace SearchRoad
 {
 	int startSearch(cocos2d::Point start, cocos2d::Point end, Soldier*);
+
 }
 
 bool GameController::init()
@@ -36,6 +37,13 @@ bool GameController::init()
 	_selectBox = Sprite::create("selectbox.png");
 	this->addChild(_selectBox);
 	_selectBox->setOpacity(0);
+	_mousePosition = cocos2d::Point(800, 450);
+
+	_isClick = false;
+	_key_A_isPressed = false;
+	_key_W_isPressed = false;
+	_key_D_isPressed = false;
+	_key_S_isPressed = false;
  
 	return true;
 }

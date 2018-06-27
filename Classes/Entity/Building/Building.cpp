@@ -5,6 +5,7 @@
 #include"Manager/MapManager.h"
 #include"PowerStation.h"
 #include"SimpleAudioEngine.h"
+#include"Entity/Player.h"
 
 #define BASE 1
 #define FACTORY 2
@@ -14,6 +15,11 @@
 #define INFANTRY 6
 #define DOG 7
 #define TANK 8
+#define EXPLOSION 9
+#define CREATE_ENEMY 1000
+#define SET_ENEMY_TARGET 1001
+#define SET_ENEMY_TARGET_ENEMY 1002
+#define ENEMY_DIE 1003
 
 Building::Building() 
 {
@@ -41,10 +47,12 @@ bool Building::init()
 
 void Building::Die()
 {
+	
 	if (_isDead)
 	{
 		return;
 	}
+	Player::getInstance()->client->SendData(0, 0, 0, this->GetID(), this->GetType(), ENEMY_DIE);
 	_isDead = true;
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/BoomSound.wav");
 	MapManager::RemoveBuilding(this, _type);

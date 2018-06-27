@@ -21,12 +21,13 @@ public:
 
 	//========场景初始化=====
 	virtual bool init();
-	//virtual void onEnter();
+	virtual void onExit();
 
 	CREATE_FUNC(GameScene);
 
 	void RecvDataUpdate(float dt);
 	void initBattle();
+
 
 	//======获取地图========
 	static cocos2d::TMXTiledMap* GetMap();

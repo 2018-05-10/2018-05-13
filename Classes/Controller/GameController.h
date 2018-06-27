@@ -31,11 +31,11 @@ public:
 
 private:
 
-	bool _isClick = false;
-	bool _key_A_isPressed = false;
-	bool _key_W_isPressed = false;
-	bool _key_D_isPressed = false;
-	bool _key_S_isPressed = false;
+	bool _isClick;
+	bool _key_A_isPressed;
+	bool _key_W_isPressed;
+	bool _key_D_isPressed;
+	bool _key_S_isPressed;
 
 	cocos2d::Point _getTouchBeganPos;
 	cocos2d::Point _getTouchEndedPos;
@@ -43,5 +43,5 @@ private:
 	cocos2d::Sprite* _selectBox;
 
 
-	cocos2d::Point _mousePosition = cocos2d::Point(800, 450);
+	cocos2d::Point _mousePosition;
 };

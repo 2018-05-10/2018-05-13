@@ -47,10 +47,7 @@ PowerStation::PowerStation(Power* p, Mineral* m,int player)
 
 PowerStation::~PowerStation() 
 {
-	if (!_player)
-	{
-		_pPower->Reduce(_powerProduce);
-	}
+	
 }
 
 bool PowerStation::init()

@@ -16,7 +16,7 @@ public:
 	int GetSpeed();
 	void Attack(Entity* target);           //普通攻击，会先分辨敌我，再攻击
 	void ForcedAttack(Entity* target);            //强制攻击，所谓反补
-	void Aoe(cocos2d::Point,int);
+	void Aoe(cocos2d::Point,int dir);
 	bool init();
 	virtual void Die();
 	int GetMineralCost()const;

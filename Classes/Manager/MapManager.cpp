@@ -3,6 +3,7 @@
 #include"SoldierManager.h"
 #include"Entity/Building/Building.h"
 #include"Entity\Soldier\Soldier.h"
+#include"Entity/Player.h"
 #include<queue>
 #include<string>
 USING_NS_CC;
@@ -23,10 +24,10 @@ bool MapManager::init()
 	{
 		return false;
 	}
-	for (int i = 0; i < 75; ++i)
+	for (int i = 0; i < Player::getInstance()->getMapSize(); ++i)
 	{
 		std::vector<int> temp;
-		for (int j = 0; j < 75; ++j)
+		for (int j = 0; j <Player::getInstance()->getMapSize(); ++j)
 		{
 			temp.push_back(1);
 		}
@@ -48,11 +49,11 @@ bool MapManager::BuildingPositionCheck(Point pos,int name)
 {
 	Vec2 tilePos = ChangeToTiledPos(pos);
 
-	if (tilePos.x < 0 || tilePos.x>74)
+	if (tilePos.x < 0 || tilePos.x>Player::getInstance()->getMapSize()-1)
 	{
 		return false;
 	}
-	if (tilePos.y < 0 || tilePos.y>74)
+	if (tilePos.y < 0 || tilePos.y>Player::getInstance()->getMapSize()-1)
 	{
 		return false;
 	}
@@ -89,7 +90,7 @@ bool MapManager::BuildingPositionCheck(Point pos,int name)
 		break;
 	}
 
-	if ((originPos.x < width || originPos.x>74) || (originPos.y < height || originPos.y>74))
+	if ((originPos.x < width || originPos.x>Player::getInstance()->getMapSize()-1) || (originPos.y < height || originPos.y>Player::getInstance()->getMapSize()-1))
 	{
 		return false;
 	}
@@ -113,9 +114,9 @@ void MapManager::GetTiledInformation()
 {
 	auto map = GetMap();
 	auto meta = map->getLayer("meta");
-	for (int i = 0; i < 75; ++i)
+	for (int i = 0; i <Player::getInstance()->getMapSize(); ++i)
 	{
-		for (int j = 0; j < 75; ++j)
+		for (int j = 0; j <Player::getInstance()->getMapSize(); ++j)
 		{
 			int tiledGid = meta->getTileGIDAt(Vec2(i, j));
 			if (tiledGid)
@@ -168,7 +169,8 @@ void MapManager::SetBuilding(Point pos,int name)
 	{
 		for (int j = 0; j < height+1; ++j)
 		{
-			if (originPos.x - i < 0 || originPos.x - i>74 || originPos.y - j < 0 || originPos.y - j>74)
+			if (originPos.x - i < 0 || originPos.x - i>Player::getInstance()->getMapSize()-1 || 
+				originPos.y - j < 0 || originPos.y - j>Player::getInstance()->getMapSize()-1)
 			{
 				continue;
 			}
@@ -219,7 +221,7 @@ void MapManager::RemoveBuilding(Building* building, int name)
 	{
 		for (int j = 0; j < height + 1; ++j)
 		{
-			if (originPos.x - i < 0 || originPos.x - i>74 || originPos.y - j < 0 || originPos.y - j>74)
+			if (originPos.x - i < 0 || originPos.x - i>Player::getInstance()->getMapSize()-1 || originPos.y - j < 0 || originPos.y - j>Player::getInstance()->getMapSize()-1)
 			{
 				continue;
 			}
@@ -231,9 +233,23 @@ void MapManager::RemoveBuilding(Building* building, int name)
 
 void MapManager::RemoveSoldier(Soldier* soldier)
 {
-	auto pos = soldier->getPosition();
-	auto originPos = ChangeToTiledPos(pos);
-	_objectVec[originPos.x][originPos.y] = 1;
+	if (soldier->_path.empty())
+	{
+		auto pos = soldier->getPosition();
+		auto originPos = ChangeToTiledPos(pos);
+		_objectVec[originPos.x][originPos.y] = 1;
+	}
+	else
+	{
+		if (soldier->_path.front() == soldier->_path.back())
+		{
+			_objectVec[soldier->_path.front().x][soldier->_path.front().y] = 1;
+		}
+		else
+		{
+			_objectVec[soldier->_path[1].x][soldier->_path[1].y] = 1;
+		}
+	}
 }
 
 Vec2 MapManager::ChangeToTiledPos(Point pos)
@@ -294,25 +310,28 @@ Point MapManager::BFS(Point start)
 	{
 		tileStart.x = 0;
 	}
-	else if (tileStart.x > 74)
+	else if (tileStart.x > Player::getInstance()->getMapSize()-1)
 	{
-		tileStart.x = 74;
+		tileStart.x = Player::getInstance()->getMapSize()-1;
 	}
 	if (tileStart.y < 0)
 	{
 		tileStart.y = 0;
 	}
-	else if (tileStart.y > 74)
+	else if (tileStart.y > Player::getInstance()->getMapSize()-1)
 	{
-		tileStart.y = 74;
+		tileStart.y = Player::getInstance()->getMapSize()-1;
 	}
 	int dir[8][2] = { {0,1},{1,0},{1,1},{1,-1},{ 0,-1 },{ -1,0 },{ -1,-1 },{ -1,1 } };
-	int searchMap[75][75];
-	for (int i = 0; i < 75; ++i)
+	std::vector<std::vector<int>> searchMap;
+	for(int i = 0; i < Player::getInstance()->getMapSize(); ++i)
 	{
-		for (int j = 0; j < 75; ++j) {
-			searchMap[i][j] = 0;
+		std::vector<int> temp;
+		for (int j = 0; j <Player::getInstance()->getMapSize(); ++j)
+		{
+			temp.push_back(0);
 		}
+		searchMap.push_back(temp);
 	}
 	queue<Point> isSearched;
 	isSearched.push(tileStart);
@@ -368,25 +387,28 @@ void MapManager::TargetPosBFS(Point start)
 	{
 		tileStart.x = 0;
 	}
-	else if (tileStart.x > 74)
+	else if (tileStart.x > Player::getInstance()->getMapSize()-1)
 	{
-		tileStart.x = 74;
+		tileStart.x = Player::getInstance()->getMapSize() - 1;
 	}
 	if (tileStart.y < 0)
 	{
 		tileStart.y = 0;
 	}
-	else if (tileStart.y > 74)
+	else if (tileStart.y > Player::getInstance()->getMapSize() - 1)
 	{
-		tileStart.y = 74;
+		tileStart.y = Player::getInstance()->getMapSize() - 1;
 	}
 	int dir[8][2] = { { 0,1 },{ 1,0 },{ 1,1 },{ 1,-1 },{ 0,-1 },{ -1,0 },{ -1,-1 },{ -1,1 } };
-	int searchMap[75][75];
-	for (int i = 0; i < 75; ++i)
+	std::vector<std::vector<int>> searchMap;
+	for (int i = 0; i < Player::getInstance()->getMapSize(); ++i)
 	{
-		for (int j = 0; j < 75; ++j) {
-			searchMap[i][j] = 0;
+		std::vector<int> temp;
+		for (int j = 0; j <Player::getInstance()->getMapSize(); ++j)
+		{
+			temp.push_back(0);
 		}
+		searchMap.push_back(temp);
 	}
 	queue<Point> isSearched;
 	isSearched.push(tileStart);
@@ -406,8 +428,8 @@ void MapManager::TargetPosBFS(Point start)
 		searchMap[static_cast<int>(isSearched.front().x)][static_cast<int>(isSearched.front().y)] = 1;
 		for (int i = 0; i < 8; ++i)
 		{
-			if (static_cast<int>(isSearched.front().x) + dir[i][0] < 0 || static_cast<int>(isSearched.front().x) + dir[i][0]>74 ||
-				static_cast<int>(isSearched.front().y) + dir[i][1] < 0 || static_cast<int>(isSearched.front().y) + dir[i][1]>74)
+			if (static_cast<int>(isSearched.front().x) + dir[i][0] < 0 || static_cast<int>(isSearched.front().x) + dir[i][0]> Player::getInstance()->getMapSize()-1 ||
+				static_cast<int>(isSearched.front().y) + dir[i][1] < 0 || static_cast<int>(isSearched.front().y) + dir[i][1]> Player::getInstance()->getMapSize() - 1)
 			{
 				continue;
 			}
@@ -423,6 +445,12 @@ void MapManager::TargetPosBFS(Point start)
 
 		isSearched.pop();
 	}
+}
+
+void MapManager::ClearAll()
+{
+	_mapVec.clear();
+	_objectVec.clear();
 }
 
 bool MapManager::CheckPos(Point point)

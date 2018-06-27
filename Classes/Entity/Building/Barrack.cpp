@@ -44,7 +44,7 @@ Barrack::Barrack(Power* p, Mineral* m,int player)
 	_currentHP = 2000;
 	_powerCost = 35;
 	_mineralCost = 100;
-	_timeToBuild = 1;
+	_timeToBuild = 15;
 	_player = player;
 	_ID = buildingsID;
 	++buildingsID;

@@ -38,7 +38,7 @@ Explosion::Explosion(int player)
 
 	_currentHP = 50;
 
-	_attack = 0;
+	_attack = 100;
 
 	_speed = 6;
 
@@ -54,9 +54,9 @@ Explosion::Explosion(int player)
 
 	_toward = Point(1, 0);
 
-	_ID = soldiersID;
+	_ID = enemySoldiersID;
 
-	--soldiersID;
+	--enemySoldiersID;
 
 }
 
@@ -72,7 +72,7 @@ Explosion::Explosion(Mineral* m, int player)
 
 	_currentHP = 50;
 
-	_attack = 0;
+	_attack = 100;
 
 	_speed = 6;
 
@@ -133,14 +133,10 @@ cocos2d::Animate* Explosion::AnimateDie()
 {
 
 	int x = _toward.x;
-
 	int y = _toward.y;
 
 	auto animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("ExplosionDie_%d_%d", x, y));
-
 	Animate* action = Animate::create(animation);
-
-
 
 	return action;
 
@@ -153,71 +149,48 @@ cocos2d::Animate* Explosion::AnimateMove(Point target)
 {
 
 	target = MapManager::ChangeToTiledPos(target);
-
 	Point p = MapManager::ChangeToTiledPos(this->getPosition());
 
 
 
 	auto dir = target - p;
-
 	int x, y;
 
-
-
 	if (dir.x == 1 && dir.y == 0)
-
 	{
-
 		x = 1; y = -1;
-
 	}
 
 	else if (dir.x == 1 && dir.y == 1)
-
 	{
-
 		x = 0; y = -1;
-
 	}
 
 	else if (dir.x == 0 && dir.y == 1)
-
 	{
-
 		x = -1; y = -1;
-
 	}
 
 	else if (dir.x == -1 && dir.y == 1)
-
 	{
-
 		x = -1; y = 0;
-
 	}
 
 	else if (dir.x == -1 && dir.y == 0)
-
 	{
-
 		x = -1; y = 1;
-
 	}
 
 	else if (dir.x == -1 && dir.y == -1)
 
 	{
-
 		x = 0; y = 1;
-
 	}
 
 	else if (dir.x == 0 && dir.y == -1)
 
 	{
-
 		x = 1; y = 1;
-
 	}
 
 	else if (dir.x == 1 && dir.y == -1)
@@ -242,7 +215,7 @@ cocos2d::Animate* Explosion::AnimateMove(Point target)
 
 cocos2d::Animate* Explosion::AnimateAttack(Point target)
 {
-	auto animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("DogAttack_%d_%d", _toward.x, _toward.y));
+	auto animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("ExplosionAttack_%d_%d", _toward.x, _toward.y));
 	Animate* action = Animate::create(animation);
 
 	return action;

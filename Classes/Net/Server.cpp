@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "Entity\Player.h"
 
 Server::Server()
 {
@@ -77,13 +78,18 @@ void Server::RecvAndSend1() const
 {
 	while (1)
 	{
-		char _str[1024] = { 0 };
-		int _judge = recv(_clientSocket1, _str, 1024, 0);
+		if (Player::getInstance()->isEnd >= 5000)
+		{
+			break;
+		}
+		char _str[100] = { 0 };
+		int _judge = recv(_clientSocket1, _str, 100, 0);
 		if (_judge <= 0)
 		{
 			break;
 		}
 		send(_clientSocket2, _str, sizeof(_str), 0);
+		
 	}
 }
 
@@ -91,14 +97,20 @@ void Server::RecvAndSend2() const
 {
 	while (1)
 	{
-		char _str[1024] = { 0 };
-		int _judge = recv(_clientSocket2, _str, 1024, 0);
+		if (Player::getInstance()->isEnd >= 5000)
+		{
+			break;
+		}
+		char _str[100] = { 0 };
+		int _judge = recv(_clientSocket2, _str, 100, 0);
 		if (_judge <= 0)
 		{
 			break;
 		}
 		send(_clientSocket1, _str, sizeof(_str), 0);
+		
 	}
+	
 }
 
 bool Server::IsConnected() const

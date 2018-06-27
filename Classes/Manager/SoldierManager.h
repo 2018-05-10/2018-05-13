@@ -29,6 +29,7 @@ public:
 	static void EnemyCreate(float x, float y,int type);
 	static void SetEnemyTarget(float x,float y,int ID);
 	static void SetEnemyTargetEnemy(int, int);
+	static void EnemyDie(int ID);
 
 	//======存储被选中士兵的vector
 	static std::unordered_map<int ,Soldier*> _beChoosedMap;
@@ -53,7 +54,7 @@ public:
 
 	void BindMineral(Mineral* m);
 	void DestroySoldier(Soldier* S);
-	void ClearAll();
+	static void ClearAll();
 	void SetPlayer(int num);
 	int GetPlayer();
 	void SetPairManager(BuildingManager* Pair);

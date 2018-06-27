@@ -221,8 +221,6 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 	auto tank = Button::create("tankpicture.png");
 	tank->setScale(0.6);
 	tank->setPosition(Size(contentSize.width / 4, contentSize.height / 2));
-
-
 	tank->addTouchEventListener([&,buildingID](Ref*, Widget::TouchEventType type)
 	{
 		switch (type)
@@ -257,8 +255,49 @@ void MenuLayer::CreateFactoryLayer(int buildingID)
 			}
 		}
 	});
-
 	menuLayer->addChild(tank);
+
+	auto explosion = Button::create("explosionpicture.png");
+	explosion->setScale(0.6);
+	explosion->setPosition(Size(contentSize.width *3/ 4, contentSize.height / 2));
+
+
+	explosion->addTouchEventListener([&, buildingID](Ref*, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::BEGAN:
+			break;
+		case Widget::TouchEventType::MOVED:
+			break;
+		case Widget::TouchEventType::ENDED:
+			if (GetMap()->getChildByTag(buildingID) == nullptr)
+			{
+				CreateMainLayer();
+				auto flowWord = FlowWord::create();
+				this->getParent()->addChild(flowWord);
+				flowWord->showWord("Building has been destroyed", Point(900, 700), 0.5, 2);
+				return;
+			}
+			if (GetSoldierManager()->CheckSoldierResource("Explosion"))
+			{
+				auto building = static_cast<Factory*>(GetMap()->getChildByTag(buildingID));
+				building->_buildingList.push("Explosion");
+				GetMineral()->Cost(50);
+				auto lab = static_cast<Text*>(Helper::seekWidgetByName(_buildingListUI, "Number"));
+				lab->setText(Value(building->_buildingList.size()).asString());
+				break;
+			}
+			else
+			{
+				auto flowWord = FlowWord::create();
+				this->getParent()->addChild(flowWord);
+				flowWord->showWord("not enough resource", Point(900, 700), 0.5, 2);
+			}
+		}
+	});
+
+	menuLayer->addChild(explosion);
 
 
 	

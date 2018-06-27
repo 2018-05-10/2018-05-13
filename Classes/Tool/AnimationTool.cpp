@@ -25,6 +25,9 @@ void AnimationTool::loadAnimation()
 				_animationCache->addAnimation(TankMoveAnimation(x, y), StringUtils::format("TankMove_%d_%d", x, y));
 				_animationCache->addAnimation(TankAttackAnimation(x, y), StringUtils::format("TankAttack_%d_%d", x, y));
 				_animationCache->addAnimation(TankDieAnimation(x, y), StringUtils::format("TankDie_%d_%d", x, y));
+				_animationCache->addAnimation(ExplosionMoveAnimation(x, y), StringUtils::format("ExplosionMove_%d_%d", x, y));
+				_animationCache->addAnimation(ExplosionAttackAnimation(x, y), StringUtils::format("ExplosionAttack_%d_%d", x, y));
+				_animationCache->addAnimation(ExplosionDieAnimation(x, y), StringUtils::format("ExplosionDie_%d_%d", x, y));
 			}
 		}
 	}
@@ -199,9 +202,20 @@ Animation* AnimationTool::ExplosionDieAnimation(int x, int y)
 
 	Vector<SpriteFrame*> frameVec;
 	SpriteFrame* frame;
-	frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Explosion_attack_(%d,%d)_3.png", x, y));
+
+	for (int i = 1; i < 4; i++)
+	{
+		frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Explosion_attack_(%d,%d)_%d.png", x, y, i));
+
+		frameVec.pushBack(frame);
+
+	}
+
+	frame = GameScene::_frameCache->getSpriteFrameByName(StringUtils::format("Explosion_move_(%d,%d).png", x, y));
 
 	frameVec.pushBack(frame);
+
+
 
 	Animation* animation = Animation::createWithSpriteFrames(frameVec);
 
