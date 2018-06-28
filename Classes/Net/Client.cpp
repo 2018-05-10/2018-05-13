@@ -1,5 +1,6 @@
 ﻿#include "Client.h"
 #include "Entity\Player.h"
+#include <mutex>
 Client::Client()//不用关心
 {
 	WSADATA _data;
@@ -96,6 +97,7 @@ int Client::Recv(char* _buffer, int _len) const//不用关心
 
 bool Client::SendData(float _p1, float _p2, int _p3, int _p4, int _p5, int _p6) const//在单位的属性有改变时均需调用此函数来发送新的属性值
 {
+	WaitForSingleObject(_mutex, INFINITE);
 	char _str[100] = { 0 };
 	int _judge = 0;
 	char* _str2 = ChangeTo(_p1, _p2, _p3, _p4, _p5, _p6);
@@ -111,7 +113,7 @@ bool Client::SendData(float _p1, float _p2, int _p3, int _p4, int _p5, int _p6) 
 	{
 		return false;
 	}
-	
+	ReleaseMutex(_mutex);
 	return true;
 }
 
@@ -133,9 +135,19 @@ bool Client::RecvData(float &_p1, float &_p2, int &_p3, int &_p4, int &_p5, int 
 		delete[] _str;
 		return true;
 	}
-	if (_s == "_cancelReady")
+
+	if (_s== "is_ended_master")
 	{
-		_isReady = 0;
+
+		Player::getInstance()->setResult(0);
+		Player::getInstance()->quitGame = 1;
+		delete[] _str;
+		return true;
+	}
+	if (_s == "is_ended_client")
+	{
+		Player::getInstance()->setResult(1);
+		Player::getInstance()->quitGame = 1;
 		delete[] _str;
 		return true;
 	}
@@ -145,9 +157,20 @@ bool Client::RecvData(float &_p1, float &_p2, int &_p3, int &_p4, int &_p5, int 
 		delete[] _str;
 		return true;
 	}
-	else if(strlen(_str) == 99 && _str[96] == 'd' && _str[97] == 'd' && _str[98] == 'd')
+	if (_s == "_cancelReady")
+	{
+		_isReady = 0;
+		delete[] _str;
+		return true;
+	}
+	else if(_str[strlen(_str) - 1] == 'd' && _str[strlen(_str) - 2] == 'd' && _str[strlen(_str) - 3] == 'd')
 	{
 		ChangeFrom(_str, _p1, _p2, _p3, _p4, _p5, _p6);
+		delete[] _str;
+		return true;
+	}
+	else if (_s.find(" ") != -1)
+	{
 		delete[] _str;
 		return true;
 	}

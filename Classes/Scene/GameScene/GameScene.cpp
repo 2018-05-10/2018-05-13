@@ -12,6 +12,7 @@
 #include"Net\API.h"
 #include"Entity\Player.h"
 #include"Scene/RoomScene/ChatBox.h"
+#include"Scene/ResultScene.h"
 
 USING_NS_CC;
 #define BASE 1
@@ -115,7 +116,8 @@ void GameScene::RecvDataUpdate(float dt)
 		case CREATE_ENEMY:
 				SoldierManager::EnemyCreate(Player::getInstance()->client->_orders.front()._x, 
 				Player::getInstance()->client->_orders.front()._y, 
-				Player::getInstance()->client->_orders.front()._kind);
+				Player::getInstance()->client->_orders.front()._kind,
+				Player::getInstance()->client->_orders.front()._id);
 				break;
 		case SET_ENEMY_TARGET:
 				SoldierManager::SetEnemyTarget(Player::getInstance()->client->_orders.front()._x, 
@@ -132,6 +134,11 @@ void GameScene::RecvDataUpdate(float dt)
 		}
 		Player::getInstance()->client->_orders.pop_front();
 	}
+	if (Player::getInstance()->quitGame)
+	{
+		auto transition = TransitionFade::create(0.3, ResultScene::createScene());
+		Director::getInstance()->replaceScene(transition);
+	}
 }
 
 void GameScene::initBattle()
@@ -144,11 +151,7 @@ void GameScene::initBattle()
 		GetMapManager()->SetBuilding(MapManager::ChangeToCocosPos(Point(60,5)), BASE);
 		base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0.1);
 		_gameController->SetBuildingController(base);
-		auto enemybase = BuildingManager::CreateEnemyBuilding(BASE);
-		_map->addChild(enemybase, 0);
-		enemybase->setPosition(MapManager::ChangeToCocosPos(Point(5,60)));
-		GetMapManager()->SetBuilding(MapManager::ChangeToCocosPos(Point(5,60)), BASE);
-		base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0.1);
+		Player::getInstance()->client->SendData(MapManager::ChangeToCocosPos(Point(60, 5)).x, MapManager::ChangeToCocosPos(Point(60, 5)).y, 0, base->GetID(), base->GetType(), CREATE_ENEMY);
 	}
 	else
 	{
@@ -158,22 +161,30 @@ void GameScene::initBattle()
 		GetMapManager()->SetBuilding(MapManager::ChangeToCocosPos(Point(5,60)), BASE);
 		base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0.1);
 		_gameController->SetBuildingController(base);
-		auto enemybase = BuildingManager::CreateEnemyBuilding(BASE);
-		_map->addChild(enemybase, 0);
-		enemybase->setPosition(MapManager::ChangeToCocosPos(Point(60,5)));
-		GetMapManager()->SetBuilding(MapManager::ChangeToCocosPos(Point(60, 5)), BASE);
-		base->scheduleOnce(schedule_selector(Building::BuildingUpdate), 0.1);
+		Player::getInstance()->client->SendData(MapManager::ChangeToCocosPos(Point(5,60)).x, MapManager::ChangeToCocosPos(Point(5,60)).y, 0, base->GetID(), base->GetType(), CREATE_ENEMY);
 	}
 }
 
 void GameScene::onExit()
 {
-	Layer::onExit();
+
 	SoldierManager::ClearAll();
 	BuildingManager::ClearAll();
 	MapManager::ClearAll();
 	Player::getInstance()->isEnd += 10000;
+	if (Player::getInstance()->isMaster)
+	{
+		if (Player::getInstance()->getResult())
+		{
+			Player::getInstance()->client->_chatMsgSend.push_back("is_ended_master");
+		}
+		else
+		{
+			Player::getInstance()->client->_chatMsgSend.push_back("is_ended_client");
+		}
 	
+	}
+	Layer::onExit();
 }
 
 

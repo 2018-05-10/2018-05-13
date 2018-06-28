@@ -3,6 +3,7 @@
 #include"SimpleAudioEngine.h"
 #include"ui/CocosGUI.h"
 #include"Setting.h"
+#include"MenuScene.h"
 
 USING_NS_CC;
 using namespace ui;
@@ -50,7 +51,6 @@ bool SettingScene::init()
 		case Widget::TouchEventType::MOVED:
 			break;
 		case Widget::TouchEventType::ENDED:
-			
 			Director::getInstance()->popScene();
 			break;
 		}

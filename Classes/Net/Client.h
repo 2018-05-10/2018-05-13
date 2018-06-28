@@ -11,7 +11,7 @@
 #include <vector>
 #include <queue>
 #include <deque>
-
+#include <mutex>
 #pragma comment(lib,"ws2_32.lib")
 
 typedef struct unit
@@ -68,6 +68,8 @@ public:
 
 	int _step;
 	bool _isReady;
+
+	HANDLE _mutex = CreateMutex(nullptr, false, nullptr);
 };
 
 

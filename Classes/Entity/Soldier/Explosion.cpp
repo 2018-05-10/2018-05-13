@@ -28,7 +28,7 @@
 
 
 
-Explosion::Explosion(int player)
+Explosion::Explosion(int id)
 
 {
 
@@ -48,13 +48,13 @@ Explosion::Explosion(int player)
 
 	_attackDistance = 25;
 
-	_player = player;
+	_player = 1;
 
 	_target = NULL;
 
 	_toward = Point(1, 0);
 
-	_ID = enemySoldiersID;
+	_ID = id;
 
 	--enemySoldiersID;
 

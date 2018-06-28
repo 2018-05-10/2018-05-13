@@ -26,7 +26,7 @@ public:
 
 	//=======Ê¿±øÒÆ¶¯º¯Êý==========
 	void Move(Soldier*);
-	static void EnemyCreate(float x, float y,int type);
+	static void EnemyCreate(float x, float y,int type,int id);
 	static void SetEnemyTarget(float x,float y,int ID);
 	static void SetEnemyTargetEnemy(int, int);
 	static void EnemyDie(int ID);
@@ -50,7 +50,7 @@ private:
 	BuildingManager* _pPairManager;
 public:
 	static Soldier *CreateSoldier(int SoldierTypeName,int player);
-	static Soldier *CreateEnemySoldier(int SoldierTypeName, int player);
+	static Soldier *CreateEnemySoldier(int SoldierTypeName, int id);
 
 	void BindMineral(Mineral* m);
 	void DestroySoldier(Soldier* S);

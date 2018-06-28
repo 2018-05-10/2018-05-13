@@ -6,7 +6,7 @@
 class Base :public Building
 {
 public:
-	Base();
+	Base(int);
 	Base(Power* p, Mineral* m,int player);
 	~Base();
 	bool init();

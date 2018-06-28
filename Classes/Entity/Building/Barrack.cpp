@@ -18,7 +18,7 @@
 #define SET_ENEMY_TARGET 1001
 #define SET_ENEMY_TARGET_ENEMY 1002
 
-Barrack::Barrack()
+Barrack::Barrack(int id)
 {
 	_type = BARRACK;
 
@@ -26,9 +26,9 @@ Barrack::Barrack()
 	_currentHP = 2000;
 	_powerCost = 35;
 	_mineralCost = 100;
-	_timeToBuild = 15;
+	_timeToBuild = 3;
 	_player = 1;
-	_ID = enemyBuildingsID;
+	_ID =id;
 	++enemyBuildingsID;
 
 

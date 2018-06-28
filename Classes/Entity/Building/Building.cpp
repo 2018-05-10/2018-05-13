@@ -52,7 +52,11 @@ void Building::Die()
 	{
 		return;
 	}
-	Player::getInstance()->client->SendData(0, 0, 0, this->GetID(), this->GetType(), ENEMY_DIE);
+	for (int i = 0; i < 5; ++i)
+	{
+		Player::getInstance()->client->SendData(0, 0, 0, this->GetID(), this->GetType(), ENEMY_DIE);
+
+	}
 	_isDead = true;
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/BoomSound.wav");
 	MapManager::RemoveBuilding(this, _type);

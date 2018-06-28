@@ -66,7 +66,6 @@ bool MenuScene::init()
 		case Widget::TouchEventType::ENDED:
 			auto transition = TransitionFade::create(0.5, SettingScene::createScene());
 			Director::getInstance()->pushScene(transition);
-			log("succeed");
 			break;
 		}
 	});

@@ -9,7 +9,7 @@
 #define DOG 7
 #define TANK 8
 
-Mine::Mine()
+Mine::Mine(int id)
 {
 	_type = MINE;
 	
@@ -19,7 +19,7 @@ Mine::Mine()
 	_powerCost = 25;
 	_timeToBuild = 15;
 	_player = 1;
-	_ID = enemyBuildingsID;
+	_ID = id;
 	++enemyBuildingsID;
 
 }

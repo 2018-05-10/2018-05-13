@@ -38,6 +38,7 @@ void Soldier::Attack(Entity* target)
 	}
 	if (this->GetPlayer() != target->GetPlayer())
 	{
+
 		if (!this->Isdead())
 		{
 			this->GetSprite()->stopAllActions();
@@ -72,7 +73,10 @@ void Soldier::Die()
 		return;
 	}
 	_isDead = true;
-	Player::getInstance()->client->SendData(0, 0, 0, this->GetID(), this->GetType(), ENEMY_DIE);
+	for (int i = 0; i < 5; ++i)
+	{
+		Player::getInstance()->client->SendData(0, 0, 0, this->GetID(), this->GetType(), ENEMY_DIE);
+	}
 	if (_type == EXPLOSION)
 	{
 		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/BoomSound.wav");
@@ -83,7 +87,14 @@ void Soldier::Die()
 	{
 		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/BoomSound.wav");
 	}
-
+	if (_type == INFANTRY)
+	{
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/DieSound.wav");
+	}
+	if (_type == DOG)
+	{
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/DogDieSound.wav");
+	}
 	MapManager::RemoveSoldier(this);
 	
 	auto func = [this]()

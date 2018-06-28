@@ -4,7 +4,7 @@
 class PowerStation :public Building
 {
 public:
-	PowerStation();
+	PowerStation(int);
 	PowerStation(Power* p, Mineral* m,int player);
 	~PowerStation();
 	bool init();
@@ -12,7 +12,7 @@ public:
 	int GetMineralCost();
 
 
-	CREATE_FUNC(PowerStation);
+
 private:
 	const int _powerProduce = 50;     //能提供的电力
 };

@@ -25,6 +25,7 @@ public:
 	Server* serve;
 	bool isMaster = false;
 	int isEnd = 0;
+	int quitGame = 0;
 private:
 	Player() {};
 	std::string name;

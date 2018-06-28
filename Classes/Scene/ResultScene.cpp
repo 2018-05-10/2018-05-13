@@ -2,6 +2,8 @@
 #include"ui/CocosGUI.h"
 #include"Entity/Player.h"
 #include"Setting.h"
+#include"MenuScene.h"
+#include"SimpleAudioEngine.h"
 USING_NS_CC;
 using namespace ui;
 
@@ -66,4 +68,28 @@ void ResultScene::update(float dt)
 		delete Player::getInstance()->client;
 		delete Player::getInstance()->serve;
 	}
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto visibleOrigin = Director::getInstance()->getVisibleOrigin();
+
+	auto button = Button::create("button.png", "buttonHighlighted.png");
+	button->setScale9Enabled(true);
+	button->setSize(Size(300, 50));
+	button->setTitleText("Return");
+	button->setTitleFontSize(20);
+	button->setPosition(Vec2(visibleOrigin.x + visibleSize.width / 2, visibleOrigin.y + visibleSize.height / 4));
+	this->addChild(button);
+	button->addTouchEventListener([&](Ref*, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::BEGAN:
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sound/ClickSound.wav");
+			break;
+		case Widget::TouchEventType::MOVED:
+			break;
+		case Widget::TouchEventType::ENDED:
+			Director::getInstance()->end();
+			break;
+		}
+	});
 }

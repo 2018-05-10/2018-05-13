@@ -8,7 +8,7 @@ Mineral::~Mineral(){}
 
 bool Mineral::init()
 {
-	_currentVal = 1000;
+	_currentVal = 2000;
 	return true;
 }
 

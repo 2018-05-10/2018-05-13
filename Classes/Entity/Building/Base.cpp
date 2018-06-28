@@ -9,17 +9,17 @@
 #define DOG 7
 #define TANK 8
 
-Base::Base()
+Base::Base(int id)
 {
 	_type = BASE;
 
 	_totalHP = 5000;
 	_currentHP = 5000;
 	_powerCost = 40;
-	_mineralCost = 0;
+	_mineralCost = 100;
 	_timeToBuild = 10;
 	_player = 1; 
-	_ID = enemyBuildingsID;
+	_ID = id;
 	++enemyBuildingsID;
 
 }

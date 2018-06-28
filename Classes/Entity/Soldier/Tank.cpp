@@ -12,7 +12,7 @@
 #define DOG 7
 #define TANK 8
 
-Tank::Tank(int player)
+Tank::Tank(int id)
 {
 	_type=TANK;
 	_totalHP = 300;
@@ -21,11 +21,11 @@ Tank::Tank(int player)
 	_speed = 3;
 	_mineralCost = 50;
 	_attackInterval = 1.0;
-	_player = player;
+	_player = 1;
 	_attackDistance = 64;
 	_toward = Point(1, 0);
 	_target = NULL;
-	_ID = enemySoldiersID;
+	_ID =id;
 	--enemySoldiersID;
 } 
 

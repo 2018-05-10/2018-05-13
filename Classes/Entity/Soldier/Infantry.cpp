@@ -12,7 +12,7 @@
 #define DOG 7
 #define TANK 8
 
-Infantry::Infantry(int player)
+Infantry::Infantry(int id)
 {
 	_type=INFANTRY;
 	_totalHP = 150;
@@ -22,10 +22,10 @@ Infantry::Infantry(int player)
 	_mineralCost = 20;
 	_attackInterval = 0.5;
 	_attackDistance = 49;
-	_player = player;
+	_player =1;
 	_target = NULL;
 	_toward = Point(1, 0);
-	_ID = enemySoldiersID;
+	_ID = id;
 	--enemySoldiersID;
 }
 

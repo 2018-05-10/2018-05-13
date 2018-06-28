@@ -24,7 +24,7 @@
 #define SET_ENEMY_TARGET_ENEMY 1002
 
 
-Factory::Factory()
+Factory::Factory(int id)
 {
 	_type = FACTORY;
 	
@@ -34,7 +34,7 @@ Factory::Factory()
 	_mineralCost = 100;
 	_timeToBuild = 1;
 	_player = 1;
-	_ID = enemyBuildingsID;
+	_ID = id;
 	++enemyBuildingsID;
 
 	
@@ -50,7 +50,7 @@ Factory::Factory(Power* p, Mineral* m,int player)
 	_currentHP = 2000;
 	_powerCost = 35;
 	_mineralCost = 100;
-	_timeToBuild = 1;
+	_timeToBuild = 5;
 	_player = player;
 	_ID = buildingsID;
 	++buildingsID;

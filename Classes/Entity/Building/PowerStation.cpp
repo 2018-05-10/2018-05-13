@@ -10,7 +10,7 @@
 #define TANK 8
 
 
-PowerStation::PowerStation()
+PowerStation::PowerStation(int id)
 {
 	_type=POWERSTATION;
 
@@ -20,7 +20,7 @@ PowerStation::PowerStation()
 	_mineralCost = 100;
 	_timeToBuild = 15;
 	_player = 1;
-	_ID = enemyBuildingsID;
+	_ID = id;
 	++enemyBuildingsID;
 
 }

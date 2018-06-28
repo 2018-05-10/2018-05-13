@@ -251,29 +251,29 @@ void SoldierManager::Move(Soldier* soldier)
 	}
 }
 
-Soldier *SoldierManager::CreateEnemySoldier(int SoldierNameType, int player)
+Soldier *SoldierManager::CreateEnemySoldier(int SoldierNameType, int id)
 {
 	Sprite* spr = NULL;
 	Soldier* S = NULL;
 	switch (SoldierNameType)
 	{
 	case DOG:
-		S = new Dog(player);
+		S = new Dog(id);
 		spr = Sprite::createWithSpriteFrameName("Dog_move_(1,1)_1.png");
 		S->BindSprite(spr);
 		break;
 	case INFANTRY:
-		S = new Infantry(player);
+		S = new Infantry(id);
 		spr = Sprite::createWithSpriteFrameName("Infantry_stand_(1,1).png");
 		S->BindSprite(spr);
 		break;
 	case TANK:
-		S = new Tank(player);
+		S = new Tank(id);
 		spr = Sprite::createWithSpriteFrameName("Tank_move_(1,1).png");
 		S->BindSprite(spr);
 		break;
 	case EXPLOSION:
-		S = new  Explosion( player);
+		S = new  Explosion(id);
 		spr = Sprite::createWithSpriteFrameName("Explosion_move_(1,1).png");
 		S->BindSprite(spr);
 		break;
@@ -438,11 +438,11 @@ int SearchRoad::startSearch(Point startp, Point endp, Soldier* soldier)
 	return find;
 }
 
-void SoldierManager::EnemyCreate(float x, float y,int type)
+void SoldierManager::EnemyCreate(float x, float y,int type,int id)
 {
 	if (type >POWERSTATION)
 	{
-		auto enemy = CreateEnemySoldier(type, 1);
+		auto enemy = CreateEnemySoldier(type, id);
 		GameScene::GetMap()->addChild(enemy, 1000, enemy->GetID());
 		enemy->setPosition(Point(x, y));
 		if (type!=EXPLOSION)
@@ -453,7 +453,7 @@ void SoldierManager::EnemyCreate(float x, float y,int type)
 	}
 	else
 	{
-		auto enemy = BuildingManager::CreateEnemyBuilding(type);
+		auto enemy = BuildingManager::CreateEnemyBuilding(type,id);
 		GameScene::GetMap()->addChild(enemy, 1000, enemy->GetID());
 		enemy->setPosition(Point(x, y));
 		MapManager::SetBuilding(Point(x, y), enemy->Type());
